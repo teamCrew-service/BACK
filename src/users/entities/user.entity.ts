@@ -23,6 +23,18 @@ export class Users {
   @Column({ nullable: true })
   profileImage: string;
 
+  @Column({ nullable: true })
+  age: number;
+
+  @Column({ nullable: true })
+  gender: string;
+
+  @Column({ nullable: true })
+  myMessage: string;
+
+  @Column({ nullable: true })
+  location: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
