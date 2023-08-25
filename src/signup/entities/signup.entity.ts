@@ -7,33 +7,27 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Users {
+export class Signup {
   @PrimaryGeneratedColumn()
+  signupId: number;
+
+  @Column()
+  signupFormId: number;
+
+  @Column()
+  crewId: number;
+
+  @Column()
   userId: number;
 
   @Column()
-  provider: string;
+  answer1: string;
 
   @Column()
-  email: string;
-
-  @Column()
-  nickname: string;
+  answer2: string;
 
   @Column({ nullable: true })
-  profileImage: string;
-
-  @Column({ nullable: true })
-  age: number;
-
-  @Column({ nullable: true })
-  gender: string;
-
-  @Column({ nullable: true })
-  myMessage: string;
-
-  @Column({ nullable: true })
-  location: string;
+  permission: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
