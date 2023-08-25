@@ -11,7 +11,7 @@ import { SignupService } from './signup.service';
 import { CreateSignupFormDto } from './dto/create-signupForm.dto';
 import { SubmitSignupDto } from './dto/submit-signup.dto';
 
-@Controller('signup')
+@Controller()
 export class SignupController {
   constructor(private readonly signupService: SignupService) {}
 

@@ -12,8 +12,6 @@ import { SignupModule } from './signup/signup.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    UsersModule,
-    AuthModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -24,6 +22,8 @@ import { SignupModule } from './signup/signup.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    UsersModule,
+    AuthModule,
     SignupModule,
   ],
   controllers: [AppController],
