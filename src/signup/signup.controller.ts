@@ -16,7 +16,7 @@ export class SignupController {
   constructor(private readonly signupService: SignupService) {}
 
   /* 모임 가입(form 생성) */
-  @Post('api/signup/:crewId/signupform')
+  @Post('signup/:crewId/signupform')
   async createSignupForm(
     @Param('crewId') crewId: number,
     @Body() createSignupFormDto: CreateSignupFormDto,
@@ -25,7 +25,7 @@ export class SignupController {
   }
 
   /* 모임 가입(form 불러오기) */
-  @Get('api/signup/:crewId/:signupFormId')
+  @Get('signup/:crewId/:signupFormId')
   async findOneSignupForm(
     @Param() crewId: number,
     signupFormId: number,
@@ -39,7 +39,7 @@ export class SignupController {
   }
 
   /* 모임 가입 작성 */
-  @Post('api/signup/:crewId/:signupFormId/submit')
+  @Post('signup/:crewId/:signupFormId/submit')
   async submitSignup(
     @Param() crewId: number,
     signupFormId: number,
@@ -57,7 +57,7 @@ export class SignupController {
   }
 
   /* 제출한 가입서 조회 */
-  @Get('api/signup/:crewId')
+  @Get('signup/:crewId')
   async findAllSubmitted(
     @Param('crewId') crewId: number,
     @Res() res: any,
