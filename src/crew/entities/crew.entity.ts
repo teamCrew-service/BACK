@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
