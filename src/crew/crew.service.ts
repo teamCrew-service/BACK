@@ -10,4 +10,10 @@ export class CrewService {
     const crewList = this.crewRepository.findByCategory(category);
     return crewList;
   }
+
+  /* 모임 글 상세 조회(참여 전) */
+  async findCrewDetail(crewId: number): Promise<any> {
+    const crew = this.crewRepository.findCrewDetail(crewId);
+    return crew;
+  }
 }

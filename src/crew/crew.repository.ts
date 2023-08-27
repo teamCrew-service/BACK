@@ -14,4 +14,10 @@ export class CrewRepository {
     const crewList = this.crewRepository.find({ where: { category } });
     return crewList;
   }
+
+  /* 모임 글 상세 조회(참여 전) */
+  async findCrewDetail(crewId: number): Promise<any> {
+    const crew = this.crewRepository.findOne({ where: { crewId } });
+    return crew;
+  }
 }
