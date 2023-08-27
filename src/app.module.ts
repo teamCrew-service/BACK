@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
+import { NoticeModule } from './notice/notice.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CrewModule } from './crew/crew.module';
     AuthModule,
     HomeModule,
     CrewModule,
+    NoticeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

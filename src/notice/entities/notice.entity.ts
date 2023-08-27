@@ -1,5 +1,5 @@
+import { Crew } from 'src/crew/entities/crew.entity';
 import { Users } from 'src/users/entities/user.entity';
-import { Notice } from 'src/notice/entities/notice.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,67 +7,40 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('crew')
-export class Crew {
+@Entity('notice')
+export class Notice {
   @PrimaryGeneratedColumn()
-  crewId: number;
+  noticeId: number;
 
   @ManyToOne(() => Users, (user) => user.crew)
   @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
   user: Users;
 
-  @OneToMany(() => Notice, (notice) => notice.crew)
-  notice: Notice[];
+  @ManyToOne(() => Crew, (crew) => crew.notice)
+  @JoinColumn({ name: 'crewId', referencedColumnName: 'crewId' })
+  crew: Crew;
 
   @Column()
   userId: number;
 
   @Column()
-  category: string;
+  crewId: number;
 
   @Column()
-  crewAddress: string;
+  noticeTitle: string;
 
   @Column()
-  crewType: string;
+  noticeContent: string;
 
   @Column()
-  crewDDay: Date;
+  noitceDDay: Date;
 
   @Column()
-  crewMemberInfo: string;
-
-  @Column()
-  crewTimeInfo: string;
-
-  @Column()
-  crewAgeInfo: string;
-
-  @Column()
-  crewSignup: boolean;
-
-  @Column()
-  crewTitle: string;
-
-  @Column()
-  crewContent: string;
-
-  @Column({ nullable: true })
-  thumbnail: string;
-
-  @Column()
-  crewMaxMember: number;
-
-  @Column()
-  latitude: number;
-
-  @Column()
-  longtitude: number;
+  noticeAddress: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
