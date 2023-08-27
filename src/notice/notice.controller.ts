@@ -10,7 +10,7 @@ import { NoticeService } from './notice.service';
 // import { KakaoAuthGuard } from 'src/auth/guard/kakao-auth.guard';
 // import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 
-@Controller('api/notice')
+@Controller('notice')
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
