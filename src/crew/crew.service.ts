@@ -10,4 +10,9 @@ export class CrewService {
     const crewList = this.crewRepository.findByCategory(category);
     return crewList;
   }
+
+  async createCrew(CreateCrewDto: any): Promise<any> {
+    const crew = await this.crewRepository.createCrew(CreateCrewDto);
+    return crew;
+  }
 }

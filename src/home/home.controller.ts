@@ -6,7 +6,7 @@ export class HomeController {
   constructor(private readonly homeService: HomeService) {}
 
   /* 관심사 별 모임 찾기 */
-  @Get('api/home/:category')
+  @Get('home/:category')
   async findByCategory(
     @Param('category') category: string,
     @Res() res: any,
