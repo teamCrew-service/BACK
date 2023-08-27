@@ -1,12 +1,14 @@
+import { Crew } from 'src/crew/entities/crew.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class Users {
   @PrimaryGeneratedColumn()
   userId: number;
@@ -40,4 +42,7 @@ export class Users {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToMany(() => Crew, (crew) => crew.user)
+  crew: Crew[];
 }
