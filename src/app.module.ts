@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SignupModule } from './signup/signup.module';
 import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
+import { NoticeModule } from './notice/notice.module';
 
 
 @Module({
@@ -30,6 +31,7 @@ import { CrewModule } from './crew/crew.module';
     SignupModule,
     HomeModule,
     CrewModule,
+    NoticeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
