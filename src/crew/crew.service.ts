@@ -11,9 +11,13 @@ export class CrewService {
     return crewList;
   }
 
+  async createCrew(CreateCrewDto: any): Promise<any> {
+    const crew = await this.crewRepository.createCrew(CreateCrewDto);
+
   /* 모임 글 상세 조회(참여 전) */
   async findCrewDetail(crewId: number): Promise<any> {
     const crew = this.crewRepository.findCrewDetail(crewId);
+
     return crew;
   }
 }
