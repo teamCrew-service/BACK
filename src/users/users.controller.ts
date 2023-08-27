@@ -22,7 +22,7 @@ export class UsersController {
 
   /* 카카오 로그인 서비스*/
   @UseGuards(KakaoAuthGuard)
-  @Get('api/auth/kakao')
+  @Get('auth/kakao')
   async kakaoLogin() {
     return;
   }
@@ -37,7 +37,7 @@ export class UsersController {
 
   /*네이버 로그인 서비스*/
   @UseGuards(NaverAuthGuard)
-  @Get('api/auth/naver')
+  @Get('auth/naver')
   async naverLogin() {
     return;
   }
@@ -50,7 +50,7 @@ export class UsersController {
 
   /*구글 로그인 서비스*/
   @UseGuards(GoogleAuthGuard)
-  @Get('api/auth/google')
+  @Get('auth/google')
   async googleLogin() {
     return;
   }
@@ -62,7 +62,7 @@ export class UsersController {
   }
 
   /*최초 로그인 설정*/
-  @Put('api/auth/info')
+  @Put('auth/info')
   async addUserInfo(
     @Body() addUserInfoDto: AddUserInfoDto,
     @Res() res: any,
