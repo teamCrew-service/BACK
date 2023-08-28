@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SignupForm } from 'src/signup/entities/signupForm.entity';
 
 @Entity('crew')
 export class Crew {
@@ -23,6 +24,9 @@ export class Crew {
 
   @OneToMany(() => Notice, (notice) => notice.crew)
   notice: Notice[];
+
+  @OneToMany(() => SignupForm, (signupForm) => signupForm.crew)
+  signupForm: SignupForm[];
 
   @Column()
   userId: number;

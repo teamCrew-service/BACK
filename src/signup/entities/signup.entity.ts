@@ -1,10 +1,14 @@
+import { Users } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { SignupForm } from './signupForm.entity';
 
 @Entity()
 export class Signup {
@@ -16,6 +20,14 @@ export class Signup {
 
   @Column()
   crewId: number;
+
+  @ManyToOne(() => Users, (user) => user.signup)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  user: Users;
+
+  @ManyToOne(() => SignupForm, (signupForm) => signupForm.signup)
+  @JoinColumn({ name: 'signupFormId', referencedColumnName: 'signupFormId' })
+  signupForm: SignupForm;
 
   @Column()
   userId: number;

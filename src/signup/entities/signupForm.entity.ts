@@ -1,14 +1,23 @@
+import { Crew } from 'src/crew/entities/crew.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Signup } from './signup.entity';
 
 @Entity()
 export class SignupForm {
   @PrimaryGeneratedColumn()
   signupFormId: number;
+
+  @ManyToOne(() => Crew, (crew) => crew.signupForm)
+  @JoinColumn({ name: 'crewId', referencedColumnName: 'crewId' })
+  crew: Crew;
 
   @Column()
   crewId: number;
@@ -21,4 +30,7 @@ export class SignupForm {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @OneToMany(() => Signup, (signup) => signup.signupForm)
+  signup: Signup[];
 }

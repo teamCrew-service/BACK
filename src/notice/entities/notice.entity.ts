@@ -16,7 +16,7 @@ export class Notice {
   @PrimaryGeneratedColumn()
   noticeId: number;
 
-  @ManyToOne(() => Users, (user) => user.crew)
+  @ManyToOne(() => Users, (user) => user.notice)
   @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
   user: Users;
 
