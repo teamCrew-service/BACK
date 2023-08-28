@@ -8,34 +8,30 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { SignupForm } from './signupForm.entity';
+import { Signupform } from './signupForm.entity';
+import { Crew } from 'src/crew/entities/crew.entity';
 
 @Entity()
 export class Signup {
   @PrimaryGeneratedColumn()
   signupId: number;
 
-  @Column()
-  signupFormId: number;
-
-  @Column()
-  crewId: number;
-
-  @ManyToOne(() => Users, (user) => user.signupId)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
-  user: Users;
-
-  @ManyToOne(() => SignupForm, (signupForm) => signupForm.signupId)
-  @JoinColumn({ name: 'signupFormId', referencedColumnName: 'signupFormId' })
-  signupForm: SignupForm;
-
-  @Column()
+  @ManyToOne(() => Users, (user) => user.signup)
+  @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @Column()
+  @ManyToOne(() => Signupform, (signupForm) => signupForm.signup)
+  @JoinColumn({ name: 'signupFormId' })
+  signupFormId: number;
+
+  @ManyToOne(() => Crew, (crew) => crew.signup)
+  @JoinColumn({ name: 'crewId' })
+  crewId: number;
+
+  @Column({ nullable: false })
   answer1: string;
 
-  @Column()
+  @Column({ nullable: false })
   answer2: string;
 
   @Column({ nullable: true })

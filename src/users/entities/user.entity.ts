@@ -45,12 +45,12 @@ export class Users {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToMany(() => Crew, (crew) => crew.crewId)
-  crewId: Crew[];
+  @OneToMany(() => Crew, (crew) => crew.userId)
+  crew: Crew[];
 
-  @OneToMany(() => Signup, (signup) => signup.signupId)
-  signupId: Signup[];
+  @OneToMany(() => Signup, (signup) => signup.userId)
+  signup: Signup[];
 
-  @OneToMany(() => Notice, (notice) => notice.noticeId)
-  noticeId: Notice[];
+  @OneToMany(() => Notice, (notice) => notice.userId)
+  notice: Notice[];
 }

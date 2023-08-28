@@ -25,16 +25,13 @@ export class SignupController {
   }
 
   /* 모임 가입(form 불러오기) */
-  @Get('signup/:crewId/:signupFormId')
+  @Get('signup/:signupFormId')
   async findOneSignupForm(
-    @Param() crewId: number,
+    @Param()
     signupFormId: number,
     @Res() res: any,
   ): Promise<any> {
-    const signupForm = await this.signupService.findOneSignupForm(
-      crewId,
-      signupFormId,
-    );
+    const signupForm = await this.signupService.findOneSignupForm(signupFormId);
     return res.status(HttpStatus.OK).json(signupForm);
   }
 
@@ -46,6 +43,9 @@ export class SignupController {
     @Body() submitSignupDto: SubmitSignupDto,
     @Res() res: any,
   ): Promise<any> {
+    if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
+      throw new Error('작성을 완료해주세요');
+    }
     await this.signupService.submitSignup(
       crewId,
       signupFormId,

@@ -16,18 +16,12 @@ export class Notice {
   @PrimaryGeneratedColumn()
   noticeId: number;
 
-  @ManyToOne(() => Users, (user) => user.noticeId)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
-  user: Users;
-
-  @ManyToOne(() => Crew, (crew) => crew.noticeId)
-  @JoinColumn({ name: 'crewId', referencedColumnName: 'crewId' })
-  crew: Crew;
-
-  @Column()
+  @ManyToOne(() => Users, (user) => user.notice)
+  @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @Column()
+  @ManyToOne(() => Crew, (crew) => crew.notice)
+  @JoinColumn({ name: 'crewId' })
   crewId: number;
 
   @Column()

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from './signupForm.repository';
 import { CreateSignupFormDto } from './dto/create-signupForm.dto';
-import { SubmitSignupDto } from './dto/submit-signup.dto';
 import { SingupRepository } from './signup.repository';
 
 @Injectable()
@@ -24,9 +23,8 @@ export class SignupService {
   }
 
   /* form 불러오기 */
-  async findOneSignupForm(crewId: number, signupFormId: number): Promise<any> {
+  async findOneSignupForm(signupFormId: number): Promise<any> {
     const signupForm = await this.signupFormRepository.findOneSignupForm(
-      crewId,
       signupFormId,
     );
     return signupForm;
@@ -36,7 +34,7 @@ export class SignupService {
   async submitSignup(
     crewId: number,
     signupFormId: number,
-    submitSignupDto: SubmitSignupDto,
+    submitSignupDto: any,
   ): Promise<any> {
     const submitSignup = await this.signupRespository.submitSignup(
       crewId,

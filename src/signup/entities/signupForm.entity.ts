@@ -11,26 +11,23 @@ import {
 import { Signup } from './signup.entity';
 
 @Entity()
-export class SignupForm {
+export class Signupform {
   @PrimaryGeneratedColumn()
   signupFormId: number;
 
-  @ManyToOne(() => Crew, (crew) => crew.signupFormId)
-  @JoinColumn({ name: 'crewId', referencedColumnName: 'crewId' })
-  crew: Crew;
-
-  @Column()
+  @ManyToOne(() => Crew, (crew) => crew.signupForm)
+  @JoinColumn({ name: 'crewId' })
   crewId: number;
 
-  @Column()
+  @Column({ nullable: false })
   question1: string;
 
-  @Column()
+  @Column({ nullable: false })
   question2: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @OneToMany(() => Signup, (signup) => signup.signupId)
-  signupId: Signup[];
+  @OneToMany(() => Signup, (signup) => signup.signupFormId)
+  signup: Signup[];
 }

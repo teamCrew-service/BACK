@@ -11,25 +11,26 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { SignupForm } from 'src/signup/entities/signupForm.entity';
+import { Signupform } from 'src/signup/entities/signupForm.entity';
+import { Signup } from 'src/signup/entities/signup.entity';
 
 @Entity('crew')
 export class Crew {
   @PrimaryGeneratedColumn()
   crewId: number;
 
-  @ManyToOne(() => Users, (user) => user.crewId)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
-  user: Users;
-
-  @OneToMany(() => Notice, (notice) => notice.noticeId)
-  noticeId: Notice[];
-
-  @OneToMany(() => SignupForm, (signupForm) => signupForm.signupFormId)
-  signupFormId: SignupForm[];
-
-  @Column()
+  @ManyToOne(() => Users, (user) => user.crew)
+  @JoinColumn({ name: 'userId' })
   userId: number;
+
+  @OneToMany(() => Notice, (notice) => notice.crewId)
+  notice: Notice[];
+
+  @OneToMany(() => Signupform, (signupForm) => signupForm.crewId)
+  signupForm: Signupform[];
+
+  @OneToMany(() => Signup, (signup) => signup.crewId)
+  signup: Signupform[];
 
   @Column()
   category: string;
