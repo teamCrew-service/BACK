@@ -15,7 +15,7 @@ export class SignupForm {
   @PrimaryGeneratedColumn()
   signupFormId: number;
 
-  @ManyToOne(() => Crew, (crew) => crew.signupForm)
+  @ManyToOne(() => Crew, (crew) => crew.signupFormId)
   @JoinColumn({ name: 'crewId', referencedColumnName: 'crewId' })
   crew: Crew;
 
@@ -31,6 +31,6 @@ export class SignupForm {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @OneToMany(() => Signup, (signup) => signup.signupForm)
-  signup: Signup[];
+  @OneToMany(() => Signup, (signup) => signup.signupId)
+  signupId: Signup[];
 }

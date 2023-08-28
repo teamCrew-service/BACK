@@ -18,15 +18,15 @@ export class Crew {
   @PrimaryGeneratedColumn()
   crewId: number;
 
-  @ManyToOne(() => Users, (user) => user.crew)
+  @ManyToOne(() => Users, (user) => user.crewId)
   @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
   user: Users;
 
-  @OneToMany(() => Notice, (notice) => notice.crew)
-  notice: Notice[];
+  @OneToMany(() => Notice, (notice) => notice.noticeId)
+  noticeId: Notice[];
 
-  @OneToMany(() => SignupForm, (signupForm) => signupForm.crew)
-  signupForm: SignupForm[];
+  @OneToMany(() => SignupForm, (signupForm) => signupForm.signupFormId)
+  signupFormId: SignupForm[];
 
   @Column()
   userId: number;

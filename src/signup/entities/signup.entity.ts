@@ -21,11 +21,11 @@ export class Signup {
   @Column()
   crewId: number;
 
-  @ManyToOne(() => Users, (user) => user.signup)
+  @ManyToOne(() => Users, (user) => user.signupId)
   @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
   user: Users;
 
-  @ManyToOne(() => SignupForm, (signupForm) => signupForm.signup)
+  @ManyToOne(() => SignupForm, (signupForm) => signupForm.signupId)
   @JoinColumn({ name: 'signupFormId', referencedColumnName: 'signupFormId' })
   signupForm: SignupForm;
 
