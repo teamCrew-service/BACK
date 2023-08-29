@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignupForm } from './entities/signupForm.entity';
 import { Repository } from 'typeorm';
-import { CreateSignupFormDto } from './dto/create-signupForm.dto';
 
 @Injectable()
 export class SignupFormRepository {
@@ -14,7 +13,7 @@ export class SignupFormRepository {
   /* form 생성 */
   async createSignupForm(
     crewId: number,
-    createSignupFormDto: CreateSignupFormDto,
+    createSignupFormDto: any,
   ): Promise<any> {
     const signupForm = new SignupForm();
     signupForm.crewId = crewId;
@@ -25,9 +24,9 @@ export class SignupFormRepository {
   }
 
   /* form 불러오기 */
-  async findOneSignupForm(crewId: number, signupFormId: number): Promise<any> {
+  async findOneSignupForm(signupFormId: number): Promise<any> {
     const signupForm = await this.signupFormRepository.findOne({
-      where: { crewId, signupFormId },
+      where: { signupFormId },
     });
     return signupForm;
   }

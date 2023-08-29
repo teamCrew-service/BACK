@@ -20,21 +20,25 @@ export class SignupController {
   async createSignupForm(
     @Param('crewId') crewId: number,
     @Body() createSignupFormDto: CreateSignupFormDto,
-  ) {
+    @Res() res: any,
+  ): Promise<any> {
+    if (!createSignupFormDto.question1 || !createSignupFormDto.question2) {
+      throw new Error('질문을 작성해주세요');
+    }
     await this.signupService.createSignupForm(crewId, createSignupFormDto);
+    return res
+      .status(HttpStatus.CREATED)
+      .json({ message: '모임 가입 양식 작성 완료' });
   }
 
   /* 모임 가입(form 불러오기) */
-  @Get('signup/:crewId/:signupFormId')
+  @Get('signup/:signupFormId')
   async findOneSignupForm(
-    @Param() crewId: number,
+    @Param('signupFormId')
     signupFormId: number,
     @Res() res: any,
   ): Promise<any> {
-    const signupForm = await this.signupService.findOneSignupForm(
-      crewId,
-      signupFormId,
-    );
+    const signupForm = await this.signupService.findOneSignupForm(signupFormId);
     return res.status(HttpStatus.OK).json(signupForm);
   }
 
@@ -46,6 +50,9 @@ export class SignupController {
     @Body() submitSignupDto: SubmitSignupDto,
     @Res() res: any,
   ): Promise<any> {
+    if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
+      throw new Error('모임 가입 양식을 채워주세요');
+    }
     await this.signupService.submitSignup(
       crewId,
       signupFormId,
