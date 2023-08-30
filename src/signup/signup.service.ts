@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from './signupForm.repository';
-import { CreateSignupFormDto } from './dto/create-signupForm.dto';
 import { SingupRepository } from './signup.repository';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class SignupService {
   /* form 생성 */
   async createSignupForm(
     crewId: number,
-    createSignupFormDto: CreateSignupFormDto,
+    createSignupFormDto: any,
   ): Promise<any> {
     const createSignupForm = await this.signupFormRepository.createSignupForm(
       crewId,

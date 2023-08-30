@@ -20,14 +20,22 @@ export class SignupController {
   async createSignupForm(
     @Param('crewId') crewId: number,
     @Body() createSignupFormDto: CreateSignupFormDto,
-  ) {
+    @Res() res: any,
+  ): Promise<any> {
+    if (!createSignupFormDto.question1 || !createSignupFormDto.question2) {
+      throw new Error('질문을 작성해주세요');
+    }
     await this.signupService.createSignupForm(crewId, createSignupFormDto);
+    return res
+      .status(HttpStatus.CREATED)
+      .json({ message: '모임 가입 양식 작성 완료' });
   }
 
   /* 모임 가입(form 불러오기) */
   @Get('signup/:signupFormId')
   async findOneSignupForm(
-    @Param()
+
+    @Param('signupFormId')
     signupFormId: number,
     @Res() res: any,
   ): Promise<any> {

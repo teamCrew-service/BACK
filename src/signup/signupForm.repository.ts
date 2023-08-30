@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Signupform } from './entities/signupForm.entity';
 import { Repository } from 'typeorm';
-import { CreateSignupFormDto } from './dto/create-signupForm.dto';
 
 @Injectable()
 export class SignupFormRepository {
@@ -14,7 +13,7 @@ export class SignupFormRepository {
   /* form 생성 */
   async createSignupForm(
     crewId: number,
-    createSignupFormDto: CreateSignupFormDto,
+    createSignupFormDto: any,
   ): Promise<any> {
     const signupForm = new Signupform();
     signupForm.crewId = crewId;
