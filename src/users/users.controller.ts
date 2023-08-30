@@ -4,7 +4,6 @@ import {
   Req,
   Get,
   UseGuards,
-  Post,
   Put,
   Body,
   HttpStatus,
@@ -30,7 +29,7 @@ export class UsersController {
   @UseGuards(KakaoAuthGuard)
   @Get('auth/kakao/callback')
   async kakaoCallback(@Req() req: any, @Res() res: Response) {
-    // res.cookie('authorization', req.user);
+    res.cookie('authorization', req.user);
     // res.setHeader('Set-Cookie', req.user);
     res.redirect('http://localhost:3000');
   }
@@ -45,6 +44,7 @@ export class UsersController {
   @UseGuards(NaverAuthGuard)
   @Get('auth/naver/callback')
   async naverCallback(@Req() req: any, @Res() res: Response) {
+    res.cookie('authorization', req.user);
     res.redirect('http://localhost:3000');
   }
 
@@ -58,6 +58,7 @@ export class UsersController {
   @UseGuards(GoogleAuthGuard)
   @Get('auth/google/callback')
   async googleCallback(@Req() req: any, @Res() res: Response) {
+    res.cookie('authorization', req.user);
     res.redirect('http://localhost:3000');
   }
 

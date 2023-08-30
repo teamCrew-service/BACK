@@ -9,7 +9,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     super({
       clientID: process.env.NAVER_ID,
       clientSecret: process.env.NAVER_SECRET,
-      callbackURL: '/auth/naver/callback',
+      callbackURL: '/api/auth/naver/callback',
     });
   }
   async validate(
