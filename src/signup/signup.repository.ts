@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Signup } from './entities/signup.entity';
 import { Repository } from 'typeorm';
-import { SubmitSignupDto } from './dto/submit-signup.dto';
 
 @Injectable()
 export class SingupRepository {
@@ -14,7 +13,7 @@ export class SingupRepository {
   async submitSignup(
     crewId: number,
     signupFormId: number,
-    submitSignupDto: SubmitSignupDto,
+    submitSignupDto: any,
   ): Promise<any> {
     const submitSignup = new Signup();
     submitSignup.crewId = crewId;
@@ -29,7 +28,6 @@ export class SingupRepository {
   async findAllSubmitted(crewId: number): Promise<any> {
     const findAllSubmitted = await this.signupRepository.find({
       where: { crewId },
-      relations: ['users'],
     });
     return findAllSubmitted;
   }
