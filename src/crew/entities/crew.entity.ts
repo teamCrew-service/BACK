@@ -11,6 +11,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Signupform } from 'src/signup/entities/signupForm.entity';
+import { Signup } from 'src/signup/entities/signup.entity';
 
 @Entity('crew')
 export class Crew {
@@ -18,14 +20,17 @@ export class Crew {
   crewId: number;
 
   @ManyToOne(() => Users, (user) => user.crew)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
-  user: Users;
+  @JoinColumn({ name: 'userId' })
+  userId: number;
 
-  @OneToMany(() => Notice, (notice) => notice.crew)
+  @OneToMany(() => Notice, (notice) => notice.crewId)
   notice: Notice[];
 
-  @Column()
-  userId: number;
+  @OneToMany(() => Signupform, (signupForm) => signupForm.crewId)
+  signupForm: Signupform[];
+
+  @OneToMany(() => Signup, (signup) => signup.crewId)
+  signup: Signupform[];
 
   @Column()
   category: string;

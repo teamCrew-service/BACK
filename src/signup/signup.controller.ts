@@ -34,6 +34,7 @@ export class SignupController {
   /* 모임 가입(form 불러오기) */
   @Get('signup/:signupFormId')
   async findOneSignupForm(
+
     @Param('signupFormId')
     signupFormId: number,
     @Res() res: any,
@@ -51,7 +52,7 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
-      throw new Error('모임 가입 양식을 채워주세요');
+      throw new Error('작성을 완료해주세요');
     }
     await this.signupService.submitSignup(
       crewId,

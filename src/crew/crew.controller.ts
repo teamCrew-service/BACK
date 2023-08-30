@@ -19,7 +19,7 @@ export class CrewController {
     return this.crewService.createCrew(CreateCrewDto);
   }
   /* 모임 글 상세 조회(참여 전)*/
-  @Get('crew/:crewId')
+  @Get(':crewId')
   async findCrewDetail(
     @Param('crewId') crewId: number,
     @Res() res: any,
