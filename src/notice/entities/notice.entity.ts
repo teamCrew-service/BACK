@@ -31,7 +31,7 @@ export class Notice {
   noticeContent: string;
 
   @Column()
-  noitceDDay: Date;
+  noticeDDay: Date;
 
   @Column()
   noticeAddress: string;
