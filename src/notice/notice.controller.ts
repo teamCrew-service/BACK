@@ -3,31 +3,43 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  // UseGuards,
+  Res,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
-// import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
-// import { KakaoAuthGuard } from 'src/auth/guard/kakao-auth.guard';
-// import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 
 @Controller('notice')
+@ApiTags('Notice API')
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
   // HTTP GET 요청에 대한 핸들러
-  @Get('/comingDate')
-  // @UseGuards(GoogleAuthGuard, KakaoAuthGuard, NaverAuthGuard)
-  async getComingDate() {
-    try {
-      // 서비스를 통해 알림 정보 가져오기
-      return await this.noticeService.getComingDate();
-    } catch (error) {
-      // 에러 발생 시, HTTP 500 응답 전송
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          errorMessage: '리스트 조회 실패',
+  @Get('comingDate')
+  @ApiOperation({
+    summary: '다가오는 일정 리스트 조회 API',
+    description: '다가오는 일정 리스트 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '다가오는 일정 리스트 조회합니다.',
+    schema: {
+      example: {
+        noice: {
+          noticeTitle: '퇴근 후 40분 걷기',
+          noticeDDay: '2023-08-19T03:44:19.661Z',
         },
+        participatedUser: { profileImage: 'URI' },
+      },
+    },
+  })
+  async findNotice(@Res() res: any): Promise<any> {
+    try {
+      const notice = await this.noticeService.findNotice();
+      return res.status(HttpStatus.OK).json({ data: notice, message: '성공' });
+    } catch (error) {
+      console.error(error); // 로깅
+      throw new HttpException(
+        `리스트 조회 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

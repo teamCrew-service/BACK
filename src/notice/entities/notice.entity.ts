@@ -18,10 +18,12 @@ export class Notice {
 
   @ManyToOne(() => Users, (user) => user.notice)
   @JoinColumn({ name: 'userId' })
+  // user: Users;
   userId: number;
 
   @ManyToOne(() => Crew, (crew) => crew.notice)
   @JoinColumn({ name: 'crewId' })
+  // crew: Crew;
   crewId: number;
 
   @Column()
@@ -31,7 +33,7 @@ export class Notice {
   noticeContent: string;
 
   @Column()
-  noitceDDay: Date;
+  noticeDDay: Date;
 
   @Column()
   noticeAddress: string;
@@ -44,4 +46,5 @@ export class Notice {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt: Date;
+  user: any;
 }

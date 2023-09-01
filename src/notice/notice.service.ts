@@ -5,7 +5,7 @@ import { NoticeRepository } from './notice.repository';
 export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
 
-  async getComingDate() {
+  async findNotice() {
     try {
       const notice = await this.noticeRepository.findNotice();
       return notice;

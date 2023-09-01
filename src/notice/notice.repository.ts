@@ -11,22 +11,16 @@ export class NoticeRepository {
   ) {}
 
   async findNotice(): Promise<any> {
-    try {
-      const notice = await this.noticeRepository
-        .createQueryBuilder('notice') // Notice 엔티티와 조인
-        .leftJoinAndSelect('notice.user', 'user') // Users 엔티티와 조인
-        .leftJoinAndSelect('notice.crew', 'crew') // Crew 엔티티와 조인
-        .select([
-          'notice.noticeTitle',
-          'notice.noitceDDay',
-          'user.profileImage', // Users 엔티티의 profileImage 필드 가정
-        ])
-        .getMany();
-
-      return notice;
-    } catch (error) {
-      // 에러 발생 시, 에러 메시지를 예외로 던짐
-      throw new Error('리스트 조회 실패');
-    }
+    const notice = await this.noticeRepository
+      .createQueryBuilder('notice') // Notice 엔티티와 조인
+      .leftJoinAndSelect('notice.userId', 'users') // Users 엔티티와 조인
+      .leftJoinAndSelect('notice.crewId', 'crew') // Crew 엔티티와 조인
+      .select([
+        'notice.noticeTitle',
+        'notice.noticeDDay',
+        'users.profileImage', // Users 엔티티의 profileImage 필드 가정
+      ])
+      .getMany();
+    return notice;
   }
 }
