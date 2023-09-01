@@ -12,6 +12,12 @@ export class UsersService {
     return exUser;
   }
 
+  // urser 정보 findByPk
+  async findUserByPk(userId: number): Promise<any> {
+    const user = await this.usersRepository.findUserByPk(userId);
+    return user;
+  }
+
   // newUser create
   async create({ email, nickname, provider }): Promise<any> {
     const user = await this.usersRepository.create({

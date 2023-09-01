@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,7 +14,7 @@ import { SignupModule } from './signup/signup.module';
 import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
 import { NoticeModule } from './notice/notice.module';
-
+import { AuthMiddleWare } from './middleware/auth.middleware';
 
 @Module({
   imports: [
@@ -24,7 +29,7 @@ import { NoticeModule } from './notice/notice.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
     }),
     UsersModule,
     AuthModule,
@@ -36,4 +41,9 @@ import { NoticeModule } from './notice/notice.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleWare);
+    // .forRoutes({ path: 'api/createcrew', method: RequestMethod.POST });
+  }
+}
