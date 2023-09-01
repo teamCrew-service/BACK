@@ -14,12 +14,12 @@ export class NoticeRepository {
     try {
       const notice = await this.noticeRepository
         .createQueryBuilder('notice') // Notice 엔티티와 조인
-        .leftJoinAndSelect('notice.user', 'user') // Users 엔티티와 조인
-        .leftJoinAndSelect('notice.crew', 'crew') // Crew 엔티티와 조인
+        .leftJoinAndSelect('notice.userId', 'users') // Users 엔티티와 조인
+        //.leftJoinAndSelect('notice.crew', 'crew') // Crew 엔티티와 조인
         .select([
           'notice.noticeTitle',
-          'notice.noitceDDay',
-          'user.profileImage', // Users 엔티티의 profileImage 필드 가정
+          'notice.noticeDDay',
+          'users.profileImage', // Users 엔티티의 profileImage 필드 가정
         ])
         .getMany();
 
