@@ -25,9 +25,12 @@ export class SignupFormRepository {
 
   /* form 불러오기 */
   async findOneSignupForm(signupFormId: number): Promise<any> {
-    const signupForm = await this.signupFormRepository.findOne({
-      where: { signupFormId },
-    });
+    const signupForm = await this.signupFormRepository
+      .createQueryBuilder('signupForm')
+      .select(['signupFormId', 'question1', 'question2', 'createdAt', 'crewId'])
+      .where('signupForm.signupFormId = :id', { id: signupFormId })
+      .getRawOne();
+
     return signupForm;
   }
 }
