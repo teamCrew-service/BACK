@@ -132,4 +132,11 @@ export class UsersController {
       .status(HttpStatus.CREATED)
       .json({ message: '추가 정보 입력 완료' });
   }
+
+  /* 로그아웃 */
+  @Get('auth/logout')
+  async logout(@Res() res: Response): Promise<any> {
+    res.clearCookie('authorization');
+    return res.status(HttpStatus.OK).json({ message: '로그아웃 성공' });
+  }
 }

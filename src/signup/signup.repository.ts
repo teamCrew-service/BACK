@@ -26,9 +26,20 @@ export class SingupRepository {
 
   /* 제출한 가입서 조회 */
   async findAllSubmitted(crewId: number): Promise<any> {
-    const findAllSubmitted = await this.signupRepository.find({
-      where: { crewId },
-    });
+    const findAllSubmitted = await this.signupRepository
+      .createQueryBuilder('signup')
+      .select([
+        'signupFormId',
+        'answer1',
+        'answer2',
+        'createdAt',
+        'crewId',
+        'permission',
+        'updatedAt',
+        'userId',
+      ])
+      .where('signup.crewId = :id', { id: crewId })
+      .getRawMany();
     return findAllSubmitted;
   }
 }

@@ -18,7 +18,7 @@ export class SignupController {
   constructor(private readonly signupService: SignupService) {}
 
   /* 모임 가입(form 생성) */
-  @Post('signup/:crewId/signupform')
+  @Post('signupform/:crewId/createform')
   @ApiOperation({
     summary: '모임 가입 form 생성 API',
     description: '모임 가입 양식 생성',
@@ -42,7 +42,7 @@ export class SignupController {
   }
 
   /* 모임 가입(form 불러오기) */
-  @Get('signup/:signupFormId')
+  @Get('signupform/:signupFormId')
   @ApiOperation({
     summary: '모임 가입 form 불러오기 API',
     description: '모임 가입 form 불러오기',
@@ -79,14 +79,15 @@ export class SignupController {
     description: '모임 가입 작성 완료',
   })
   async submitSignup(
-    @Param() crewId: number,
-    signupFormId: number,
+    @Param('crewId') crewId: number,
+    @Param('signupFormId') signupFormId: number,
     @Body() submitSignupDto: SubmitSignupDto,
     @Res() res: any,
   ): Promise<any> {
     if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
       throw new Error('작성을 완료해주세요');
     }
+    console.log(signupFormId);
     await this.signupService.submitSignup(
       crewId,
       signupFormId,
