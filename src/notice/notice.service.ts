@@ -17,9 +17,6 @@ export class NoticeService {
         };
       });
 
-      console.log('service');
-      console.log(processedNotices);
-
       return processedNotices;
     } catch (error) {
       console.error(error); // 로깅
