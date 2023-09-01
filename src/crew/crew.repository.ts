@@ -21,7 +21,28 @@ export class CrewRepository {
   }
   /* 모임 글 상세 조회(참여 전) */
   async findCrewDetail(crewId: number): Promise<any> {
-    const crew = this.crewRepository.findOne({ where: { crewId } });
+    const crew = this.crewRepository
+      .createQueryBuilder('crew')
+      .select([
+        'crewId',
+        'userId',
+        'category',
+        'crewAddress',
+        'crewType',
+        'crewDDay',
+        'crewMemberInfo',
+        'crewAgeInfo',
+        'crewSignup',
+        'crewTitle',
+        'crewContent',
+        'thumbnail',
+        'crewMaxMember',
+        'latitude',
+        'longtitude',
+        'deletedAt',
+      ])
+      .where('crew.crewId = :id', { id: crewId })
+      .getRawOne();
 
     return crew;
   }
