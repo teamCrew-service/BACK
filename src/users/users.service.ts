@@ -1,10 +1,15 @@
 import { Injectable, Body } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
+import { TopicDto } from './dto/topic-user.dto';
+import { TopicRepository } from './topic.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private topicRepository: TopicRepository,
+  ) {}
 
   // user 정보 email로 조회
   async findUserByEmail(email: string): Promise<any> {
@@ -32,5 +37,11 @@ export class UsersService {
   async addUserInfo(@Body() addUserInfoDto: AddUserInfoDto): Promise<any> {
     const addUserInfo = await this.usersRepository.addUserInfo(addUserInfoDto);
     return addUserInfo;
+  }
+
+  //topic 정보 입력
+  async addTopic(@Body() topicDto: TopicDto): Promise<any> {
+    const addTopic = await this.topicRepository.addTopic(topicDto);
+    return addTopic;
   }
 }

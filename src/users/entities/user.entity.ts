@@ -1,6 +1,7 @@
 import { Crew } from 'src/crew/entities/crew.entity';
 import { Notice } from 'src/notice/entities/notice.entity';
 import { Signup } from 'src/signup/entities/signup.entity';
+import { Topic } from './topic.entity';
 import {
   Column,
   Entity,
@@ -53,4 +54,7 @@ export class Users {
 
   @OneToMany(() => Notice, (notice) => notice.userId)
   notice: Notice[];
+
+  @OneToMany(() => Topic, (topic) => topic.userId)
+  topic: Topic[];
 }

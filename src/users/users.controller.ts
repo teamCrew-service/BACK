@@ -15,6 +15,7 @@ import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 import { UsersService } from './users.service';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import { TopicDto } from './dto/topic-user.dto';
 
 @Controller()
 @ApiTags('User API')
@@ -124,10 +125,11 @@ export class UsersController {
   })
   async addUserInfo(
     @Body() addUserInfoDto: AddUserInfoDto,
+    @Body() topicDto: TopicDto,
     @Res() res: any,
-    @Req() req: any,
   ): Promise<any> {
     await this.userService.addUserInfo(addUserInfoDto);
+    await this.userService.addTopic(topicDto);
     return res
       .status(HttpStatus.CREATED)
       .json({ message: '추가 정보 입력 완료' });
