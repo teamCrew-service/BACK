@@ -19,6 +19,6 @@ RUN npm run build
 # 3000번 포트를 열어 외부에서 접근 가능하게 함
 EXPOSE 3000
 
-# 컨테이너가 실행될 때 "npm run start:dev" 명령어를 실행
+# 컨테이너가 실행될 때 "npm run start:prod" 명령어를 실행
 # 개발 모드로 앱을 시작
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start:prod"]
