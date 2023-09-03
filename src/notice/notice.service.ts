@@ -13,7 +13,7 @@ export class NoticeService {
         return {
           noticeTitle: notice.noticeTitle,
           noticeDDay: notice.noticeDDay,
-          profileImage: notice.userId.profileImage,
+          profileImage: notice.userId ? notice.userId.profileImage : null,
         };
       });
 

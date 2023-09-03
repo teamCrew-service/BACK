@@ -2,7 +2,7 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  RequestMethod,
+  // RequestMethod,
 } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -15,6 +15,7 @@ import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
 import { NoticeModule } from './notice/notice.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
+import { MapModule } from './map/map.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { AuthMiddleWare } from './middleware/auth.middleware';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
+      // synchronize: false,
     }),
     UsersModule,
     AuthModule,
@@ -37,6 +39,7 @@ import { AuthMiddleWare } from './middleware/auth.middleware';
     HomeModule,
     CrewModule,
     NoticeModule,
+    MapModule,
   ],
   controllers: [AppController],
   providers: [AppService],

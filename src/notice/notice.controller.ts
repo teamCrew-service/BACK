@@ -34,7 +34,16 @@ export class NoticeController {
   })
   async findNotice(@Res() res: any): Promise<any> {
     try {
+      // 다가오는 일정 리스트 조회
       const notice = await this.noticeService.findNotice();
+
+      // 다가오는 일정 리스트 조회 결과가 없을 경우
+      if (notice.length === 0) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          errormessage: '다가오는 일정 리스트 조회 결과가 없습니다.',
+        });
+      }
+      // 다가오는 일정 리스트 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json({ data: notice, message: '성공' });
     } catch (error) {
       console.error(error); // 로깅
