@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { NoticeRepository } from './notice.repository';
 
 @Injectable()
@@ -6,23 +6,17 @@ export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
 
   async findNotice() {
-    try {
-      const notice = await this.noticeRepository.findNotice();
+    const notice = await this.noticeRepository.findNotice();
 
-      const processedNotices = notice.map((notice) => {
-        return {
-          noticeTitle: notice.noticeTitle,
-          noticeDDay: notice.noticeDDay,
-          profileImage: notice.userId ? notice.userId.profileImage : null,
-        };
-      });
+    // map 함수를 사용하여 notice를 순회하면서 필요한 데이터만 추출 후 새로운 배열로 반환
+    const processedNotices = notice.map((notice) => {
+      return {
+        noticeTitle: notice.noticeTitle,
+        noticeDDay: notice.noticeDDay,
+        profileImage: notice.userId ? notice.userId.profileImage : null, // user.profileImage가 존재하지 않을 경우 null
+      };
+    });
 
-      return processedNotices;
-    } catch (error) {
-      console.error(error); // 로깅
-      throw new InternalServerErrorException(
-        `리스트 조회 실패: ${error.message}`,
-      );
-    }
+    return processedNotices;
   }
 }

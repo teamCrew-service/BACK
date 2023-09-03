@@ -44,7 +44,7 @@ export class NoticeController {
         });
       }
       // 다가오는 일정 리스트 조회 결과가 있을 경우
-      return res.status(HttpStatus.OK).json({ data: notice, message: '성공' });
+      return res.status(HttpStatus.OK).json(notice);
     } catch (error) {
       console.error(error); // 로깅
       throw new HttpException(
