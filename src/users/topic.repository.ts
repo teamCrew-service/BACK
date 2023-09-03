@@ -13,13 +13,21 @@ export class TopicRepository {
   async addTopic(@Body() topicDto: TopicDto): Promise<any> {
     try {
       const userId = topicDto.userId;
-      const topics = topicDto.interestTopic.split(',');
+      const interestTopic = topicDto.interestTopic;
 
-      for (const interestTopic of topics) {
+      if (interestTopic.includes(',')) {
+        const topics = interestTopic.split(',');
+        for (const interestTopic of topics) {
+          const topic = new Topic();
+          topic.userId = userId;
+          topic.interestTopic = interestTopic;
+          await this.topicRepository.save(topic); // TypeORM과 같은 데이터베이스 ORM을 사용하고 있다고 가정합니다.
+        }
+      } else {
         const topic = new Topic();
         topic.userId = userId;
         topic.interestTopic = interestTopic;
-        await this.topicRepository.save(topic); // TypeORM과 같은 데이터베이스 ORM을 사용하고 있다고 가정합니다.
+        await this.topicRepository.save(topic);
       }
 
       return { message: '주제가 성공적으로 저장되었습니다.' };
