@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CrewService } from 'src/crew/crew.service';
+// import { Crew } from 'src/crew/entities/crew.entity';
+import { HomeRepository } from './home.repository';
 
 @Injectable()
 export class HomeService {
-  constructor(private crewService: CrewService) {}
+  constructor(private homeRepository: HomeRepository) {}
 
-  /* 관심사 별 모임 찾기 */
+  // 내 주변 모임 찾기
+  async getCrew(): Promise<any> {
+    return this.homeRepository.getCrew();
+  }
+
+  // 내 주변 모임 찾기(카테고리별)
   async findByCategory(category: string): Promise<any> {
-    const crewList = this.crewService.findByCategory(category);
-    return crewList;
+    return this.homeRepository.findByCategory(category);
   }
 }

@@ -3,15 +3,10 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  // UseGuards,
+  Res,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
-import { application } from 'express';
-import { json } from 'stream/consumers';
-// import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
-// import { KakaoAuthGuard } from 'src/auth/guard/kakao-auth.guard';
-// import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 
 @Controller('notice')
 @ApiTags('Notice API')
@@ -37,18 +32,23 @@ export class NoticeController {
       },
     },
   })
-  // @UseGuards(GoogleAuthGuard, KakaoAuthGuard, NaverAuthGuard)
-  async getComingDate() {
+  async findNotice(@Res() res: any): Promise<any> {
     try {
-      // 서비스를 통해 알림 정보 가져오기
-      return await this.noticeService.getComingDate();
+      // 다가오는 일정 리스트 조회
+      const notice = await this.noticeService.findNotice();
+
+      // 다가오는 일정 리스트 조회 결과가 없을 경우
+      if (notice.length === 0) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          errormessage: '다가오는 일정 리스트 조회 결과가 없습니다.',
+        });
+      }
+      // 다가오는 일정 리스트 조회 결과가 있을 경우
+      return res.status(HttpStatus.OK).json(notice);
     } catch (error) {
-      // 에러 발생 시, HTTP 500 응답 전송
+      console.error(error); // 로깅
       throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          errorMessage: '리스트 조회 실패',
-        },
+        `리스트 조회 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
