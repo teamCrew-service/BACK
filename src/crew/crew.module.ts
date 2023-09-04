@@ -5,7 +5,6 @@ import { CrewRepository } from './crew.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Crew } from './entities/crew.entity';
 import { CrewController } from './crew.controller';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Crew]), forwardRef(() => HomeModule)],

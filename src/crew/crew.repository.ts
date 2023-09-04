@@ -47,7 +47,12 @@ export class CrewRepository {
     return crew;
   }
 
-  async findAttendedCrew(userId: number): Promise<any> {
-    const attendedCrew = await this.crewRepository.find({});
+  async findCreatedCrew(userId: number): Promise<any> {
+    const createdCrew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .select(['crewId', 'category', 'crewType', 'crewAddress', 'crewTitle'])
+      .where('crew.userId = :id', { id: userId })
+      .getRawMany();
+    return createdCrew;
   }
 }

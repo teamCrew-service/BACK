@@ -23,7 +23,8 @@ export class CrewService {
   }
 
   /* 참여한 모임 */
-  async findAttendedCrew(userId: number): Promise<any> {
-    const attendedCrew = await this.crewRepository.findAttendedCrew(userId);
+  async findCreatedCrew(userId: number): Promise<any> {
+    const createdCrew = await this.crewRepository.findCreatedCrew(userId);
+    return createdCrew;
   }
 }

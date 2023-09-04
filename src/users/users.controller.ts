@@ -152,7 +152,7 @@ export class UsersController {
   async mypage(@Res() res: Response): Promise<any> {
     const { userId } = res.locals.user;
     const user = await this.usersService.findUserByPk(userId);
-    const attendedCrew = await this.crewService.findAttendedCrew(userId);
-    return res.status(HttpStatus.OK).json(user);
+    const createdCrew = await this.crewService.findCreatedCrew(userId);
+    return res.status(HttpStatus.OK).json({ user, createdCrew });
   }
 }
