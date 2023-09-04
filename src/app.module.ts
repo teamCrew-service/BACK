@@ -2,7 +2,7 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  // RequestMethod,
+  RequestMethod,
 } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -15,6 +15,7 @@ import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
 import { NoticeModule } from './notice/notice.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -40,11 +41,12 @@ import { AuthMiddleWare } from './middleware/auth.middleware';
     NoticeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleWare);
-    // .forRoutes({ path: 'api/createcrew', method: RequestMethod.POST });
+    consumer
+      .apply(AuthMiddleWare)
+      .forRoutes({ path: 'mypage', method: RequestMethod.GET });
   }
 }

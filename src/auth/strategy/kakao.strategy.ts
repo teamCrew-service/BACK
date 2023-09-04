@@ -25,12 +25,12 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     // user 정보 확인
     const exUser = await this.authService.validateUser(email);
     if (exUser) {
-      const token = await this.authService.getToken({ userId: exUser.userId });
+      const token = await this.authService.getToken(exUser.userId);
       return token;
     }
     if (exUser === null) {
       const user = await this.authService.create({ email, nickname, provider });
-      const token = await this.authService.getToken({ userId: user.userId });
+      const token = await this.authService.getToken(exUser.userId);
       return token;
     }
   }
