@@ -7,7 +7,7 @@ export class CrewService {
 
   /* 관심사 별 모임 찾기 */
   async findByCategory(category: string): Promise<any> {
-    const crewList = this.crewRepository.findByCategory(category);
+    const crewList = await this.crewRepository.findByCategory(category);
     return crewList;
   }
 
@@ -17,8 +17,13 @@ export class CrewService {
   }
   /* 모임 글 상세 조회(참여 전) */
   async findCrewDetail(crewId: number): Promise<any> {
-    const crew = this.crewRepository.findCrewDetail(crewId);
+    const crew = await this.crewRepository.findCrewDetail(crewId);
 
     return crew;
+  }
+
+  /* 참여한 모임 */
+  async findAttendedCrew(userId: number): Promise<any> {
+    const attendedCrew = await this.crewRepository.findAttendedCrew(userId);
   }
 }
