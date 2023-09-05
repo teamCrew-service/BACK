@@ -55,7 +55,7 @@ export class UsersController {
   async kakaoCallback(@Req() req: any, @Res() res: Response) {
     res.cookie('authorization', `Bearer ${req.user}`);
     // res.setHeader('Set-Cookie', req.user);
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.REDIRECT_URI);
   }
 
   /*네이버 로그인 서비스*/
@@ -85,7 +85,7 @@ export class UsersController {
   })
   async naverCallback(@Req() req: any, @Res() res: Response) {
     res.cookie('authorization', `Bearer ${req.user}`);
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.REDIRECT_URI);
   }
 
   /*구글 로그인 서비스*/
@@ -115,7 +115,7 @@ export class UsersController {
   })
   async googleCallback(@Req() req: any, @Res() res: Response) {
     res.cookie('authorization', `Bearer ${req.user}`);
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.REDIRECT_URI);
   }
 
   /*최초 로그인 설정*/
