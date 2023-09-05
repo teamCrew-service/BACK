@@ -5,12 +5,14 @@ import { CrewRepository } from './crew.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Crew } from './entities/crew.entity';
 import { CrewController } from './crew.controller';
+import { SignupModule } from 'src/signup/signup.module';
 import { MemberModule } from 'src/member/member.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Crew]),
     forwardRef(() => HomeModule),
+    forwardRef(() => SignupModule),
     forwardRef(() => MemberModule),
   ],
   providers: [CrewService, CrewRepository],

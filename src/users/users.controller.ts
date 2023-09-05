@@ -133,8 +133,9 @@ export class UsersController {
     @Body() topicDto: TopicDto,
     @Res() res: any,
   ): Promise<any> {
-    await this.usersService.addUserInfo(addUserInfoDto);
-    await this.usersService.addTopic(topicDto);
+    const { userId } = res.locals.user;
+    await this.usersService.addUserInfo(addUserInfoDto, userId);
+    await this.usersService.addTopic(topicDto, userId);
     return res
       .status(HttpStatus.CREATED)
       .json({ message: '추가 정보 입력 완료' });

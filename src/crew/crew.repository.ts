@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crew } from './entities/crew.entity';
 import { Repository } from 'typeorm';
+import { CreateCrewDto } from './dto/createCrew.dto';
 
 @Injectable()
 export class CrewRepository {
@@ -15,10 +16,28 @@ export class CrewRepository {
     return crewList;
   }
 
-  async createCrew(CreateCrewDto: any): Promise<any> {
-    const crew = this.crewRepository.create(CreateCrewDto);
+  /* 모임 생성 */
+  async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
+    const crew = new Crew();
+    crew.userId = userId;
+    crew.category = createCrewDto.category;
+    crew.crewAddress = createCrewDto.crewAddress;
+    crew.crewType = createCrewDto.crewType;
+    crew.crewDDay = createCrewDto.crewDDay;
+    crew.crewMemberInfo = createCrewDto.crewMemberInfo;
+    crew.crewTimeInfo = createCrewDto.crewTimeInfo;
+    crew.crewTitle = createCrewDto.crewTitle;
+    crew.crewContent = createCrewDto.crewContent;
+    crew.crewAgeInfo = createCrewDto.crewAgeInfo;
+    crew.crewSignup = createCrewDto.crewSignup;
+    crew.thumbnail = createCrewDto.thumbnail;
+    crew.crewMaxMember = createCrewDto.crewMaxMember;
+    crew.latitude = createCrewDto.latitude;
+    crew.longtitude = createCrewDto.longtitude;
     await this.crewRepository.save(crew);
+    return crew;
   }
+
   /* 모임 글 상세 조회(참여 전) */
   async findCrewDetail(crewId: number): Promise<any> {
     const crew = await this.crewRepository

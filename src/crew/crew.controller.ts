@@ -10,11 +10,16 @@ import {
 import { CrewService } from './crew.service';
 import { CreateCrewDto } from './dto/createCrew.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import { SignupService } from 'src/signup/signup.service';
+import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
 
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
-  constructor(private readonly crewService: CrewService) {}
+  constructor(
+    private readonly crewService: CrewService,
+    private readonly signupService: SignupService,
+  ) {}
 
   @Post('createcrew')
   @ApiOperation({
@@ -26,10 +31,18 @@ export class CrewController {
     description: '모임 생성 성공',
   })
   async createCrew(
-    @Body() CreateCrewDto: CreateCrewDto,
+    @Body() createCrewDto: CreateCrewDto,
+    @Body() createSignupFormDto: CreateSignupFormDto,
     @Res() res: any,
   ): Promise<any> {
-    await this.crewService.createCrew(CreateCrewDto);
+    const { userId } = res.locals.user;
+    const newCrew = await this.crewService.createCrew(createCrewDto, userId);
+    if (createCrewDto.crewSignup === true) {
+      await this.signupService.createSignupForm(
+        newCrew.crewId,
+        createSignupFormDto,
+      );
+    }
     return res.status(HttpStatus.CREATED).json({ message: '모임 생성 성공' });
   }
   /* 모임 글 상세 조회(참여 전)*/
