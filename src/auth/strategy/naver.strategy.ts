@@ -26,7 +26,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     // user 정보 확인
     const exUser = await this.authService.validateUser(email);
     if (exUser) {
-      const token = await this.authService.getToken({ userId: exUser.userId });
+      const token = await this.authService.getToken(exUser.userId);
       return token;
     }
     if (exUser === null) {
@@ -35,7 +35,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
         nickname,
         provider,
       });
-      const token = await this.authService.getToken({ userId: newUser.userId });
+      const token = await this.authService.getToken(exUser.userId);
       return token;
     }
   }

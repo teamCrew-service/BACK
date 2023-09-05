@@ -13,7 +13,7 @@ export class UsersRepository {
   // email로 유저 정보 찾기
   async findUserByEmail(email: string): Promise<Users | undefined> {
     try {
-      const exUser = this.usersRepository.findOne({ where: { email } });
+      const exUser = await this.usersRepository.findOne({ where: { email } });
       return exUser;
     } catch (e) {
       console.error(e.message);

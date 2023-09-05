@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +16,7 @@ import { CrewModule } from './crew/crew.module';
 import { NoticeModule } from './notice/notice.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
 import { MemberModule } from './member/member.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -37,11 +43,12 @@ import { MemberModule } from './member/member.module';
     MemberModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleWare);
-    // .forRoutes({ path: 'api/createcrew', method: RequestMethod.POST });
+    consumer
+      .apply(AuthMiddleWare)
+      .forRoutes({ path: 'mypage', method: RequestMethod.GET });
   }
 }

@@ -1,24 +1,28 @@
-# node:18 이미지를 기반으로 새 Docker 이미지를 생성
-FROM node:18
-
-# /var/app 디렉터리를 컨테이너 안에 생성
-RUN mkdir -p /var/app
-
-# /var/app 디렉터리를 작업 디렉터리로 설정
-WORKDIR /var/app
-
-# 현재 호스트의 모든 파일을 컨테이너의 /var/app 디렉터리에 복사
-COPY . .
-
-# 패키지 설치 (package.json과 package-lock.json에 명시된 모듈)
+# build stage
+# 사용하는 node 버전
+FROM node:18-alpine AS build
+# RUN,CMD의 명령이 실행될 디렉토리 경로
+WORKDIR /usr/src/app
+# COPY (복사할 파일 경로) (이미지에서 파일이 위치할 경로)
+COPY package*.json ./
+# 이미지 실행 시 사용될 명령어
 RUN npm install
-
-# 프로젝트 빌드 (dist 폴더에 빌드 결과물 저장)
+COPY . .
+# FROM에서 설정한 이미지 위에서 스크립트 혹은 명령을 실행
 RUN npm run build
 
-# 3000번 포트를 열어 외부에서 접근 가능하게 함
-EXPOSE 3000
-
-# 컨테이너가 실행될 때 "npm run start:prod" 명령어를 실행
-# 개발 모드로 앱을 시작
-CMD ["npm", "run", "start:prod"]
+# prod stage
+FROM node:18-alpine
+WORKDIR /usr/src/app
+ARG NODE_ENV=production
+# 환경변수 설정
+ENV NODE_ENV=${NODE_ENV}
+COPY --from=build /usr/src/app/.env ./.env
+COPY --from=build /usr/src/app/dist ./dist
+COPY package*.json ./
+RUN npm install --only=production
+RUN rm package*.json
+# 호스트와 연결할 포트 번호
+EXPOSE 80
+# 컨테이너가 시작되었을 때 실행하는 명령
+CMD ["node", "dist/main.js"]
