@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CrewRepository } from './crew.repository';
+import { CreateCrewDto } from './dto/createCrew.dto';
 
 @Injectable()
 export class CrewService {
@@ -11,8 +12,8 @@ export class CrewService {
     return crewList;
   }
 
-  async createCrew(CreateCrewDto: any): Promise<any> {
-    const crew = await this.crewRepository.createCrew(CreateCrewDto);
+  async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
+    const crew = await this.crewRepository.createCrew(createCrewDto, userId);
     return crew;
   }
   /* 모임 글 상세 조회(참여 전) */

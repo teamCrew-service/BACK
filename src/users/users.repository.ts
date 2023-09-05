@@ -38,16 +38,23 @@ export class UsersRepository {
   }
 
   // 최초 유저 정보 입력
-  async addUserInfo(@Body() addUserInfoDto: AddUserInfoDto): Promise<any> {
-    const userId = addUserInfoDto.userId;
-    const user = await this.usersRepository.findOne({ where: { userId } });
-    user.nickname = addUserInfoDto.nickname;
-    user.age = addUserInfoDto.age;
-    user.gender = addUserInfoDto.gender;
-    user.profileImage = addUserInfoDto.profileImage;
-    user.myMessage = addUserInfoDto.myMessage;
-    user.location = addUserInfoDto.location;
-    await this.usersRepository.save(user);
-    return user;
+  async addUserInfo(
+    @Body() addUserInfoDto: AddUserInfoDto,
+    userId: number,
+  ): Promise<any> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { userId } });
+      user.nickname = addUserInfoDto.nickname;
+      user.age = addUserInfoDto.age;
+      user.gender = addUserInfoDto.gender;
+      user.profileImage = addUserInfoDto.profileImage;
+      user.myMessage = addUserInfoDto.myMessage;
+      user.location = addUserInfoDto.location;
+      await this.usersRepository.save(user);
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository / addUserInfo');
+    }
   }
 }

@@ -34,14 +34,20 @@ export class UsersService {
   }
 
   // 새로운 유저 추가 정보 입력
-  async addUserInfo(@Body() addUserInfoDto: AddUserInfoDto): Promise<any> {
-    const addUserInfo = await this.usersRepository.addUserInfo(addUserInfoDto);
+  async addUserInfo(
+    @Body() addUserInfoDto: AddUserInfoDto,
+    userId: number,
+  ): Promise<any> {
+    const addUserInfo = await this.usersRepository.addUserInfo(
+      addUserInfoDto,
+      userId,
+    );
     return addUserInfo;
   }
 
   //topic 정보 입력
-  async addTopic(@Body() topicDto: TopicDto): Promise<any> {
-    const addTopic = await this.topicRepository.addTopic(topicDto);
+  async addTopic(@Body() topicDto: TopicDto, userId: number): Promise<any> {
+    const addTopic = await this.topicRepository.addTopic(topicDto, userId);
     return addTopic;
   }
 }

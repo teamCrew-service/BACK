@@ -10,9 +10,8 @@ export class TopicRepository {
     @InjectRepository(Topic) private topicRepository: Repository<Topic>,
   ) {}
 
-  async addTopic(@Body() topicDto: TopicDto): Promise<any> {
+  async addTopic(@Body() topicDto: TopicDto, userId: number): Promise<any> {
     try {
-      const userId = topicDto.userId;
       const interestTopic = topicDto.interestTopic;
 
       if (interestTopic.includes(',')) {

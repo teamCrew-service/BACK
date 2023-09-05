@@ -2,15 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class AddUserInfoDto {
-  //userId
-  @ApiProperty({
-    example: 1,
-    description: 'userId',
-    required: true,
-  })
-  @IsNumber()
-  readonly userId: number;
-
   // nickname
   @ApiProperty({
     example: '돌핀맨',
