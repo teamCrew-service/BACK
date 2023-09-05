@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { Signupform } from 'src/signup/entities/signupForm.entity';
 import { Signup } from 'src/signup/entities/signup.entity';
+import { Member } from 'src/member/entities/member.entity';
 
 @Entity('crew')
 export class Crew {
@@ -22,6 +23,9 @@ export class Crew {
   @ManyToOne(() => Users, (user) => user.crew)
   @JoinColumn({ name: 'userId' })
   userId: number;
+
+  @OneToMany(() => Member, (member) => member.crewId)
+  member: Member[];
 
   @OneToMany(() => Notice, (notice) => notice.crewId)
   notice: Notice[];

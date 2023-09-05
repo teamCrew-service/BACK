@@ -15,6 +15,7 @@ import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
 import { NoticeModule } from './notice/notice.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
+import { MemberModule } from './member/member.module';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
@@ -39,6 +40,7 @@ import { JwtService } from '@nestjs/jwt';
     HomeModule,
     CrewModule,
     NoticeModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

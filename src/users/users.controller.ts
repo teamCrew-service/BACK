@@ -9,7 +9,7 @@ import {
   Body,
   HttpStatus,
 } from '@nestjs/common';
-import { Response, response } from 'express';
+import { Response } from 'express';
 import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
 import { KakaoAuthGuard } from 'src/auth/guard/kakao-auth.guard';
 import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
