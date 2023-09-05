@@ -1,9 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  // RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,6 +10,7 @@ import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
 import { NoticeModule } from './notice/notice.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -38,6 +34,7 @@ import { AuthMiddleWare } from './middleware/auth.middleware';
     HomeModule,
     CrewModule,
     NoticeModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService],
