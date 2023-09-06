@@ -51,7 +51,6 @@ export class SingupRepository {
     signupId: number,
     confirmSingupDto: ConfirmSingupDto,
   ): Promise<any> {
-    console.log(signupId);
     const signup = await this.signupRepository
       .createQueryBuilder('signup')
       .select([

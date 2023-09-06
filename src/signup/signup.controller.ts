@@ -139,7 +139,7 @@ export class SignupController {
   }
 
   /* 모임 참여 (방장 승인 여부)API */
-  @Put('signup/:singupId/confirmsingup')
+  @Put('signup/:signupId/confirmsignup')
   @ApiOperation({
     summary: '모임 참여 승인 여부 API',
     description: '제출한 가입서에 대한 승인 여부',

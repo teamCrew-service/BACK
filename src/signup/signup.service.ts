@@ -61,14 +61,18 @@ export class SignupService {
     signupId: number,
     confirmSingupDto: ConfirmSingupDto,
   ): Promise<any> {
-    const confirmedSingup = await this.signupRespository.confirmSingup(
+    const confirmedSignup = await this.signupRespository.confirmSingup(
       signupId,
       confirmSingupDto,
     );
-    // if (confirmedSingup.permission === true) {
-
-    //   const addMember = await this.memberRepository.addMember()
-    // }
-    return confirmedSingup;
+    if (confirmedSignup.permission === true) {
+      const crewId = confirmedSignup.crewId;
+      const userId = confirmedSignup.userId;
+      const addMember = await this.memberRepository.addMember(crewId, userId);
+      return { confirmedSignup, addMember };
+    }
+    if (confirmedSignup.permission === false) {
+      return confirmedSignup;
+    }
   }
 }
