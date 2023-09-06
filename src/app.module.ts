@@ -47,12 +47,15 @@ import { JwtService } from '@nestjs/jwt';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleWare)
-      .forRoutes(
-        { path: 'mypage', method: RequestMethod.GET },
-        { path: 'auth/info', method: RequestMethod.PUT },
-        { path: 'crew/createcrew', method: RequestMethod.POST },
-      );
+    consumer.apply(AuthMiddleWare).forRoutes(
+      { path: 'mypage', method: RequestMethod.GET },
+      { path: 'auth/info', method: RequestMethod.PUT },
+      { path: 'crew/createcrew', method: RequestMethod.POST },
+      {
+        path: 'signup/:crewId/:signupFormId/submit',
+        method: RequestMethod.POST,
+      },
+      { path: 'signup/:crewId', method: RequestMethod.GET },
+    );
   }
 }
