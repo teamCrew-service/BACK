@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from './signupForm.repository';
 import { SingupRepository } from './signup.repository';
+import { ConfirmSingupDto } from './dto/confirm-singup.dto';
+import { MemberRepository } from 'src/member/member.repository';
 
 @Injectable()
 export class SignupService {
   constructor(
     private signupFormRepository: SignupFormRepository,
     private signupRespository: SingupRepository,
+    private memberRepository: MemberRepository,
   ) {}
 
   /* form 생성 */
@@ -31,11 +34,13 @@ export class SignupService {
 
   /* form 작성 후 제출 */
   async submitSignup(
+    userId: number,
     crewId: number,
     signupFormId: number,
     submitSignupDto: any,
   ): Promise<any> {
     const submitSignup = await this.signupRespository.submitSignup(
+      userId,
       crewId,
       signupFormId,
       submitSignupDto,
@@ -49,5 +54,21 @@ export class SignupService {
       crewId,
     );
     return findAllSubmitted;
+  }
+
+  /* 모임 참여 (방장 승인 여부)API */
+  async confirmSingup(
+    signupId: number,
+    confirmSingupDto: ConfirmSingupDto,
+  ): Promise<any> {
+    const confirmedSingup = await this.signupRespository.confirmSingup(
+      signupId,
+      confirmSingupDto,
+    );
+    // if (confirmedSingup.permission === true) {
+
+    //   const addMember = await this.memberRepository.addMember()
+    // }
+    return confirmedSingup;
   }
 }
