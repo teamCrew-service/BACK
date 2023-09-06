@@ -32,7 +32,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
     if (exUser === null) {
       const user = await this.authService.create({ email, nickname, provider });
-      const token = await this.authService.getToken(exUser.userId);
+      const token = await this.authService.getToken(user.userId);
       return token;
     }
   }

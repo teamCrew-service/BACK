@@ -30,7 +30,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     }
     if (exUser === null) {
       const user = await this.authService.create({ email, nickname, provider });
-      const token = await this.authService.getToken(exUser.userId);
+      const token = await this.authService.getToken(user.userId);
       return token;
     }
   }

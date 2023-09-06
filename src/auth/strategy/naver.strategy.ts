@@ -35,7 +35,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
         nickname,
         provider,
       });
-      const token = await this.authService.getToken(exUser.userId);
+      const token = await this.authService.getToken(newUser.userId);
       return token;
     }
   }
