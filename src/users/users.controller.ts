@@ -53,9 +53,10 @@ export class UsersController {
     description: '카카오 소셜로그인을 통한 서비스 로그인',
   })
   async kakaoCallback(@Req() req: any, @Res() res: Response) {
-    res.cookie('authorization', `Bearer ${req.user}`);
-    // res.setHeader('Set-Cookie', req.user);
-    res.redirect(process.env.REDIRECT_URI);
+    // res.cookie('authorization', `Bearer ${req.user}`);
+    const token = req.user;
+    const query = '?token=' + token;
+    res.redirect(process.env.REDIRECT_URI + `/${query}`);
   }
 
   /*네이버 로그인 서비스*/
@@ -84,8 +85,10 @@ export class UsersController {
     description: '네이버 소셜로그인을 통한 서비스 로그인',
   })
   async naverCallback(@Req() req: any, @Res() res: Response) {
-    res.cookie('authorization', `Bearer ${req.user}`);
-    res.redirect(process.env.REDIRECT_URI);
+    // res.cookie('authorization', `Bearer ${req.user}`);
+    const token = req.user;
+    const query = '?token=' + token;
+    res.redirect(process.env.REDIRECT_URI + `/${query}`);
   }
 
   /*구글 로그인 서비스*/
