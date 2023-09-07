@@ -77,6 +77,7 @@ export class CrewRepository {
   }
 
   /* 모임 글 수정 */
+  //TODO : 수정할 때, 삭제되었는지 확인하는 로직 필요할듯
   async editCrew(crewId: number, editCrewDto: EditCrewDto): Promise<any> {
     const {
       category,
@@ -102,9 +103,19 @@ export class CrewRepository {
         crewTitle,
         crewContent,
         crewMaxMember,
+        updatedAt: new Date(),
       },
     );
 
     return editCrew;
+  }
+
+  /* 모임 글 삭제 */
+  async deleteCrew(crewId: number): Promise<any> {
+    const deleteCrew = await this.crewRepository.update(
+      { crewId },
+      { deletedAt: new Date() },
+    );
+    return deleteCrew;
   }
 }

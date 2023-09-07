@@ -34,4 +34,10 @@ export class CrewService {
     const crew = await this.crewRepository.editCrew(crewId, editCrewDto);
     return crew;
   }
+
+  /* 모임 글 삭제 */
+  async deleteCrew(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.deleteCrew(crewId);
+    return crew;
+  }
 }

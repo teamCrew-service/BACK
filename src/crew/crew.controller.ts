@@ -7,6 +7,7 @@ import {
   Controller,
   Post,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { CrewService } from './crew.service';
 import { CreateCrewDto } from './dto/createCrew.dto';
@@ -58,12 +59,7 @@ export class CrewController {
     description: '모임의 상세한 내용을 조회합니다.',
     schema: {
       example: {
-        crewId: 1,
-        category: '친목',
-        crewTitle: '같이 운동하고 건강한 저녁 함께해요',
-        thumbnail: ['url1', 'url2', 'url3'],
-        crewDDay: '2023-08-19T03:44:19.661Z',
-        crewAddress: '소공동',
+        message: '모임 수정 성공',
       },
     },
   })
@@ -102,6 +98,29 @@ export class CrewController {
     res: any,
   ): Promise<any> {
     const crew = await this.crewService.editCrew(crewId, editCrewDto);
+    return res.status(HttpStatus.OK).json(crew);
+  }
+
+  /* 모임 글 삭제 */
+  @Delete(':crewId/delete')
+  @ApiOperation({
+    summary: '모임 글 삭제 API',
+    description: '모임의 내용을 삭제합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임의 내용을 삭제합니다.',
+    schema: {
+      example: {
+        message: '모임 삭제 성공',
+      },
+    },
+  })
+  async deleteCrew(
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    const crew = await this.crewService.deleteCrew(crewId);
     return res.status(HttpStatus.OK).json(crew);
   }
 }
