@@ -27,7 +27,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     const exUser = await this.authService.validateUser(email);
     if (exUser) {
       const token = await this.authService.getToken(exUser.userId);
-      return token;
+      return { token, userId: exUser.userId };
     }
     if (exUser === null) {
       const newUser = await this.authService.create({
@@ -36,7 +36,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
         provider,
       });
       const token = await this.authService.getToken(newUser.userId);
-      return token;
+      return { token, userId: newUser.userId };
     }
   }
 }

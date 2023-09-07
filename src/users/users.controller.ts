@@ -54,9 +54,21 @@ export class UsersController {
   })
   async kakaoCallback(@Req() req: any, @Res() res: Response) {
     // res.cookie('authorization', `Bearer ${req.user}`);
-    const token = req.user;
-    const query = '?token=' + token;
-    res.redirect(process.env.REDIRECT_URI + `/${query}`);
+    try {
+      const token = req.user.token;
+      const userId = req.user.userId;
+      const user = await this.usersService.findUserByPk(userId);
+      if (user.location === null) {
+        const query = '?token=' + token;
+        res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
+      } else {
+        const query = '?token=' + token;
+        res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('kakao 로그인 error');
+    }
   }
 
   /*네이버 로그인 서비스*/
@@ -86,9 +98,21 @@ export class UsersController {
   })
   async naverCallback(@Req() req: any, @Res() res: Response) {
     // res.cookie('authorization', `Bearer ${req.user}`);
-    const token = req.user;
-    const query = '?token=' + token;
-    res.redirect(process.env.REDIRECT_URI + `/${query}`);
+    try {
+      const token = req.user.token;
+      const userId = req.user.userId;
+      const user = await this.usersService.findUserByPk(userId);
+      if (user.location === null) {
+        const query = '?token=' + token;
+        res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
+      } else {
+        const query = '?token=' + token;
+        res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('kakao 로그인 error');
+    }
   }
 
   /*구글 로그인 서비스*/
