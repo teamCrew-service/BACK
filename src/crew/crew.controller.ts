@@ -6,9 +6,11 @@ import {
   HttpStatus,
   Controller,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CrewService } from './crew.service';
 import { CreateCrewDto } from './dto/createCrew.dto';
+import { EditCrewDto } from './dto/editCrew.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 import { SignupService } from 'src/signup/signup.service';
 import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
@@ -70,6 +72,36 @@ export class CrewController {
     @Res() res: any,
   ): Promise<any> {
     const crew = await this.crewService.findCrewDetail(crewId);
+    return res.status(HttpStatus.OK).json(crew);
+  }
+
+  /* 모임글 수정 */
+  @Put(':crewId/edit')
+  @ApiOperation({
+    summary: '모임 글 수정 API',
+    description: '모임의 상세한 내용을 수정합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임의 상세한 내용을 수정합니다.',
+    schema: {
+      example: {
+        crewId: 1,
+        category: '친목',
+        crewTitle: '같이 운동하고 건강한 저녁 함께해요',
+        thumbnail: ['url1', 'url2', 'url3'],
+        crewDDay: '2023-08-19T03:44:19.661Z',
+        crewAddress: '소공동',
+      },
+    },
+  })
+  async editCrew(
+    @Param('crewId') crewId: number,
+    @Body() editCrewDto: EditCrewDto,
+    @Res()
+    res: any,
+  ): Promise<any> {
+    const crew = await this.crewService.editCrew(crewId, editCrewDto);
     return res.status(HttpStatus.OK).json(crew);
   }
 }
