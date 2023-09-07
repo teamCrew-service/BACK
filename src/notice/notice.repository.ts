@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice } from './entities/notice.entity';
+import { CreateNoticeDto } from './dto/createnotice.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -21,5 +22,12 @@ export class NoticeRepository {
       .getMany();
 
     return notices;
+  }
+
+  async createNotice(createNoticeDto: CreateNoticeDto): Promise<Notice> {
+    const notice = new Notice();
+    Object.assign(notice, createNoticeDto);
+    await this.noticeRepository.save(notice);
+    return notice;
   }
 }

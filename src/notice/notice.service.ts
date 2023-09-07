@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { NoticeRepository } from './notice.repository';
+import { CreateNoticeDto } from './dto/createnotice.dto';
 
 @Injectable()
 export class NoticeService {
@@ -18,5 +19,14 @@ export class NoticeService {
     });
 
     return processedNotices;
+  }
+
+  async createNotice(createNoticeDto: CreateNoticeDto): Promise<any> {
+    try {
+      const notice = await this.noticeRepository.createNotice(createNoticeDto);
+      return { notice, message: '공지 등록 성공' };
+    } catch (error) {
+      throw new HttpException('공지 글 생성 실패', HttpStatus.BAD_REQUEST);
+    }
   }
 }

@@ -1,12 +1,15 @@
 import {
   Controller,
   Get,
+  Post,
   HttpException,
   HttpStatus,
   Res,
   Request,
+  Body,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
+import { CreateNoticeDto } from './dto/createnotice.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 
 @Controller('notice')
@@ -54,5 +57,10 @@ export class NoticeController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  @Post('write')
+  async createNotice(@Body() createNoticeDto: CreateNoticeDto): Promise<any> {
+    return this.noticeService.createNotice(createNoticeDto);
   }
 }
