@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Res,
+  Request,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
@@ -32,10 +33,11 @@ export class NoticeController {
       },
     },
   })
-  async findNotice(@Res() res: any): Promise<any> {
+  async findNotice(@Res() res: any, @Request() req: any): Promise<any> {
     try {
       // 다가오는 일정 리스트 조회
-      const notice = await this.noticeService.findNotice();
+      const userId = req.user.userId;
+      const notice = await this.noticeService.findNotice(userId);
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
       if (notice.length === 0) {

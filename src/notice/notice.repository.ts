@@ -10,17 +10,16 @@ export class NoticeRepository {
     private readonly noticeRepository: Repository<Notice>,
   ) {}
 
-  async findNotice(): Promise<any> {
-    const notice = await this.noticeRepository
-      .createQueryBuilder('notice') // Notice 엔티티와 조인
-      .leftJoinAndSelect('notice.userId', 'users') // Users 엔티티와 조인
-      .leftJoinAndSelect('notice.crewId', 'crew') // Crew 엔티티와 조인
-      .select([
-        'notice.noticeTitle',
-        'notice.noticeDDay',
-        'users.profileImage', // Users 엔티티의 profileImage 필드 가정
-      ])
+  async findNotice(userId: number): Promise<any> {
+    const notices = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .leftJoinAndSelect('notice.userId', 'users') // users 테이블과 조인하여 profileImage를 가져옴
+      .leftJoin('notice.crewId', 'crew') // crew 테이블과의 join
+      .leftJoin('crew.member', 'member') // crew와 member 테이블과의 join
+      .where('member.userId = :userId', { userId }) // 해당 userId를 가진 멤버만 필터링
+      .select(['notice.noticeTitle', 'notice.noticeDDay', 'users.profileImage']) // 필요한 필드만 선택
       .getMany();
-    return notice;
+
+    return notices;
   }
 }

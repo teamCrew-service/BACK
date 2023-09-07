@@ -5,8 +5,8 @@ import { NoticeRepository } from './notice.repository';
 export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
 
-  async findNotice() {
-    const notice = await this.noticeRepository.findNotice();
+  async findNotice(userId: number) {
+    const notice = await this.noticeRepository.findNotice(userId);
 
     // map 함수를 사용하여 notice를 순회하면서 필요한 데이터만 추출 후 새로운 배열로 반환
     const processedNotices = notice.map((notice) => {
