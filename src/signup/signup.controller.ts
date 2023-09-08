@@ -47,6 +47,28 @@ export class SignupController {
   //     .json({ message: '모임 가입 양식 작성 완료' });
   // }
 
+  /* (누구나 참여 가능) 모임 가입 */
+  @Post('signup/:crewId')
+  @ApiOperation({
+    summary: '(누구나 참여 가능) 모임 가입 API',
+    description: '(누구나 참여 가능) 모임 가입',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임 가입 완료',
+  })
+  async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
+    const { userId } = res.locals.user;
+    const crew = await this.crewService.findByCrewId(crewId);
+    if (crew.userId === userId) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '모임의 방장입니다.' });
+    }
+    await this.signupService.signup(crewId, userId);
+    return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
+  }
+
   /* 모임 가입(form 불러오기) */
   @Get('signupform/:signupFormId')
   @ApiOperation({
@@ -75,7 +97,7 @@ export class SignupController {
   }
 
   /* 모임 가입 작성 */
-  @Post('signup/:crewId/:signupFormId/submit')
+  @Post('signup/:signupFormId/:crewId/submit')
   @ApiOperation({
     summary: '모임 가입 작성 API',
     description: '모임 가입 작성',
