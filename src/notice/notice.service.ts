@@ -19,4 +19,10 @@ export class NoticeService {
 
     return processedNotices;
   }
+
+  /* crew 해당하는 notice 조회 */
+  async findNoticeByCrew(crewId: number): Promise<any> {
+    const notice = await this.noticeRepository.findNoticeByCrew(crewId);
+    return notice;
+  }
 }
