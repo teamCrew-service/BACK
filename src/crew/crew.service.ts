@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CrewRepository } from './crew.repository';
 import { CreateCrewDto } from './dto/createCrew.dto';
-
+import { EditCrewDto } from './dto/editCrew.dto';
 @Injectable()
 export class CrewService {
   constructor(private crewRepository: CrewRepository) {}
@@ -27,5 +27,17 @@ export class CrewService {
   async findCreatedCrew(userId: number): Promise<any> {
     const createdCrew = await this.crewRepository.findCreatedCrew(userId);
     return createdCrew;
+  }
+
+  /* 모임 글 수정 */
+  async editCrew(crewId: number, editCrewDto: EditCrewDto): Promise<any> {
+    const crew = await this.crewRepository.editCrew(crewId, editCrewDto);
+    return crew;
+  }
+
+  /* 모임 글 삭제 */
+  async deleteCrew(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.deleteCrew(crewId);
+    return crew;
   }
 }
