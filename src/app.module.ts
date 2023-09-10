@@ -17,6 +17,7 @@ import { NoticeModule } from './notice/notice.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
 import { MemberModule } from './member/member.module';
 import { JwtService } from '@nestjs/jwt';
+import { LoginMiddleware } from './middleware/login.middleware';
 
 @Module({
   imports: [
@@ -58,5 +59,8 @@ export class AppModule implements NestModule {
       },
       { path: 'signup/:crewId', method: RequestMethod.GET },
     );
+    consumer
+      .apply(LoginMiddleware)
+      .forRoutes({ path: ':crewId', method: RequestMethod.GET });
   }
 }
