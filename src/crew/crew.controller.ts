@@ -128,8 +128,20 @@ export class CrewController {
     @Res()
     res: any,
   ): Promise<any> {
-    const crew = await this.crewService.editCrew(crewId, editCrewDto);
-    return res.status(HttpStatus.OK).json(crew);
+    const { userId } = res.locals.user;
+    const crew = await this.crewService.findCrewForAuth(crewId);
+    if (crew.userId !== userId) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: '글 수정 권한이 없습니다.' });
+    }
+    const editCrew = await this.crewService.editCrew(crewId, editCrewDto);
+    if (!editCrew) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '글 수정 실패' });
+    }
+    return res.status(HttpStatus.OK).json({ message: '글 수정 완료' });
   }
 
   /* 모임 글 삭제 */
@@ -151,7 +163,19 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
-    const crew = await this.crewService.deleteCrew(crewId);
-    return res.status(HttpStatus.OK).json(crew);
+    const { userId } = res.locals.user;
+    const crew = await this.crewService.findCrewForAuth(crewId);
+    if (crew.userId !== userId) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: '글 삭제 권한이 없습니다.' });
+    }
+    const deleteCrew = await this.crewService.deleteCrew(crewId);
+    if (!deleteCrew) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '글 삭제 실패' });
+    }
+    return res.status(HttpStatus.OK).json({ message: '글 삭제 완료' });
   }
 }

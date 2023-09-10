@@ -6,6 +6,12 @@ import { EditCrewDto } from './dto/editCrew.dto';
 export class CrewService {
   constructor(private crewRepository: CrewRepository) {}
 
+  /* 권한 검사를 위한 crew 조회 */
+  async findCrewForAuth(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.findCrewForAuth(crewId);
+    return crew;
+  }
+
   /* 관심사 별 모임 찾기 */
   async findByCategory(category: string): Promise<any> {
     const crewList = await this.crewRepository.findByCategory(category);

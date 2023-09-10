@@ -11,6 +11,16 @@ export class CrewRepository {
     @InjectRepository(Crew) private crewRepository: Repository<Crew>,
   ) {}
 
+  /* 권한 검사를 위한 crew 조회 */
+  async findCrewForAuth(crewId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .select(['userId'])
+      .where('crew.crewId = :id', { id: crewId })
+      .getRawOne();
+    return crew;
+  }
+
   /* 관심사 별 모임 찾기 */
   async findByCategory(category: string): Promise<any> {
     const crewList = await this.crewRepository.find({ where: { category } });
