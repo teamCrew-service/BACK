@@ -15,6 +15,8 @@ import { EditCrewDto } from './dto/editCrew.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 import { SignupService } from 'src/signup/signup.service';
 import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
+import { MemberService } from 'src/member/member.service';
+import { NoticeService } from 'src/notice/notice.service';
 
 @Controller('crew')
 @ApiTags('Crew API')
@@ -22,6 +24,8 @@ export class CrewController {
   constructor(
     private readonly crewService: CrewService,
     private readonly signupService: SignupService,
+    private readonly memberService: MemberService,
+    private readonly noticeService: NoticeService,
   ) {}
 
   @Post('createcrew')
@@ -48,7 +52,7 @@ export class CrewController {
     }
     return res.status(HttpStatus.CREATED).json({ message: '모임 생성 성공' });
   }
-  /* 모임 글 상세 조회(참여 전)*/
+  /* 모임 글 상세 조회*/
   @Get(':crewId')
   @ApiOperation({
     summary: '모임 글 상세 조회(참여 전) API',
@@ -67,8 +71,35 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
+    const userId = res.locals.user ? res.locals.user.userId : null;
     const crew = await this.crewService.findCrewDetail(crewId);
-    return res.status(HttpStatus.OK).json(crew);
+    const member = await this.memberService.findAllMember(crewId);
+    const notice = await this.noticeService.findNoticeByCrew(crewId);
+
+    /* userId를 통해 crew 방장 및 member 확인 */
+    // 게스트일 경우
+    if (!userId) {
+      return res
+        .status(HttpStatus.OK)
+        .json({ crew, member, personType: 'person' });
+    }
+    // 방장일 경우
+    if (userId === crew.userId) {
+      return res
+        .status(HttpStatus.OK)
+        .json({ crew, member, notice, personType: 'captain' });
+    }
+    for (let i = 0; i < member.length; i++) {
+      // member일 경우
+      if (userId === member[i].member_userId) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ crew, member, notice, personType: 'member' });
+      }
+    }
+    return res
+      .status(HttpStatus.OK)
+      .json({ crew, member, personType: 'person' });
   }
 
   /* 모임글 수정 */
