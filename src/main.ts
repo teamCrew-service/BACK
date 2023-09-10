@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -11,6 +12,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe()); // 입력값 유효성 검사를 위한 ValidationPipe 추가
   app.setGlobalPrefix('api'); //글로벌 프리픽스 설정
 
   const config = new DocumentBuilder()
