@@ -14,6 +14,7 @@ import { SubmitSignupDto } from './dto/submit-signup.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 import { CrewService } from 'src/crew/crew.service';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
+import { MemberService } from 'src/member/member.service';
 
 @Controller()
 @ApiTags('signup API')
@@ -21,6 +22,7 @@ export class SignupController {
   constructor(
     private readonly signupService: SignupService,
     private readonly crewService: CrewService,
+    private readonly memberService: MemberService,
   ) {}
 
   /* 모임 가입(form 생성): 버전 업그레이드에 맞춰 사용*/
@@ -60,12 +62,20 @@ export class SignupController {
   async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
     const { userId } = res.locals.user;
     const crew = await this.crewService.findByCrewId(crewId);
+    const member = await this.memberService.findAllMember(crewId);
     if (crew.userId === userId) {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: '모임의 방장입니다.' });
     }
-    await this.signupService.signup(crewId, userId);
+    for (let i = 0; i < member.length; i++) {
+      if (member.userId === userId) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임에 이미 가입했습니다.' });
+      }
+    }
+    await this.memberService.signup(crewId, userId);
     return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
   }
 
