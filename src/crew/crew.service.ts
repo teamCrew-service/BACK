@@ -46,4 +46,10 @@ export class CrewService {
     const crew = await this.crewRepository.deleteCrew(crewId);
     return crew;
   }
+
+  /* crewId를 이용해 조회하기 */
+  async findByCrewId(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.findByCrewId(crewId);
+    return crew;
+  }
 }

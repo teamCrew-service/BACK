@@ -18,6 +18,8 @@ import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 import { TopicDto } from './dto/topic-user.dto';
 import { CrewService } from 'src/crew/crew.service';
+import { TestLoginDto } from './dto/testLogin-user.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller()
 @ApiTags('User API')
@@ -25,6 +27,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly crewService: CrewService,
+    private readonly authService: AuthService,
   ) {}
 
   /* 카카오 로그인 서비스*/
@@ -143,6 +146,20 @@ export class UsersController {
   async googleCallback(@Req() req: any, @Res() res: Response) {
     res.cookie('authorization', `Bearer ${req.user}`);
     res.redirect(process.env.REDIRECT_URI);
+  }
+
+  /* 테스트용 로그인 API */
+  @Post('login')
+  async testLogin(
+    @Body() testLoginDto: TestLoginDto,
+    @Res() res: any,
+  ): Promise<any> {
+    const email = testLoginDto.email;
+    const user = await this.usersService.findUserByEmail(email);
+    const userId = user.userId;
+    const token = await this.authService.getToken(userId);
+    res.cookie('authorization', `Bearer ${token}`);
+    return res.status(HttpStatus.OK).json({ message: '로그인 성공' });
   }
 
   /*최초 로그인 설정*/

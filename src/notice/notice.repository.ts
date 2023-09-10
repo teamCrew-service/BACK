@@ -23,4 +23,14 @@ export class NoticeRepository {
       .getMany();
     return notice;
   }
+
+  /* crew에 해당하는 notice 조회 */
+  async findNoticeByCrew(crewId: number): Promise<any> {
+    const notice = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .select(['noticeTitle', 'noticeContent', 'noticeDDay', 'noticeAddress'])
+      .where('notice.crewId = :id', { id: crewId })
+      .getRawMany();
+    return notice;
+  }
 }
