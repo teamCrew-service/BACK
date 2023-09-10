@@ -118,4 +118,14 @@ export class CrewRepository {
     );
     return deleteCrew;
   }
+
+  /* crewId로 조회하기 */
+  async findByCrewId(crewId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .select(['crewId', 'userId'])
+      .where('crew.crewId: id', { id: crewId })
+      .getRawOne();
+    return crew;
+  }
 }
