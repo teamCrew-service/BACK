@@ -18,7 +18,6 @@ export class MemberRepository {
     return addMember;
   }
 
-
   /* member 조회 */
   async findAllMember(crewId: number): Promise<any> {
     const allMember = await this.memberRepository

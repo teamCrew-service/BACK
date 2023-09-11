@@ -12,7 +12,12 @@ import {
 import { CrewService } from './crew.service';
 import { CreateCrewDto } from './dto/createCrew.dto';
 import { EditCrewDto } from './dto/editCrew.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger/dist';
 import { SignupService } from 'src/signup/signup.service';
 import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
 import { MemberService } from 'src/member/member.service';
@@ -28,6 +33,7 @@ export class CrewController {
     private readonly noticeService: NoticeService,
   ) {}
 
+  /* 모임 생성 */
   @Post('createcrew')
   @ApiOperation({
     summary: '모임 생성 API',
@@ -52,18 +58,71 @@ export class CrewController {
     }
     return res.status(HttpStatus.CREATED).json({ message: '모임 생성 성공' });
   }
-  /* 모임 글 상세 조회*/
+
+  /* 모임 상세 조회*/
   @Get(':crewId')
   @ApiOperation({
-    summary: '모임 글 상세 조회(참여 전) API',
+    summary: '모임 상세 조회 API',
     description: '모임의 상세한 내용을 조회합니다.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
   })
   @ApiResponse({
     status: 200,
     description: '모임의 상세한 내용을 조회합니다.',
     schema: {
-      example: {
-        message: '모임 수정 성공',
+      examples: {
+        example1: {
+          crew: {
+            crewId: 1,
+            category: '친목',
+            crewTitle: '같이 운동하고 건강한 저녁 함께해요',
+            thumbnail: ['url1', 'url2', 'url3'],
+            crewDDay: '2023-08-19T03:44:19.661Z',
+            crewAddress: '소공동',
+          },
+          member: [1, 11, 10], // 게스트일 경우 비어있는 배열
+          personType: 'person',
+        },
+        example2: {
+          crew: {
+            crewId: 1,
+            category: '친목',
+            crewTitle: '같이 운동하고 건강한 저녁 함께해요',
+            thumbnail: ['url1', 'url2', 'url3'],
+            crewDDay: '2023-08-19T03:44:19.661Z',
+            crewAddress: '소공동',
+          },
+          member: [1, 11, 10],
+          notice: {
+            noticeTitle: '퇴근 후 40분 걷기',
+            noticeDDay: '2023-08-19T03:44:19.661Z',
+            noticeContent: '일찍 퇴근 하는 분들 모여요!!',
+            noticeAddress: '일산 호수공원',
+          },
+          personType: 'captain',
+        },
+        example3: {
+          crew: {
+            crewId: 1,
+            category: '친목',
+            crewTitle: '같이 운동하고 건강한 저녁 함께해요',
+            thumbnail: ['url1', 'url2', 'url3'],
+            crewDDay: '2023-08-19T03:44:19.661Z',
+            crewAddress: '소공동',
+          },
+          member: [1, 11, 10],
+          notice: {
+            noticeTitle: '퇴근 후 40분 걷기',
+            noticeDDay: '2023-08-19T03:44:19.661Z',
+            noticeContent: '일찍 퇴근 하는 분들 모여요!!',
+            noticeAddress: '일산 호수공원',
+          },
+          personType: 'member',
+        },
       },
     },
   })
@@ -78,7 +137,7 @@ export class CrewController {
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우
-    if (!userId) {
+    if (userId === null) {
       return res
         .status(HttpStatus.OK)
         .json({ crew, member, personType: 'person' });
@@ -133,15 +192,17 @@ export class CrewController {
     if (crew.userId !== userId) {
       return res
         .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: '글 수정 권한이 없습니다.' });
+        .json({ message: '모임 수정 권한이 없습니다.' });
     }
     const editCrew = await this.crewService.editCrew(crewId, editCrewDto);
     if (!editCrew) {
       return res
         .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '글 수정 실패' });
+        .json({ message: '모임 수정 실패했습니다.' });
     }
-    return res.status(HttpStatus.OK).json({ message: '글 수정 완료' });
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: '모임 수정 완료했습니다.' });
   }
 
   /* 모임 글 삭제 */
@@ -155,7 +216,7 @@ export class CrewController {
     description: '모임의 내용을 삭제합니다.',
     schema: {
       example: {
-        message: '모임 삭제 성공',
+        message: '모임 삭제 성공했습니다.',
       },
     },
   })
@@ -168,14 +229,16 @@ export class CrewController {
     if (crew.userId !== userId) {
       return res
         .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: '글 삭제 권한이 없습니다.' });
+        .json({ message: '모임 삭제 권한이 없습니다.' });
     }
     const deleteCrew = await this.crewService.deleteCrew(crewId);
     if (!deleteCrew) {
       return res
         .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '글 삭제 실패' });
+        .json({ message: '모임 삭제를 실패했습니다.' });
     }
-    return res.status(HttpStatus.OK).json({ message: '글 삭제 완료' });
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: '모임 삭제를 성공했습니다.' });
   }
 }
