@@ -144,8 +144,21 @@ export class UsersController {
     description: '구글 소셜로그인을 통한 서비스 로그인',
   })
   async googleCallback(@Req() req: any, @Res() res: Response) {
-    res.cookie('authorization', `Bearer ${req.user}`);
-    res.redirect(process.env.REDIRECT_URI);
+    try {
+      const token = req.user.token;
+      const userId = req.user.userId;
+      const user = await this.usersService.findUserByPk(userId);
+      if (user.location === null) {
+        const query = '?token=' + token;
+        res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
+      } else {
+        const query = '?token=' + token;
+        res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('Google 로그인 error');
+    }
   }
 
   /* 테스트용 로그인 API */
