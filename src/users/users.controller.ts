@@ -168,7 +168,8 @@ export class UsersController {
     @Res() res: any,
   ): Promise<any> {
     const email = testLoginDto.email;
-    const user = await this.usersService.findUserByEmail(email);
+    const provider = testLoginDto.provider;
+    const user = await this.usersService.findUserByEmail(email, provider);
     const userId = user.userId;
     const token = await this.authService.getToken(userId);
     res.cookie('authorization', `Bearer ${token}`);

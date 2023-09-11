@@ -12,8 +12,8 @@ export class UsersService {
   ) {}
 
   // user 정보 email로 조회
-  async findUserByEmail(email: string): Promise<any> {
-    const exUser = await this.usersRepository.findUserByEmail(email);
+  async findUserByEmail(email: string, provider: string): Promise<any> {
+    const exUser = await this.usersRepository.findUserByEmail(email, provider);
     return exUser;
   }
 
