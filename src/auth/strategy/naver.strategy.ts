@@ -24,7 +24,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     const provider = profile.provider;
 
     // user 정보 확인
-    const exUser = await this.authService.validateUser(email);
+    const exUser = await this.authService.validateUser(email, provider);
     if (exUser) {
       const token = await this.authService.getToken(exUser.userId);
       return { token, userId: exUser.userId };

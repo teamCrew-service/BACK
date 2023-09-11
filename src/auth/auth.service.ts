@@ -7,8 +7,8 @@ export class AuthService {
   constructor(private usersService: UsersService) {}
 
   /* user 정보 확인 */
-  async validateUser(email: string): Promise<any> {
-    const exUser = await this.usersService.findUserByEmail(email);
+  async validateUser(email: string, provider: string): Promise<any> {
+    const exUser = await this.usersService.findUserByEmail(email, provider);
     if (!exUser) {
       return null;
     }

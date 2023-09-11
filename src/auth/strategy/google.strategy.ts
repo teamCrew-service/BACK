@@ -25,15 +25,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const provider = profile.provider;
 
     // user 정보 확인
-    const exUser = await this.authService.validateUser(email);
+    const exUser = await this.authService.validateUser(email, provider);
     if (exUser) {
       const token = await this.authService.getToken(exUser.userId);
       return { token, userId: exUser.userId };
     }
     if (exUser === null) {
-      const user = await this.authService.create({ email, nickname, provider });
-      const token = await this.authService.getToken(user.userId);
-      return { token, userId: user.userId };
+      const newUser = await this.authService.create({
+        email,
+        nickname,
+        provider,
+      });
+      const token = await this.authService.getToken(newUser.userId);
+      return { token, userId: newUser.userId };
     }
   }
 }
