@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger/dist';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class SubmitSignupDto {
   // answer1
@@ -9,6 +9,7 @@ export class SubmitSignupDto {
     required: true,
   })
   @IsString()
+  @IsNotEmpty()
   readonly answer1: string;
 
   //answer2
@@ -18,5 +19,6 @@ export class SubmitSignupDto {
     required: true,
   })
   @IsString()
+  @IsNotEmpty()
   readonly answer2: string;
 }

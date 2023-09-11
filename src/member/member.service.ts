@@ -6,7 +6,7 @@ export class MemberService {
   constructor(private memberRepository: MemberRepository) {}
 
   /* (누구나 참여 가능) 모임 가입 */
-  async signup(crewId: number, userId: number): Promise<any> {
+  async addMember(crewId: number, userId: number): Promise<any> {
     const signup = await this.memberRepository.addMember(crewId, userId);
     return signup;
   }
