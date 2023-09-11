@@ -133,7 +133,6 @@ export class CrewController {
     const userId = res.locals.user ? res.locals.user.userId : null;
     const crew = await this.crewService.findCrewDetail(crewId);
     const member = await this.memberService.findAllMember(crewId);
-    const notice = await this.noticeService.findNoticeByCrew(crewId);
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우
@@ -142,6 +141,10 @@ export class CrewController {
         .status(HttpStatus.OK)
         .json({ crew, member, personType: 'person' });
     }
+
+    const notice = await this.noticeService.findNoticeByCrew(crewId);
+    // const signup = await this.signupService.findMySignup(userId, crewId);
+
     // 방장일 경우
     if (userId === crew.userId) {
       return res

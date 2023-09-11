@@ -75,7 +75,7 @@ export class SignupController {
           .json({ message: '모임에 이미 가입했습니다.' });
       }
     }
-    await this.memberService.signup(crewId, userId);
+    await this.memberService.addMember(crewId, userId);
     return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
   }
 
@@ -123,6 +123,15 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     const { userId } = res.locals.user;
+    const submitedSignup = await this.signupService.findMySignup(
+      userId,
+      crewId,
+    );
+    if (submitedSignup) {
+      return res.status(HttpStatus.CONFLICT).json({
+        message: '가입서를 작성한 Crew입니다. 모임장의 승인을 기다려주세요',
+      });
+    }
     if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
       throw new Error('작성을 완료해주세요');
     }
