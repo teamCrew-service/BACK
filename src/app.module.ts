@@ -18,6 +18,8 @@ import { AuthMiddleWare } from './middleware/auth.middleware';
 import { MemberModule } from './member/member.module';
 import { JwtService } from '@nestjs/jwt';
 import { LoginMiddleware } from './middleware/login.middleware';
+import { LikeModule } from './like/like.module';
+import { TopicModule } from './topic/topic.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { LoginMiddleware } from './middleware/login.middleware';
     CrewModule,
     NoticeModule,
     MemberModule,
+    LikeModule,
+    TopicModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
@@ -51,6 +55,7 @@ export class AppModule implements NestModule {
     consumer.apply(AuthMiddleWare).forRoutes(
       { path: 'mypage', method: RequestMethod.GET },
       { path: 'auth/info', method: RequestMethod.PUT },
+      { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
       { path: ':crewId/edit', method: RequestMethod.PUT },
       { path: ':crewId/delete', method: RequestMethod.DELETE },

@@ -2,7 +2,7 @@ import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from './entities/topic.entity';
 import { Repository } from 'typeorm';
-import { TopicDto } from './dto/topic-user.dto';
+import { TopicDto } from './dto/topic.dto';
 
 @Injectable()
 export class TopicRepository {
@@ -10,7 +10,8 @@ export class TopicRepository {
     @InjectRepository(Topic) private topicRepository: Repository<Topic>,
   ) {}
 
-  async addTopic(@Body() topicDto: TopicDto, userId: number): Promise<any> {
+  /* 관심사 선택 */
+  async addTopic(topicDto: TopicDto, userId: number): Promise<any> {
     try {
       const interestTopic = topicDto.interestTopic;
 

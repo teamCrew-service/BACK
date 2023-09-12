@@ -16,10 +16,11 @@ import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 import { UsersService } from './users.service';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
-import { TopicDto } from './dto/topic-user.dto';
+import { TopicDto } from '../topic/dto/topic.dto';
 import { CrewService } from 'src/crew/crew.service';
 import { TestLoginDto } from './dto/testLogin-user.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { CheckNicknameDto } from './dto/checkNickname-user.dto';
 
 @Controller()
 @ApiTags('User API')
@@ -197,6 +198,40 @@ export class UsersController {
     return res
       .status(HttpStatus.CREATED)
       .json({ message: '추가 정보 입력 완료' });
+  }
+
+  /* 닉네임 체크 API */
+  @Post('nickname')
+  @ApiOperation({
+    summary: '닉네임 중복 체크',
+    description: '유저의 닉네임이 중복되지 않게 체크하는 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '닉네임 중복확인 완료',
+  })
+  async checkNickname(
+    @Body() checkNicknameDto: CheckNicknameDto,
+    @Res() res: any,
+  ) {
+    try {
+      const newNickname = checkNicknameDto.nickname;
+      const exNickname = await this.usersService.checkNickname(newNickname);
+      if (newNickname === exNickname) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '중복된 닉네임입니다.' });
+      } else {
+        return res
+          .status(HttpStatus.OK)
+          .json({ message: '중복된 닉네임이 없습니다.' });
+      }
+    } catch (e) {
+      console.error(e);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: '닉네임 중복 체크 실패' });
+    }
   }
 
   /* 로그아웃 */

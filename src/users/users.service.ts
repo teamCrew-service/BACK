@@ -1,14 +1,14 @@
 import { Injectable, Body } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
-import { TopicDto } from './dto/topic-user.dto';
-import { TopicRepository } from './topic.repository';
+import { TopicDto } from '../topic/dto/topic.dto';
+import { TopicService } from 'src/topic/topic.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private usersRepository: UsersRepository,
-    private topicRepository: TopicRepository,
+    private topicService: TopicService,
   ) {}
 
   // user 정보 email로 조회
@@ -47,7 +47,16 @@ export class UsersService {
 
   //topic 정보 입력
   async addTopic(@Body() topicDto: TopicDto, userId: number): Promise<any> {
-    const addTopic = await this.topicRepository.addTopic(topicDto, userId);
+    const addTopic = await this.topicService.addTopic(topicDto, userId);
     return addTopic;
+  }
+
+  // nickname으로 체크하기
+  async checkNickname(newNickname: string): Promise<any> {
+    const exNickname = await this.usersRepository.checkNickname(newNickname);
+    if (!exNickname) {
+      return null;
+    }
+    return exNickname;
   }
 }

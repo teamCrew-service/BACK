@@ -62,4 +62,13 @@ export class UsersRepository {
       throw new Error('UsersRepository / addUserInfo');
     }
   }
+
+  // nickname 체크
+  async checkNickname(newNickname: string): Promise<any> {
+    const user = await this.usersRepository.findOne({
+      where: { nickname: newNickname },
+    });
+    const exNickname = user.nickname;
+    return exNickname;
+  }
 }
