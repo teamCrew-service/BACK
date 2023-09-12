@@ -22,6 +22,13 @@ export class CrewService {
     const crew = await this.crewRepository.createCrew(createCrewDto, userId);
     return crew;
   }
+
+  /*thumbnail을 aws3에 업로드하고 그 url을 받아온다.*/
+  async thumbnailUpload(thumbnail: any): Promise<any> {
+    console.log(thumbnail);
+    //thumbnail은 url로 되어있다.
+  }
+
   /* 모임 글 상세 조회(참여 전) */
   async findCrewDetail(crewId: number): Promise<any> {
     const crew = await this.crewRepository.findCrewDetail(crewId);
