@@ -16,7 +16,7 @@ import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 import { UsersService } from './users.service';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
-import { TopicDto } from './dto/topic-user.dto';
+import { TopicDto } from '../topic/dto/topic.dto';
 import { CrewService } from 'src/crew/crew.service';
 import { TestLoginDto } from './dto/testLogin-user.dto';
 import { AuthService } from 'src/auth/auth.service';

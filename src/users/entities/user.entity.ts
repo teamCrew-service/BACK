@@ -2,7 +2,7 @@ import { Crew } from 'src/crew/entities/crew.entity';
 import { Notice } from 'src/notice/entities/notice.entity';
 import { Signup } from 'src/signup/entities/signup.entity';
 import { Member } from 'src/member/entities/member.entity';
-import { Topic } from './topic.entity';
+import { Topic } from '../../topic/entities/topic.entity';
 import {
   Column,
   Entity,
@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { Like } from 'src/like/entities/like.entity';
 
 @Entity('users')
 export class Users {
@@ -61,4 +62,7 @@ export class Users {
 
   @OneToMany(() => Member, (member) => member.userId)
   member: Member[];
+
+  @OneToMany(() => Like, (like) => like.userId)
+  like: Like[];
 }
