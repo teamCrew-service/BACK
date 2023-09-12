@@ -13,6 +13,7 @@ import { CrewService } from './crew.service';
 import { CreateCrewDto } from './dto/createCrew.dto';
 import { EditCrewDto } from './dto/editCrew.dto';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -22,7 +23,7 @@ import { SignupService } from 'src/signup/signup.service';
 import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
 import { MemberService } from 'src/member/member.service';
 import { NoticeService } from 'src/notice/notice.service';
-
+import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
@@ -43,12 +44,19 @@ export class CrewController {
     status: 201,
     description: '모임 생성 성공',
   })
+  @ApiBearerAuth('accessToken')
   async createCrew(
-    @Body() createCrewDto: CreateCrewDto,
-    @Body() createSignupFormDto: CreateSignupFormDto,
+    @Body() joinCreateCrewDto: JoinCreateCrewDto,
     @Res() res: any,
   ): Promise<any> {
+    let { createCrewDto, createSignupFormDto } = joinCreateCrewDto;
     const { userId } = res.locals.user;
+    //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
+    const thumbnail = await this.crewService.thumbnailUpload(
+      createCrewDto.thumbnail,
+    );
+    createCrewDto.thumbnail = thumbnail;
+
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
     if (createCrewDto.crewSignup === true) {
       await this.signupService.createSignupForm(
@@ -184,6 +192,7 @@ export class CrewController {
       },
     },
   })
+  @ApiBearerAuth('accessToken')
   async editCrew(
     @Param('crewId') crewId: number,
     @Body() editCrewDto: EditCrewDto,

@@ -54,7 +54,7 @@ export class EditCrewDto {
 
   //crewSignUp
   @ApiProperty({
-    example: true,
+    example: 1,
     description: 'crewSignUp',
     required: true,
   })

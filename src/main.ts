@@ -19,7 +19,19 @@ async function bootstrap() {
     .setTitle('CREW API Document')
     .setDescription('Crew API 서버')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'authorization',
+        description: 'Enter JWT Token',
+        in: 'header',
+      },
+      'accessToken',
+    )
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
