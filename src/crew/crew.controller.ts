@@ -196,10 +196,13 @@ export class CrewController {
   async editCrew(
     @Param('crewId') crewId: number,
     @Body() editCrewDto: EditCrewDto,
-    @Res()
-    res: any,
+    @Res() res: any,
   ): Promise<any> {
+    console.log('crewId', crewId);
+    console.log('editCrewDto', editCrewDto);
+    console.log('res.locals', res.locals);
     const { userId } = res.locals.user;
+
     const crew = await this.crewService.findCrewForAuth(crewId);
     if (crew.userId !== userId) {
       return res

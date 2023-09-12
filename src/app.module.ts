@@ -52,8 +52,8 @@ export class AppModule implements NestModule {
       { path: 'mypage', method: RequestMethod.GET },
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'crew/createcrew', method: RequestMethod.POST },
-      { path: ':crewId/edit', method: RequestMethod.PUT },
-      { path: ':crewId/delete', method: RequestMethod.DELETE },
+      { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
+      { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
       { path: 'signupform/:signupFormId', method: RequestMethod.GET },
       {
         path: 'signup/:crewId/:signupFormId/submit',
