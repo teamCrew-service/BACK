@@ -50,4 +50,13 @@ export class UsersService {
     const addTopic = await this.topicService.addTopic(topicDto, userId);
     return addTopic;
   }
+
+  // nickname으로 체크하기
+  async checkNickname(newNickname: string): Promise<any> {
+    const exNickname = await this.usersRepository.checkNickname(newNickname);
+    if (!exNickname) {
+      return null;
+    }
+    return exNickname;
+  }
 }
