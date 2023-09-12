@@ -68,7 +68,7 @@ export class UsersRepository {
     const user = await this.usersRepository.findOne({
       where: { nickname: newNickname },
     });
-    const exNickname = user.nickname;
+    const exNickname = user ? user.nickname : null;
     return exNickname;
   }
 }
