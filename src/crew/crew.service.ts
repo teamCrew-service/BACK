@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { CrewRepository } from './crew.repository';
 import { CreateCrewDto } from './dto/createCrew.dto';
 import { EditCrewDto } from './dto/editCrew.dto';
+import axios from 'axios';
+import { createWriteStream } from 'fs';
+import { join } from 'path';
 import { LikeService } from 'src/like/like.service';
 @Injectable()
 export class CrewService {
@@ -28,11 +31,35 @@ export class CrewService {
   }
 
   /*thumbnail을 aws3에 업로드하고 그 url을 받아온다.*/
-  async thumbnailUpload(thumbnail: any): Promise<any> {
-    console.log(thumbnail);
+  async thumbnailUpload(createCrewDto: CreateCrewDto): Promise<any> {
+    //console.log(createCrewDto.thumbnail);
+    const url = createCrewDto.thumbnail;
+    const localPath = join(
+      __dirname,
+      '..',
+      '..',
+      'test',
+      createCrewDto.crewTitle + '_' + Date.now() + '.jpg',
+    );
+    await this.downloadAndSave(url, localPath);
+    return localPath;
     //thumbnail은 url로 되어있다.
   }
+  async downloadAndSave(url: string, localPath: string): Promise<void> {
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream',
+    });
 
+    const writer = createWriteStream(localPath);
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+  }
   /* 모임 글 상세 조회(참여 전) */
   async findCrewDetail(crewId: number): Promise<any> {
     const crew = await this.crewRepository.findCrewDetail(crewId);
