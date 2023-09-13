@@ -52,9 +52,7 @@ export class CrewController {
     let { createCrewDto, createSignupFormDto } = joinCreateCrewDto;
     const { userId } = res.locals.user;
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
-    const thumbnail = await this.crewService.thumbnailUpload(
-      createCrewDto.thumbnail,
-    );
+    const thumbnail = await this.crewService.thumbnailUpload(createCrewDto);
     createCrewDto.thumbnail = thumbnail;
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
