@@ -54,6 +54,9 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleWare).forRoutes(
       { path: 'mypage', method: RequestMethod.GET },
+      { path: 'mypage/edit', method: RequestMethod.PUT },
+      { path: 'mycrew/likedcrew', method: RequestMethod.GET },
+      { path: 'mycrew/joinedcrew', method: RequestMethod.GET },
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },

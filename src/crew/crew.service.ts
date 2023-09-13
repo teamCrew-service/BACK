@@ -2,9 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { CrewRepository } from './crew.repository';
 import { CreateCrewDto } from './dto/createCrew.dto';
 import { EditCrewDto } from './dto/editCrew.dto';
+import { LikeService } from 'src/like/like.service';
 @Injectable()
 export class CrewService {
-  constructor(private crewRepository: CrewRepository) {}
+  constructor(
+    private crewRepository: CrewRepository,
+    private likeService: LikeService,
+  ) {}
 
   /* 권한 검사를 위한 crew 조회 */
   async findCrewForAuth(crewId: number): Promise<any> {

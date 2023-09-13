@@ -21,6 +21,9 @@ import { CrewService } from 'src/crew/crew.service';
 import { TestLoginDto } from './dto/testLogin-user.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { CheckNicknameDto } from './dto/checkNickname-user.dto';
+import { TopicAndInfoDto } from './dto/topicAndInfo-user.dto';
+import { LikeService } from 'src/like/like.service';
+import { MemberService } from 'src/member/member.service';
 
 @Controller()
 @ApiTags('User API')
@@ -29,6 +32,8 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly crewService: CrewService,
     private readonly authService: AuthService,
+    private readonly likeService: LikeService,
+    private readonly memberService: MemberService,
   ) {}
 
   /* 카카오 로그인 서비스*/
@@ -188,12 +193,12 @@ export class UsersController {
     description: '추가 정보 입력 완료',
   })
   async addUserInfo(
-    @Body() addUserInfoDto: AddUserInfoDto,
-    @Body() topicDto: TopicDto,
+    @Body() topicAndInfoDto: TopicAndInfoDto,
     @Res() res: any,
   ): Promise<any> {
+    let { addUserInfoDto, topicDto } = topicAndInfoDto;
     const { userId } = res.locals.user;
-    await this.usersService.addUserInfo(addUserInfoDto, userId);
+    await this.usersService.userInfo(addUserInfoDto, userId);
     await this.usersService.addTopic(topicDto, userId);
     return res
       .status(HttpStatus.CREATED)
@@ -245,8 +250,92 @@ export class UsersController {
   @Get('mypage')
   async mypage(@Res() res: Response): Promise<any> {
     const { userId } = res.locals.user;
+    // user 정보
     const user = await this.usersService.findUserByPk(userId);
+    // user 관심사
+    const topic = await this.usersService.findTopicById(userId);
+    // user가 만든 모임
     const createdCrew = await this.crewService.findCreatedCrew(userId);
-    return res.status(HttpStatus.OK).json({ user, createdCrew });
+    // user가 찜한 모임
+    const likedCrew = await this.likeService.findLikedCrew(userId);
+    const crewList = [];
+    for (let i = 0; i < likedCrew.length; i++) {
+      const crewId = likedCrew[i].crewId;
+      const crew = await this.crewService.findByCrewId(crewId);
+      crewList.push(crew);
+    }
+    // user가 참여한 모임
+    const joinedCrew = await this.memberService.findJoinedCrew(userId);
+    const memberCrewList = [];
+    for (let i = 0; i < joinedCrew.length; i++) {
+      const crewId = joinedCrew[i].crewId;
+      const crew = await this.crewService.findByCrewId(crewId);
+      memberCrewList.push(crew);
+    }
+    return res.status(HttpStatus.OK).json({
+      user,
+      createdCrew,
+      topic,
+      likedCrew: crewList,
+      joinedCrew: memberCrewList,
+    });
+  }
+
+  /* 마이페이지 edit */
+  @Put('mypage/edit')
+  @ApiOperation({
+    summary: '마이페이지 유저 정보 수정 API',
+    description: '유저의 정보를 수정하는 API',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '유저 정보 수정 완료',
+  })
+  async editMypage(
+    @Body() topicAndInfoDto: TopicAndInfoDto,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      let { addUserInfoDto, topicDto } = topicAndInfoDto;
+      const { userId } = res.locals.user;
+      await this.usersService.userInfo(addUserInfoDto, userId);
+      await this.usersService.editTopic(topicDto, userId);
+      return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
+    } catch (e) {
+      console.error(e);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: '유저 정보 수정 실패' });
+    }
+  }
+
+  /* 내가 찜한 모임 */
+  @Get('mycrew/likedcrew')
+  async findLikedCrew(@Res() res: any): Promise<any> {
+    const { userId } = res.locals.user;
+    const likedCrew = await this.likeService.findLikedCrew(userId);
+    const crewList = [];
+    for (let i = 0; i < likedCrew.length; i++) {
+      const crewId = likedCrew[i].crewId;
+      const crew = await this.crewService.findByCrewId(crewId);
+      crewList.push(crew);
+    }
+
+    return res.status(HttpStatus.OK).json({ likedCrew: crewList });
+  }
+
+  /* 내가 참여한 모임 */
+  @Get('mycrew/joinedcrew')
+  async findJoinedCrew(@Res() res: any): Promise<any> {
+    const { userId } = res.locals.user;
+    // user가 참여한 모임
+    const joinedCrew = await this.memberService.findJoinedCrew(userId);
+    const memberCrewList = [];
+    for (let i = 0; i < joinedCrew.length; i++) {
+      const crewId = joinedCrew[i].crewId;
+      const crew = await this.crewService.findByCrewId(crewId);
+      memberCrewList.push(crew);
+    }
+    return res.status(HttpStatus.OK).json({ joinedCrew: memberCrewList });
   }
 }

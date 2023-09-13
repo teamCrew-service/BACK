@@ -19,4 +19,10 @@ export class LikeService {
     );
     return caceledLike;
   }
+
+  /* 찜 조회하기 */
+  async findLikedCrew(userId: number): Promise<any> {
+    const likedCrewId = await this.likeRepository.findLikedCrew(userId);
+    return likedCrewId;
+  }
 }

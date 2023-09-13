@@ -1,4 +1,4 @@
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { TopicDto } from '../topic/dto/topic.dto';
@@ -34,11 +34,8 @@ export class UsersService {
   }
 
   // 새로운 유저 추가 정보 입력
-  async addUserInfo(
-    @Body() addUserInfoDto: AddUserInfoDto,
-    userId: number,
-  ): Promise<any> {
-    const addUserInfo = await this.usersRepository.addUserInfo(
+  async userInfo(addUserInfoDto: AddUserInfoDto, userId: number): Promise<any> {
+    const addUserInfo = await this.usersRepository.userInfo(
       addUserInfoDto,
       userId,
     );
@@ -46,9 +43,21 @@ export class UsersService {
   }
 
   //topic 정보 입력
-  async addTopic(@Body() topicDto: TopicDto, userId: number): Promise<any> {
+  async addTopic(topicDto: TopicDto, userId: number): Promise<any> {
     const addTopic = await this.topicService.addTopic(topicDto, userId);
     return addTopic;
+  }
+
+  // userId로 topic 정보 받기
+  async findTopicById(userId: number): Promise<any> {
+    const topic = await this.topicService.findTopicById(userId);
+    return topic;
+  }
+
+  //edit topic
+  async editTopic(topicDto: TopicDto, userId: number): Promise<any> {
+    const editTopic = await this.topicService.editTopic(topicDto, userId);
+    return editTopic;
   }
 
   // nickname으로 체크하기
