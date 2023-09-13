@@ -31,4 +31,10 @@ export class NoticeService {
       throw new HttpException('공지 글 생성 실패', HttpStatus.BAD_REQUEST);
     }
   }
+
+  /* crew 해당하는 notice 조회 */
+  async findNoticeByCrew(crewId: number): Promise<any> {
+    const notice = await this.noticeRepository.findNoticeByCrew(crewId);
+    return notice;
+  }
 }

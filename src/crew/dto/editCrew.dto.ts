@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger/dist';
 import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class CreateCrewDto {
+export class EditCrewDto {
   //category
   @ApiProperty({
     example: '운동',
@@ -21,26 +21,6 @@ export class CreateCrewDto {
   @IsString()
   @IsNotEmpty()
   crewAddress: string;
-
-  //crewType
-  @ApiProperty({
-    example: '번개',
-    description: 'crewType',
-    required: true,
-  })
-  @IsString()
-  @IsNotEmpty()
-  crewType: string;
-
-  //crewDDay
-  @ApiProperty({
-    example: '2023-08-19T03:44:19.661Z',
-    description: 'crewDDay',
-    required: true,
-  })
-  @IsDate()
-  @IsNotEmpty()
-  crewDDay: Date;
 
   //crewMemberInfo
   @ApiProperty({
@@ -102,17 +82,6 @@ export class CreateCrewDto {
   @IsNotEmpty()
   crewContent: string;
 
-  //thumbnail
-  @ApiProperty({
-    example:
-      'https://www.sportsw.kr/news/data/20230627/p1065588600851429_657_thum.jpg',
-    description: 'thumbnail',
-    required: true,
-  })
-  @IsString()
-  @IsNotEmpty()
-  thumbnail: string;
-
   //crewMaxMember
   @ApiProperty({
     example: 8,
@@ -122,24 +91,4 @@ export class CreateCrewDto {
   @IsNumber()
   @IsNotEmpty()
   crewMaxMember: number;
-
-  //latitude
-  @ApiProperty({
-    example: 23.010203,
-    description: 'latitude',
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  latitude: number;
-
-  //longtitude
-  @ApiProperty({
-    example: 106.102032,
-    description: 'longtitude',
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  longtitude: number;
 }

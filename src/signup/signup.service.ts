@@ -48,6 +48,12 @@ export class SignupService {
     return submitSignup;
   }
 
+  /* 본인이 작성한 signup확인 */
+  async findMySignup(userId: number, crewId: number): Promise<any> {
+    const signup = this.signupRespository.findMySignup(userId, crewId);
+    return signup;
+  }
+
   /* 제출한 가입서 조회 */
   async findAllSubmitted(crewId: number): Promise<any> {
     const findAllSubmitted = await this.signupRespository.findAllSubmitted(

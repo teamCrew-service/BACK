@@ -5,18 +5,22 @@ import { UsersRepository } from './users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
-import { Topic } from './entities/topic.entity';
-import { TopicRepository } from './topic.repository';
 import { CrewModule } from 'src/crew/crew.module';
+import { TopicModule } from 'src/topic/topic.module';
+import { LikeModule } from 'src/like/like.module';
+import { MemberModule } from 'src/member/member.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, Topic]),
+    TypeOrmModule.forFeature([Users]),
     forwardRef(() => AuthModule),
     forwardRef(() => CrewModule),
+    forwardRef(() => TopicModule),
+    forwardRef(() => LikeModule),
+    forwardRef(() => MemberModule),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, TopicRepository],
-  exports: [UsersService, UsersRepository, TopicRepository],
+  providers: [UsersService, UsersRepository],
+  exports: [UsersService, UsersRepository],
 })
 export class UsersModule {}

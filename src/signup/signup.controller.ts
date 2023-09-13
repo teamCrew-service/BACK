@@ -14,6 +14,7 @@ import { SubmitSignupDto } from './dto/submit-signup.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 import { CrewService } from 'src/crew/crew.service';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
+import { MemberService } from 'src/member/member.service';
 
 @Controller()
 @ApiTags('signup API')
@@ -21,6 +22,7 @@ export class SignupController {
   constructor(
     private readonly signupService: SignupService,
     private readonly crewService: CrewService,
+    private readonly memberService: MemberService,
   ) {}
 
   /* 모임 가입(form 생성): 버전 업그레이드에 맞춰 사용*/
@@ -46,6 +48,36 @@ export class SignupController {
   //     .status(HttpStatus.CREATED)
   //     .json({ message: '모임 가입 양식 작성 완료' });
   // }
+
+  /* (누구나 참여 가능) 모임 가입 */
+  @Post('signup/:crewId')
+  @ApiOperation({
+    summary: '(누구나 참여 가능) 모임 가입 API',
+    description: '(누구나 참여 가능) 모임 가입',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임 가입 완료',
+  })
+  async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
+    const { userId } = res.locals.user;
+    const crew = await this.crewService.findByCrewId(crewId);
+    const member = await this.memberService.findAllMember(crewId);
+    if (crew.userId === userId) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '모임의 방장입니다.' });
+    }
+    for (let i = 0; i < member.length; i++) {
+      if (member.userId === userId) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임에 이미 가입했습니다.' });
+      }
+    }
+    await this.memberService.addMember(crewId, userId);
+    return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
+  }
 
   /* 모임 가입(form 불러오기) */
   @Get('signupform/:signupFormId')
@@ -75,7 +107,7 @@ export class SignupController {
   }
 
   /* 모임 가입 작성 */
-  @Post('signup/:crewId/:signupFormId/submit')
+  @Post('signup/:signupFormId/:crewId/submit')
   @ApiOperation({
     summary: '모임 가입 작성 API',
     description: '모임 가입 작성',
@@ -91,6 +123,15 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     const { userId } = res.locals.user;
+    const submitedSignup = await this.signupService.findMySignup(
+      userId,
+      crewId,
+    );
+    if (submitedSignup) {
+      return res.status(HttpStatus.CONFLICT).json({
+        message: '가입서를 작성한 Crew입니다. 모임장의 승인을 기다려주세요',
+      });
+    }
     if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
       throw new Error('작성을 완료해주세요');
     }

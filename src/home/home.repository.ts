@@ -21,6 +21,8 @@ export class HomeRepository {
         'crew.thumbnail',
         'crew.crewDDay',
         'crew.crewAddress',
+        'crew.latitude',
+        'crew.longtitude',
       ])
       .getMany();
 
@@ -28,7 +30,27 @@ export class HomeRepository {
   }
 
   // 내 주변 모임 찾기(카테고리별)
-  async findByCategory(category: string): Promise<any> {
+  async findCrewByCategoryAndMap(category: string): Promise<any> {
+    const crew = await this.mapRepository
+      .createQueryBuilder('crew')
+      .select([
+        'crew.crewId',
+        'crew.category',
+        'crew.crewTitle',
+        'crew.thumbnail',
+        'crew.crewDDay',
+        'crew.crewAddress',
+        'crew.latitude',
+        'crew.longtitude',
+      ])
+      .where('crew.category = :category', { category })
+      .getMany();
+
+    return crew;
+  }
+
+  // 카테고리별 모임 찾기
+  async findCrewByCategory(category: string): Promise<any> {
     const crew = await this.mapRepository
       .createQueryBuilder('crew')
       .select([
@@ -39,8 +61,8 @@ export class HomeRepository {
         'crew.crewDDay',
         'crew.crewAddress',
       ])
-      .where('crew.category = :category', { category: category })
-      .getMany();
+      .where('crew.category = :category', { category })
+      .getRawMany();
 
     return crew;
   }
