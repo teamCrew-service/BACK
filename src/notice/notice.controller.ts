@@ -9,7 +9,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
-import { CreateNoticeDto } from './dto/createnotice.dto';
+import { CreateNoticeDto } from './dto/createNotice.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 
 @Controller('notice')
@@ -17,7 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
-  // HTTP GET 요청에 대한 핸들러
+  // 공지사항 조회
   @Get('comingDate')
   @ApiOperation({
     summary: '다가오는 일정 리스트 조회 API',
@@ -59,6 +59,7 @@ export class NoticeController {
     }
   }
 
+  // 공지사항 생성
   @Post('write')
   async createNotice(@Body() createNoticeDto: CreateNoticeDto): Promise<any> {
     return this.noticeService.createNotice(createNoticeDto);

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice } from './entities/notice.entity';
-import { CreateNoticeDto } from './dto/createnotice.dto';
+import { CreateNoticeDto } from './dto/createNotice.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -11,6 +11,7 @@ export class NoticeRepository {
     private readonly noticeRepository: Repository<Notice>,
   ) {}
 
+  // 공지사항 조회
   async findNotice(userId: number): Promise<any> {
     const notices = await this.noticeRepository
       .createQueryBuilder('notice')
@@ -24,6 +25,7 @@ export class NoticeRepository {
     return notices;
   }
 
+  // 공지사항 생성
   async createNotice(createNoticeDto: CreateNoticeDto): Promise<Notice> {
     const notice = new Notice();
     Object.assign(notice, createNoticeDto);

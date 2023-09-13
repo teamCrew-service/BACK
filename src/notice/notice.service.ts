@@ -1,11 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { NoticeRepository } from './notice.repository';
-import { CreateNoticeDto } from './dto/createnotice.dto';
+import { CreateNoticeDto } from './dto/createNotice.dto';
 
 @Injectable()
 export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
 
+  // 공지사항 조회
   async findNotice(userId: number) {
     const notice = await this.noticeRepository.findNotice(userId);
 
@@ -21,6 +22,7 @@ export class NoticeService {
     return processedNotices;
   }
 
+  // 공지사항 생성
   async createNotice(createNoticeDto: CreateNoticeDto): Promise<any> {
     try {
       const notice = await this.noticeRepository.createNotice(createNoticeDto);
