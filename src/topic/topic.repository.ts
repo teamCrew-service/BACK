@@ -1,4 +1,4 @@
-import { Body, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from './entities/topic.entity';
 import { Repository } from 'typeorm';
@@ -21,7 +21,7 @@ export class TopicRepository {
           const topic = new Topic();
           topic.userId = userId;
           topic.interestTopic = interestTopic;
-          await this.topicRepository.save(topic); // TypeORM과 같은 데이터베이스 ORM을 사용하고 있다고 가정합니다.
+          await this.topicRepository.save(topic);
         }
       } else {
         const topic = new Topic();
@@ -33,7 +33,53 @@ export class TopicRepository {
       return { message: '주제가 성공적으로 저장되었습니다.' };
     } catch (error) {
       console.error('주제 저장 실패:', error);
-      throw error; // 오류를 상위 수준에서 처리하기 위해 이 오류를 다시 던집니다. 호출자에서 적절히 처리할 수 있습니다.
+      throw new Error('TopicRepository/addTopic');
+    }
+  }
+
+  /* 관심사 조회 */
+  async findTopicById(userId: number): Promise<any> {
+    const topic = await this.topicRepository
+      .createQueryBuilder('topic')
+      .select(['interestTopic', 'userId'])
+      .where('topic.userId = :userId', { userId })
+      .getRawMany();
+  }
+
+  /* 관심사 수정*/
+  async editTopic(topicDto: TopicDto, userId: number): Promise<any> {
+    try {
+      const interestTopic = topicDto.interestTopic;
+
+      // 기존의 topic 삭제
+      await this.topicRepository
+        .createQueryBuilder()
+        .delete()
+        .from(Topic)
+        .where('userId = :userId', { userId })
+        .execute();
+
+      // 새로운 topic 넣어주기
+      if (interestTopic.includes(',')) {
+        const newTopics = interestTopic.split(',');
+
+        for (const newTopic of newTopics) {
+          const topic = new Topic();
+          topic.userId = userId;
+          topic.interestTopic = newTopic;
+          await this.topicRepository.save(topic);
+        }
+      } else {
+        const topic = new Topic();
+        topic.userId = userId;
+        topic.interestTopic = interestTopic;
+        await this.topicRepository.save(topic);
+      }
+
+      return { message: '관심사 주제 수정 성공' };
+    } catch (e) {
+      console.error(e);
+      throw new Error('TopicRepository/editTopic');
     }
   }
 }

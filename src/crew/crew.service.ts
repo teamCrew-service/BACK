@@ -5,9 +5,13 @@ import { EditCrewDto } from './dto/editCrew.dto';
 import axios from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
+import { LikeService } from 'src/like/like.service';
 @Injectable()
 export class CrewService {
-  constructor(private crewRepository: CrewRepository) {}
+  constructor(
+    private crewRepository: CrewRepository,
+    private likeService: LikeService,
+  ) {}
 
   /* 권한 검사를 위한 crew 조회 */
   async findCrewForAuth(crewId: number): Promise<any> {

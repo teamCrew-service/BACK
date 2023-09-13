@@ -43,7 +43,7 @@ export class UsersRepository {
   }
 
   // 최초 유저 정보 입력
-  async addUserInfo(
+  async userInfo(
     @Body() addUserInfoDto: AddUserInfoDto,
     userId: number,
   ): Promise<any> {

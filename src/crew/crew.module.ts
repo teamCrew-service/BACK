@@ -8,6 +8,7 @@ import { CrewController } from './crew.controller';
 import { SignupModule } from 'src/signup/signup.module';
 import { MemberModule } from 'src/member/member.module';
 import { NoticeModule } from 'src/notice/notice.module';
+import { LikeModule } from 'src/like/like.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { NoticeModule } from 'src/notice/notice.module';
     forwardRef(() => SignupModule),
     forwardRef(() => MemberModule),
     forwardRef(() => NoticeModule),
+    forwardRef(() => LikeModule),
   ],
   providers: [CrewService, CrewRepository],
   exports: [CrewService, CrewRepository],
