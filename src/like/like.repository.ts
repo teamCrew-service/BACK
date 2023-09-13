@@ -29,4 +29,14 @@ export class LikeRepository {
     const caceledLike = await this.likeRepository.remove(like);
     return caceledLike;
   }
+
+  /* 찜 조회하기 */
+  async findLikedCrew(userId: number): Promise<any> {
+    const likedCrew = await this.likeRepository
+      .createQueryBuilder('like')
+      .select(['likeId', 'crewId'])
+      .where('like.userId = :userId', { userId })
+      .getRawMany();
+    return likedCrew;
+  }
 }

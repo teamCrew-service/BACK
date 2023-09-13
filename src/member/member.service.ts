@@ -17,4 +17,10 @@ export class MemberService {
     const member = allMember.map((user) => user.userId);
     return member;
   }
+
+  /* user가 member로 참여한 crewId 조회 */
+  async findJoinedCrew(userId: number): Promise<any> {
+    const joinedCrew = await this.memberRepository.findJoinedCrew(userId);
+    return joinedCrew;
+  }
 }

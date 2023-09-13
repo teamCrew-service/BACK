@@ -27,4 +27,14 @@ export class MemberRepository {
       .getRawMany();
     return allMember;
   }
+
+  /* user가 member로 참여한 crewId 조회 */
+  async findJoinedCrew(userId: number): Promise<any> {
+    const joinedCrew = await this.memberRepository
+      .createQueryBuilder('member')
+      .select(['crewId', 'memberId'])
+      .where('member.userId=:userId', { userId })
+      .getRawMany();
+    return joinedCrew;
+  }
 }

@@ -11,4 +11,15 @@ export class TopicService {
     const addTopic = await this.topicRepository.addTopic(topicDto, userId);
     return addTopic;
   }
+
+  /* 관심사 조회 */
+  async findTopicById(userId: number): Promise<any> {
+    const topic = await this.topicRepository.findTopicById(userId);
+  }
+
+  /* 관심사 수정 */
+  async editTopic(topicDto: TopicDto, userId: number): Promise<any> {
+    const editTopic = await this.topicRepository.editTopic(topicDto, userId);
+    return editTopic;
+  }
 }
