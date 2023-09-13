@@ -23,12 +23,41 @@ export class NoticeService {
   }
 
   // 공지사항 생성
-  async createNotice(createNoticeDto: CreateNoticeDto): Promise<any> {
+  async createNotice(
+    createNoticeDto: CreateNoticeDto,
+    userId: number,
+    crewId: number,
+  ): Promise<any> {
     try {
-      const notice = await this.noticeRepository.createNotice(createNoticeDto);
+      const notice = await this.noticeRepository.createNotice(
+        createNoticeDto,
+        userId,
+        crewId,
+      );
       return { notice, message: '공지 등록 성공' };
     } catch (error) {
       throw new HttpException('공지 글 생성 실패', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // 공지사항 수정
+  async editNotice(
+    userId: number,
+    // crewId: number,
+    noticeId: number,
+    editNoticeDto: any,
+  ): Promise<any> {
+    try {
+      const message = await this.noticeRepository.editNotice(
+        userId,
+        // crewId,
+        noticeId,
+        editNoticeDto,
+      );
+      return { message };
+    } catch (error) {
+      console.error('Error while editing notice:', error);
+      throw new HttpException('공지사항 수정 실패', HttpStatus.BAD_REQUEST);
     }
   }
 

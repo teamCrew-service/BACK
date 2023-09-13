@@ -2,14 +2,17 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   HttpException,
   HttpStatus,
-  Res,
   Request,
+  Res,
   Body,
+  Param,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './dto/createNotice.dto';
+import { EditNoticeDto } from './dto/editNotice.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 
 @Controller('notice')
@@ -36,10 +39,10 @@ export class NoticeController {
       },
     },
   })
-  async findNotice(@Res() res: any, @Request() req: any): Promise<any> {
+  async findNotice(@Res() res: any): Promise<any> {
     try {
       // 다가오는 일정 리스트 조회
-      const userId = req.user.userId;
+      const userId = res.locals.user ? res.locals.user.userId : null;
       const notice = await this.noticeService.findNotice(userId);
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
@@ -60,8 +63,38 @@ export class NoticeController {
   }
 
   // 공지사항 생성
-  @Post('write')
-  async createNotice(@Body() createNoticeDto: CreateNoticeDto): Promise<any> {
-    return this.noticeService.createNotice(createNoticeDto);
+  @Post('/:crewId/notices')
+  async createNotice(
+    @Param('crewId') crewId: number,
+    @Body() createNoticeDto: CreateNoticeDto,
+    @Res() res: any,
+  ): Promise<any> {
+    const userId = res.locals.user ? res.locals.user.userId : null;
+
+    const result = await this.noticeService.createNotice(
+      createNoticeDto,
+      userId,
+      crewId,
+    );
+
+    return res.json(result);
+  }
+
+  // 공지사항 수정
+  @Put('edit/:noticeId')
+  async editNotice(
+    @Request() req,
+    @Res() res: any,
+    // @Param('crewId') crewId: number,
+    @Param('noticeId') noticeId: number,
+    @Body() editNoticeDto: EditNoticeDto,
+  ): Promise<any> {
+    const userId = res.locals.user ? res.locals.user.userId : null;
+    return this.noticeService.editNotice(
+      userId,
+      // crewId,
+      noticeId,
+      editNoticeDto,
+    );
   }
 }

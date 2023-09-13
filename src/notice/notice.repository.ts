@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notice } from './entities/notice.entity';
 import { CreateNoticeDto } from './dto/createNotice.dto';
+import { EditNoticeDto } from './dto/editNotice.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -26,11 +27,66 @@ export class NoticeRepository {
   }
 
   // 공지사항 생성
-  async createNotice(createNoticeDto: CreateNoticeDto): Promise<Notice> {
+  async createNotice(
+    createNoticeDto: CreateNoticeDto,
+    userId: number,
+    crewId: number,
+  ): Promise<Notice> {
+    console.log('Inside createNotice Repository', createNoticeDto);
     const notice = new Notice();
-    Object.assign(notice, createNoticeDto);
-    await this.noticeRepository.save(notice);
+    notice.userId = userId;
+    notice.crewId = crewId;
+    notice.noticeTitle = createNoticeDto.noticeTitle;
+    notice.noticeContent = createNoticeDto.noticeContent;
+    // notice.noticeDDay = createNoticeDto?.noticeDDay;
+    notice.noticeAddress = createNoticeDto.noticeAddress;
+
+    try {
+      await this.noticeRepository.save(notice);
+      console.log('Notice saved successfully'); // 성공 로깅
+    } catch (error) {
+      console.error('Error saving notice:', error); // 에러 로깅
+      throw new Error('Notice save failed');
+    }
     return notice;
+  }
+
+  // 공지사항 수정
+  async editNotice(
+    userId: number,
+    // crewId: number,
+    noticeId: number,
+    editNoticeDto: EditNoticeDto,
+  ): Promise<any> {
+    const notice = await this.noticeRepository.findOne({
+      where: { noticeId },
+      select: ['userId'],
+    });
+
+    console.log('Fetched notice:', notice);
+    console.log('Type of notice.userId:', typeof notice.userId);
+    console.log('Type of userId:', typeof userId);
+    console.log('userId:', userId);
+
+    // 공지사항 작성자가 아닐 경우
+    if (notice.userId !== userId) {
+      console.log('Authorship verification failed');
+      throw new Error('작성자가 아닙니다.');
+    }
+
+    // 공지사항 수정
+    notice.noticeTitle = editNoticeDto.noticeTitle;
+    notice.noticeContent = editNoticeDto.noticeContent;
+    // notice.noticeDDay = editNoticeDto.noticeDDay;
+    notice.noticeAddress = editNoticeDto.noticeAddress;
+    notice.updatedAt = new Date();
+
+    try {
+      await this.noticeRepository.save(notice);
+      return '공지사항 수정 성공';
+    } catch (error) {
+      throw new Error('공지사항 수정 실패');
+    }
   }
 
   /* crew에 해당하는 notice 조회 */
