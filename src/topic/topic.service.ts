@@ -15,6 +15,7 @@ export class TopicService {
   /* 관심사 조회 */
   async findTopicById(userId: number): Promise<any> {
     const topic = await this.topicRepository.findTopicById(userId);
+    return topic;
   }
 
   /* 관심사 수정 */

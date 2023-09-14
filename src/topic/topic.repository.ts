@@ -44,6 +44,7 @@ export class TopicRepository {
       .select(['interestTopic', 'userId'])
       .where('topic.userId = :userId', { userId })
       .getRawMany();
+    return topic;
   }
 
   /* 관심사 수정*/

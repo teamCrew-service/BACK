@@ -11,7 +11,13 @@ import {
 import { SignupService } from './signup.service';
 // import { CreateSignupFormDto } from './dto/create-signupForm.dto';
 import { SubmitSignupDto } from './dto/submit-signup.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger/dist';
 import { CrewService } from 'src/crew/crew.service';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberService } from 'src/member/member.service';
@@ -55,10 +61,12 @@ export class SignupController {
     summary: '(누구나 참여 가능) 모임 가입 API',
     description: '(누구나 참여 가능) 모임 가입',
   })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
   @ApiResponse({
     status: 200,
     description: '모임 가입 완료',
   })
+  @ApiBearerAuth('accessToken')
   async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
     const { userId } = res.locals.user;
     const crew = await this.crewService.findByCrewId(crewId);
@@ -85,6 +93,7 @@ export class SignupController {
     summary: '모임 가입 form 불러오기 API',
     description: '모임 가입 form 불러오기',
   })
+  @ApiParam({ name: 'signupFormId', description: 'signupFormId' })
   @ApiResponse({
     status: 200,
     description: '모임 가입 양식 불러오기',
@@ -97,6 +106,7 @@ export class SignupController {
       },
     },
   })
+  @ApiBearerAuth('accessToken')
   async findOneSignupForm(
     @Param('signupFormId')
     signupFormId: number,
@@ -116,6 +126,9 @@ export class SignupController {
     status: 200,
     description: '모임 가입 작성 완료',
   })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
+  @ApiParam({ name: 'signupFormId', description: 'signupFormId' })
+  @ApiBearerAuth('accessToken')
   async submitSignup(
     @Param('crewId') crewId: number,
     @Param('signupFormId') signupFormId: number,
@@ -152,6 +165,7 @@ export class SignupController {
     summary: '제출한 가입서 조회 API',
     description: '제출한 가입서 불러오기',
   })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
   @ApiResponse({
     status: 200,
     description: '제출한 가입서 불러오기',
@@ -163,6 +177,7 @@ export class SignupController {
       },
     },
   })
+  @ApiBearerAuth('accessToken')
   async findAllSubmitted(
     @Param('crewId') crewId: number,
     @Res() res: any,
@@ -185,10 +200,12 @@ export class SignupController {
     summary: '모임 참여 승인 여부 API',
     description: '제출한 가입서에 대한 승인 여부',
   })
+  @ApiParam({ name: 'signupId', description: 'signupId' })
   @ApiResponse({
     status: 200,
     description: '모임 가입서 확인 완료',
   })
+  @ApiBearerAuth('accessToken')
   async confirmSingup(
     @Param('signupId') singupId: number,
     @Body() confirmSingupDto: ConfirmSingupDto,
