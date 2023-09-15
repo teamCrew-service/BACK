@@ -196,9 +196,6 @@ export class CrewController {
     @Body() editCrewDto: EditCrewDto,
     @Res() res: any,
   ): Promise<any> {
-    console.log('crewId', crewId);
-    console.log('editCrewDto', editCrewDto);
-    console.log('res.locals', res.locals);
     const { userId } = res.locals.user;
 
     const crew = await this.crewService.findCrewForAuth(crewId);
@@ -233,6 +230,7 @@ export class CrewController {
       },
     },
   })
+  @ApiBearerAuth('accessToken')
   async deleteCrew(
     @Param('crewId') crewId: number,
     @Res() res: any,
