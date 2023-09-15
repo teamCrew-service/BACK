@@ -41,7 +41,7 @@ export class TopicRepository {
   async findTopicById(userId: number): Promise<any> {
     const topic = await this.topicRepository
       .createQueryBuilder('topic')
-      .select(['interestTopic', 'userId'])
+      .select(['userId', 'interestTopic'])
       .where('topic.userId = :userId', { userId })
       .getRawMany();
   }

@@ -133,7 +133,7 @@ export class CrewRepository {
   async findByCrewId(crewId: number): Promise<any> {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
-      .select(['crewId', 'userId'])
+      .select(['crewId', 'category', 'crewType', 'crewAddress', 'crewTitle'])
       .where('crew.crewId: id', { id: crewId })
       .getRawOne();
     return crew;
