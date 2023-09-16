@@ -1,11 +1,19 @@
 import {
   Controller,
   Get,
+  Post,
+  Put,
   HttpException,
   HttpStatus,
+  Request,
   Res,
+  Body,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
+import { CreateNoticeDto } from './dto/createNotice.dto';
+import { EditNoticeDto } from './dto/editNotice.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 
 @Controller('notice')
@@ -13,7 +21,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
-  // HTTP GET 요청에 대한 핸들러
+  // 공지사항 조회
   @Get('comingDate')
   @ApiOperation({
     summary: '다가오는 일정 리스트 조회 API',
@@ -35,7 +43,8 @@ export class NoticeController {
   async findNotice(@Res() res: any): Promise<any> {
     try {
       // 다가오는 일정 리스트 조회
-      const notice = await this.noticeService.findNotice();
+      const userId = res.locals.user ? res.locals.user.userId : null;
+      const notice = await this.noticeService.findNotice(userId);
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
       if (notice.length === 0) {
@@ -49,6 +58,84 @@ export class NoticeController {
       console.error(error); // 로깅
       throw new HttpException(
         `리스트 조회 실패: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // 공지사항 생성
+  @Post('/:crewId/notices')
+  async createNotice(
+    @Param('crewId') crewId: number,
+    @Body() createNoticeDto: CreateNoticeDto,
+    @Res() res: any,
+  ): Promise<any> {
+    const userId = res.locals.user ? res.locals.user.userId : null;
+
+    const result = await this.noticeService.createNotice(
+      createNoticeDto,
+      userId,
+      crewId,
+    );
+
+    return res.json(result);
+  }
+
+  // 공지사항 수정
+  @Put('edit/:crewId/:noticeId')
+  async editNotice(
+    @Request() req,
+    @Res() res: any,
+    @Param('crewId') crewId: number,
+    @Param('noticeId') noticeId: number,
+    @Body() editNoticeDto: EditNoticeDto,
+  ): Promise<any> {
+    const userId = res.locals.user ? res.locals.user.userId : null;
+    const result = await this.noticeService.editNotice(
+      userId,
+      crewId,
+      noticeId,
+      editNoticeDto,
+    );
+    return res.json(result);
+  }
+
+  // 공지사항 상세 조회
+  @Get('detail/:crewId/:noticeId')
+  async findNoticeDetail(
+    @Param('noticeId') noticeId: number,
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const notice = await this.noticeService.findNoticeDetail(
+        noticeId,
+        crewId,
+      );
+      return res.status(HttpStatus.OK).json(notice);
+    } catch (error) {
+      console.error(error); // 로깅
+      throw new HttpException(
+        `공지사항 상세 조회 실패: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // 공지사항 삭제
+  @Delete('del/:crewId/:noticeId')
+  async deleteNotice(
+    @Param('crewId') crewId: number,
+    @Param('noticeId') noticeId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const result = await this.noticeService.deleteNotice(noticeId, crewId);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      console.error(error); // 로깅
+      throw new HttpException(
+        `공지사항 삭제 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

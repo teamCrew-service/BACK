@@ -1,18 +1,6 @@
-import { IsNumber, IsString, IsDate, IsNotEmpty } from 'class-validator';
+import { IsString, IsDate, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateNoticeDto {
-  @IsNumber()
-  @IsNotEmpty()
-  userId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  crewId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  noticeId: number;
-
   @IsString()
   @IsNotEmpty()
   noticeTitle: string;
@@ -22,7 +10,7 @@ export class CreateNoticeDto {
   noticeContent: string;
 
   @IsDate()
-  @IsNotEmpty()
+  @IsOptional()
   noticeDDay: Date;
 
   @IsString()
