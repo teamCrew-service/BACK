@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger/dist';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateSignupFormDto {
   // question1
@@ -9,6 +9,7 @@ export class CreateSignupFormDto {
     required: true,
   })
   @IsString()
+  @IsOptional() // 값이 없어도 통과되도록 설정
   readonly question1: string;
 
   // question2
@@ -18,5 +19,6 @@ export class CreateSignupFormDto {
     required: true,
   })
   @IsString()
+  @IsOptional()
   readonly question2: string;
 }

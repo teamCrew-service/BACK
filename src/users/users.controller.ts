@@ -14,9 +14,12 @@ import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
 import { KakaoAuthGuard } from 'src/auth/guard/kakao-auth.guard';
 import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 import { UsersService } from './users.service';
-import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
-import { TopicDto } from '../topic/dto/topic.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger/dist';
 import { CrewService } from 'src/crew/crew.service';
 import { TestLoginDto } from './dto/testLogin-user.dto';
 import { AuthService } from 'src/auth/auth.service';
@@ -192,6 +195,7 @@ export class UsersController {
     status: 201,
     description: '추가 정보 입력 완료',
   })
+  @ApiBearerAuth('accessToken')
   async addUserInfo(
     @Body() topicAndInfoDto: TopicAndInfoDto,
     @Res() res: any,
@@ -241,6 +245,14 @@ export class UsersController {
 
   /* 로그아웃 */
   @Get('auth/logout')
+  @ApiOperation({
+    summary: '로그아웃 API',
+    description: '로그아웃 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그아웃 완료',
+  })
   async logout(@Res() res: Response): Promise<any> {
     res.clearCookie('authorization');
     return res.status(HttpStatus.OK).json({ message: '로그아웃 성공' });
@@ -248,6 +260,82 @@ export class UsersController {
 
   /* 마이페이지 */
   @Get('mypage')
+  @ApiOperation({
+    summary: '마이페이지 API',
+    description: '마이페이지 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '마이페이지에 관련된 정보를 조회',
+    schema: {
+      example: {
+        user: {
+          userId: 1,
+          provider: 'kakao',
+          location: '운정역',
+          email: 'asdf@asdf.com',
+          nickname: '돌핀맨',
+          age: 20,
+          gender: '남자',
+          profileImage: 'URL',
+          myMessage: '돌고래 짱짱맨',
+        },
+        topic: [
+          { userId: 1, interestTopic: '친목' },
+          { userId: 1, interestTopic: '여행' },
+        ],
+        createdCrew: [
+          {
+            crewId: 1,
+            category: '여행',
+            crewType: '단기',
+            crewAddress: '김포공항',
+            crewTitle: '제주도로 같이 여행 떠나요~~',
+          },
+          {
+            crewId: 6,
+            category: '자기 개발',
+            crewType: '장기',
+            crewAddress: '백석역',
+            crewTitle: '영어 스터디 모임',
+          },
+        ],
+        likedCrew: [
+          {
+            crewId: 1,
+            category: '여행',
+            crewType: '단기',
+            crewAddress: '김포공항',
+            crewTitle: '제주도로 같이 여행 떠나요~~',
+          },
+          {
+            crewId: 6,
+            category: '자기 개발',
+            crewType: '장기',
+            crewAddress: '백석역',
+            crewTitle: '영어 스터디 모임',
+          },
+        ],
+        joinedCrew: [
+          {
+            crewId: 1,
+            category: '여행',
+            crewType: '단기',
+            crewAddress: '김포공항',
+            crewTitle: '제주도로 같이 여행 떠나요~~',
+          },
+          {
+            crewId: 6,
+            category: '자기 개발',
+            crewType: '장기',
+            crewAddress: '백석역',
+            crewTitle: '영어 스터디 모임',
+          },
+        ],
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
   async mypage(@Res() res: Response): Promise<any> {
     const { userId } = res.locals.user;
     // user 정보
@@ -274,8 +362,8 @@ export class UsersController {
     }
     return res.status(HttpStatus.OK).json({
       user,
-      createdCrew,
       topic,
+      createdCrew,
       likedCrew: crewList,
       joinedCrew: memberCrewList,
     });
@@ -291,6 +379,7 @@ export class UsersController {
     status: 201,
     description: '유저 정보 수정 완료',
   })
+  @ApiBearerAuth('accessToken')
   async editMypage(
     @Body() topicAndInfoDto: TopicAndInfoDto,
     @Res() res: any,
@@ -311,6 +400,35 @@ export class UsersController {
 
   /* 내가 찜한 모임 */
   @Get('mycrew/likedcrew')
+  @ApiOperation({
+    summary: '내가 찜한 모임 API',
+    description: 'user가 찜한 모임 조회 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '내가 찜한 모임의 정보를 조회',
+    schema: {
+      example: {
+        likedCrew: [
+          {
+            crewId: 1,
+            category: '여행',
+            crewType: '단기',
+            crewAddress: '김포공항',
+            crewTitle: '제주도로 같이 여행 떠나요~~',
+          },
+          {
+            crewId: 6,
+            category: '자기 개발',
+            crewType: '장기',
+            crewAddress: '백석역',
+            crewTitle: '영어 스터디 모임',
+          },
+        ],
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
   async findLikedCrew(@Res() res: any): Promise<any> {
     const { userId } = res.locals.user;
     const likedCrew = await this.likeService.findLikedCrew(userId);
@@ -326,6 +444,35 @@ export class UsersController {
 
   /* 내가 참여한 모임 */
   @Get('mycrew/joinedcrew')
+  @ApiOperation({
+    summary: '내가 참여한 모임 API',
+    description: 'user가 참여한 모임 조회',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '내가 참여한 모임의 정보를 조회',
+    schema: {
+      example: {
+        joinedCrew: [
+          {
+            crewId: 1,
+            category: '여행',
+            crewType: '단기',
+            crewAddress: '김포공항',
+            crewTitle: '제주도로 같이 여행 떠나요~~',
+          },
+          {
+            crewId: 6,
+            category: '자기 개발',
+            crewType: '장기',
+            crewAddress: '백석역',
+            crewTitle: '영어 스터디 모임',
+          },
+        ],
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
   async findJoinedCrew(@Res() res: any): Promise<any> {
     const { userId } = res.locals.user;
     // user가 참여한 모임

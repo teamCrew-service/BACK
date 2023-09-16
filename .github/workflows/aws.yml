@@ -59,6 +59,36 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+      
+    - name: Generate Environment Variables File for Production
+      run: |
+        echo "KAKAO_ID=$KAKAO_ID" >> .env
+        echo "NAVER_ID=$NAVER_ID" >> .env
+        echo "NAVER_SECRET=$NAVER_SECRET" >> .env
+        echo "GOOGLE_ID=$GOOGLE_ID" >> .env
+        echo "GOOGLE_SECRET=$GOOGLE_SECRET" >> .env
+        echo "JWT_SECRET=$JWT_SECRET" >> .env
+        echo "DB_HOST=$DB_HOST" >> .env
+        echo "DB_DATABASE=$DB_DATABASE" >> .env
+        echo "DB_PORT=$DB_PORT" >> .env
+        echo "DB_USERNAME=$DB_USERNAME" >> .env
+        echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+        echo "REDIRECT_URI_AUTH=$REDIRECT_URI_AUTH" >> .env
+        echo "REDIRECT_URI_HOME=$REDIRECT_URI_HOME" >> .env
+      env:
+        KAKAO_ID: ${{ secrets.KAKAO_ID }}
+        NAVER_ID: ${{ secrets.NAVER_ID }}
+        NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
+        GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
+        GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        REDIRECT_URI_AUTH: ${{ secrets.REDIRECT_URI_AUTH }}
+        REDIRECT_URI_HOME: ${{ secrets.REDIRECT_URI_HOME }}
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -76,12 +106,18 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
+    - name: Download Task Definition Template
+      run: |
+        aws ecs describe-task-definition \
+          --task-definition ${{ env.ECS_TASK_DEFINITION }} \
+          --query taskDefinition \
+          > task-definition.json
+          
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        task-definition: task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
 

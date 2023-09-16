@@ -1,13 +1,17 @@
 import {
   Controller,
   Delete,
-  Get,
   HttpStatus,
   Param,
   Post,
   Res,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { LikeService } from './like.service';
 
 @Controller('like')
@@ -25,6 +29,7 @@ export class LikeController {
     status: 200,
     description: '찜하기 성공',
   })
+  @ApiBearerAuth('accessToken')
   async likeCrew(
     @Param('crewId') crewId: number,
     @Res() res: any,
@@ -41,7 +46,7 @@ export class LikeController {
     }
   }
 
-  /* 찜하기 */
+  /* 찜 취소하기 */
   @Delete(':crewId')
   @ApiOperation({
     summary: '찜 취소하기 API',
@@ -51,6 +56,7 @@ export class LikeController {
     status: 200,
     description: '찜 취소하기 성공',
   })
+  @ApiBearerAuth('accessToken')
   async cancelLikeCrew(
     @Param('crewId') crewId: number,
     @Res() res: any,

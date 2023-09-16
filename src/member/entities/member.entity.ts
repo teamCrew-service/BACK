@@ -1,7 +1,6 @@
 import { Crew } from 'src/crew/entities/crew.entity';
 import { Users } from 'src/users/entities/user.entity';
 import {
-  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
