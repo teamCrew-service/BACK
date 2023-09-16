@@ -1,73 +1,78 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# teamCrew
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# 목차
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+1. [프로젝트 소개](#loudspeaker-프로젝트-소개)
+2. [개발 인원](#office-개발-인원)
+3. [기술 스택](#wrench-기술-스택)
+4. [라이브러리](#books-라이브러리)
+5. [아키텍처](#pushpin-아키텍처)
+6. [ERD](#bank-erd)
+7. [개선 사항](#rocket-개선-사항)
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## :loudspeaker: 프로젝트 소개
 
-## Installation
+### :calendar: 프로젝트 기간
 
-```bash
-$ npm install
-```
+2023년 08월 06일 ~ 2023년 10월
 
-## Running the app
+---
 
-```bash
-# development
-$ npm run start
+## :office: 개발 인원
 
-# watch mode
-$ npm run start:dev
+### Front-End
 
-# production mode
-$ npm run start:prod
-```
+- 최정운 (React) [FE팀장]
+- 이자용 (React)
+- 홍주혁 (React)
 
-## Test
+### Back-End
 
-```bash
-# unit tests
-$ npm run test
+- 박윤수 (Node.js) [BE팀장]
+- 변창일 (Node.js)
+- 김승호 (Node.js)
 
-# e2e tests
-$ npm run test:e2e
+### Design
 
-# test coverage
-$ npm run test:cov
-```
+- 김준영 (Designer)
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## :wrench: 기술 스택
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## :books: 라이브러리
 
-## License
+| 라이브러리              | 설명                          |
+| :---------------------- | :---------------------------- |
+| Nestjs                  | 서버 프레임워크               |
+| swagger                 | API 명세서 정리               |
+| typescript              | 유지, 보수 및 생산성 향상     |
+| mysql2                  | MySQL                         |
+| jwt                     | 서명 암호화                   |
+| passport                | 소셜 간편화를 위한 라이브러리 |
+| passport-google-oauth20 | google 소셜 로그인            |
+| passport-kakao          | kakao 소셜 로그인             |
+| passport-naver-v2       | naver 소셜 로그인             |
+| eslint                  | 정적 코드 분석                |
+| typeorm                 | Object Relational Mapping     |
+| axios                   | Promise 기반 HTTP 클라이언트  |
 
-Nest is [MIT licensed](LICENSE).
+|
+
+---
+
+## :pushpin: 아키텍처
+
+---
+
+## :bank: ERD
+
+---
+
+## :rocket: 개선 사항
+
+---
