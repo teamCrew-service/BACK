@@ -9,6 +9,7 @@ import {
   Res,
   Body,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './dto/createNotice.dto';
@@ -81,20 +82,62 @@ export class NoticeController {
   }
 
   // 공지사항 수정
-  @Put('edit/:noticeId')
+  @Put('edit/:crewId/:noticeId')
   async editNotice(
     @Request() req,
     @Res() res: any,
-    // @Param('crewId') crewId: number,
+    @Param('crewId') crewId: number,
     @Param('noticeId') noticeId: number,
     @Body() editNoticeDto: EditNoticeDto,
   ): Promise<any> {
     const userId = res.locals.user ? res.locals.user.userId : null;
-    return this.noticeService.editNotice(
+    const result = await this.noticeService.editNotice(
       userId,
-      // crewId,
+      crewId,
       noticeId,
       editNoticeDto,
     );
+    return res.json(result);
+  }
+
+  // 공지사항 상세 조회
+  @Get('detail/:crewId/:noticeId')
+  async findNoticeDetail(
+    @Param('noticeId') noticeId: number,
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const notice = await this.noticeService.findNoticeDetail(
+        noticeId,
+        crewId,
+      );
+      return res.status(HttpStatus.OK).json(notice);
+    } catch (error) {
+      console.error(error); // 로깅
+      throw new HttpException(
+        `공지사항 상세 조회 실패: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // 공지사항 삭제
+  @Delete('del/:crewId/:noticeId')
+  async deleteNotice(
+    @Param('crewId') crewId: number,
+    @Param('noticeId') noticeId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const result = await this.noticeService.deleteNotice(noticeId, crewId);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      console.error(error); // 로깅
+      throw new HttpException(
+        `공지사항 삭제 실패: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

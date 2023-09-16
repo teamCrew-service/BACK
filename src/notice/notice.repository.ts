@@ -38,55 +38,64 @@ export class NoticeRepository {
     notice.crewId = crewId;
     notice.noticeTitle = createNoticeDto.noticeTitle;
     notice.noticeContent = createNoticeDto.noticeContent;
-    // notice.noticeDDay = createNoticeDto?.noticeDDay;
+    notice.noticeDDay = createNoticeDto?.noticeDDay;
     notice.noticeAddress = createNoticeDto.noticeAddress;
 
-    try {
-      await this.noticeRepository.save(notice);
-      console.log('Notice saved successfully'); // 성공 로깅
-    } catch (error) {
-      console.error('Error saving notice:', error); // 에러 로깅
-      throw new Error('Notice save failed');
-    }
-    return notice;
+    const createdNotice = await this.noticeRepository.save(notice);
+
+    return createdNotice;
   }
 
   // 공지사항 수정
   async editNotice(
-    userId: number,
-    // crewId: number,
-    noticeId: number,
     editNoticeDto: EditNoticeDto,
+    userId: number,
+    crewId: number,
+    noticeId: number,
   ): Promise<any> {
     const notice = await this.noticeRepository.findOne({
-      where: { noticeId },
-      select: ['userId'],
+      where: { noticeId, userId, crewId },
     });
 
-    console.log('Fetched notice:', notice);
-    console.log('Type of notice.userId:', typeof notice.userId);
-    console.log('Type of userId:', typeof userId);
-    console.log('userId:', userId);
+    // 수정할 필드만 선택적으로 업데이트
+    notice.noticeTitle = editNoticeDto.noticeTitle || notice.noticeTitle;
+    notice.noticeAddress = editNoticeDto.noticeAddress || notice.noticeAddress;
+    notice.noticeDDay = editNoticeDto.noticeDDay || notice.noticeDDay;
+    notice.noticeContent = editNoticeDto.noticeContent || notice.noticeContent;
 
-    // 공지사항 작성자가 아닐 경우
-    if (notice.userId !== userId) {
-      console.log('Authorship verification failed');
-      throw new Error('작성자가 아닙니다.');
-    }
+    const updatedNotice = await this.noticeRepository.save(notice);
 
-    // 공지사항 수정
-    notice.noticeTitle = editNoticeDto.noticeTitle;
-    notice.noticeContent = editNoticeDto.noticeContent;
-    // notice.noticeDDay = editNoticeDto.noticeDDay;
-    notice.noticeAddress = editNoticeDto.noticeAddress;
-    notice.updatedAt = new Date();
+    return updatedNotice;
+  }
 
-    try {
-      await this.noticeRepository.save(notice);
-      return '공지사항 수정 성공';
-    } catch (error) {
-      throw new Error('공지사항 수정 실패');
-    }
+  // 공지사항 상세 조회
+  async findNoticeDetail(noticeId: number, crewId: number): Promise<any> {
+    const notice = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .leftJoin('notice.crewId', 'crew') // crew 테이블과의 join
+      .leftJoin('crew.member', 'member') // crew와 member 테이블과의 join
+      .where('notice.noticeId = :noticeId', { noticeId }) // 해당 noticeId를 가진 멤버만 필터링
+      .andWhere('crew.crewId = :crewId', { crewId }) // 해당 crewId를 가진 멤버만 필터링
+      .select([
+        'notice.noticeTitle',
+        'notice.noticeDDay',
+        'notice.noticeContent',
+        'notice.noticeAddress',
+      ]) // 필요한 필드만 선택
+      .getOne();
+
+    return notice;
+  }
+
+  // 공지사항 삭제
+  async deleteNotice(noticeId: number, crewId: number): Promise<any> {
+    const notice = await this.noticeRepository.findOne({
+      where: { noticeId, crewId },
+    });
+
+    const deletedNotice = await this.noticeRepository.softRemove(notice); // soft delete
+
+    return deletedNotice;
   }
 
   /* crew에 해당하는 notice 조회 */
