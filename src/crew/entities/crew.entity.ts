@@ -1,5 +1,5 @@
 import { Users } from 'src/users/entities/user.entity';
-import { Notice } from 'src/notice/entities/notice.entity';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 import {
   Column,
   CreateDateColumn,
@@ -28,8 +28,8 @@ export class Crew {
   @OneToMany(() => Member, (member) => member.crewId)
   member: Member[];
 
-  @OneToMany(() => Notice, (notice) => notice.crewId)
-  notice: Notice[];
+  @OneToMany(() => Schedule, (schedule) => schedule.crewId)
+  schedule: Schedule[];
 
   @OneToMany(() => Signupform, (signupForm) => signupForm.crewId)
   signupForm: Signupform[];

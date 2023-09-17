@@ -22,7 +22,7 @@ import {
 import { SignupService } from 'src/signup/signup.service';
 import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
 import { MemberService } from 'src/member/member.service';
-import { NoticeService } from 'src/notice/notice.service';
+import { ScheduleService } from 'src/schedule/schedule.service';
 import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
 @Controller('crew')
 @ApiTags('Crew API')
@@ -31,7 +31,7 @@ export class CrewController {
     private readonly crewService: CrewService,
     private readonly signupService: SignupService,
     private readonly memberService: MemberService,
-    private readonly noticeService: NoticeService,
+    private readonly scheduleService: ScheduleService,
   ) {}
 
   /* 모임 생성 */
@@ -103,11 +103,11 @@ export class CrewController {
             crewAddress: '소공동',
           },
           member: [1, 11, 10],
-          notice: {
-            noticeTitle: '퇴근 후 40분 걷기',
-            noticeDDay: '2023-08-19T03:44:19.661Z',
-            noticeContent: '일찍 퇴근 하는 분들 모여요!!',
-            noticeAddress: '일산 호수공원',
+          schedule: {
+            scheduleTitle: '퇴근 후 40분 걷기',
+            scheduleDDay: '2023-08-19T03:44:19.661Z',
+            scheduleContent: '일찍 퇴근 하는 분들 모여요!!',
+            scheduleAddress: '일산 호수공원',
           },
           personType: 'captain',
         },
@@ -121,11 +121,11 @@ export class CrewController {
             crewAddress: '소공동',
           },
           member: [1, 11, 10],
-          notice: {
-            noticeTitle: '퇴근 후 40분 걷기',
-            noticeDDay: '2023-08-19T03:44:19.661Z',
-            noticeContent: '일찍 퇴근 하는 분들 모여요!!',
-            noticeAddress: '일산 호수공원',
+          schedule: {
+            scheduleTitle: '퇴근 후 40분 걷기',
+            scheduleDDay: '2023-08-19T03:44:19.661Z',
+            scheduleContent: '일찍 퇴근 하는 분들 모여요!!',
+            scheduleAddress: '일산 호수공원',
           },
           personType: 'member',
         },
@@ -148,21 +148,21 @@ export class CrewController {
         .json({ crew, member, personType: 'person' });
     }
 
-    const notice = await this.noticeService.findNoticeByCrew(crewId);
+    const schedule = await this.scheduleService.findScheduleByCrew(crewId);
     // const signup = await this.signupService.findMySignup(userId, crewId);
 
     // 방장일 경우
     if (userId === crew.userId) {
       return res
         .status(HttpStatus.OK)
-        .json({ crew, member, notice, personType: 'captain' });
+        .json({ crew, member, schedule, personType: 'captain' });
     }
     for (let i = 0; i < member.length; i++) {
       // member일 경우
       if (userId === member[i].member_userId) {
         return res
           .status(HttpStatus.OK)
-          .json({ crew, member, notice, personType: 'member' });
+          .json({ crew, member, schedule, personType: 'member' });
       }
     }
     return res

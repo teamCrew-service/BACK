@@ -1,5 +1,5 @@
 import { Crew } from 'src/crew/entities/crew.entity';
-import { Notice } from 'src/notice/entities/notice.entity';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 import { Signup } from 'src/signup/entities/signup.entity';
 import { Member } from 'src/member/entities/member.entity';
 import { Topic } from '../../topic/entities/topic.entity';
@@ -54,8 +54,8 @@ export class Users {
   @OneToMany(() => Signup, (signup) => signup.userId)
   signup: Signup[];
 
-  @OneToMany(() => Notice, (notice) => notice.userId)
-  notice: Notice[];
+  @OneToMany(() => Schedule, (schedule) => schedule.userId)
+  schedule: Schedule[];
 
   @OneToMany(() => Topic, (topic) => topic.userId)
   topic: Topic[];

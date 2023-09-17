@@ -5,21 +5,20 @@ import {
   Put,
   HttpException,
   HttpStatus,
-  Request,
   Res,
   Body,
   Param,
   Delete,
 } from '@nestjs/common';
-import { NoticeService } from './notice.service';
-import { CreateNoticeDto } from './dto/createNotice.dto';
-import { EditNoticeDto } from './dto/editNotice.dto';
+import { ScheduleService } from './schedule.service';
+import { CreateScheduleDto } from './dto/createSchedule.dto';
+import { EditScheduleDto } from './dto/editSchedule.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 
-@Controller('notice')
-@ApiTags('Notice API')
-export class NoticeController {
-  constructor(private readonly noticeService: NoticeService) {}
+@Controller('schedule')
+@ApiTags('Schedule API')
+export class ScheduleController {
+  constructor(private readonly scheduleService: ScheduleService) {}
 
   // 공지사항 조회
   @Get('comingDate')
@@ -32,28 +31,27 @@ export class NoticeController {
     description: '다가오는 일정 리스트 조회합니다.',
     schema: {
       example: {
-        noice: {
-          noticeTitle: '퇴근 후 40분 걷기',
-          noticeDDay: '2023-08-19T03:44:19.661Z',
+        schedule: {
+          scheduleFTitle: '퇴근 후 40분 걷기',
+          scheduleDDay: '2023-08-19T03:44:19.661Z',
         },
         participatedUser: { profileImage: 'URI' },
       },
     },
   })
-  async findNotice(@Res() res: any): Promise<any> {
+  async findschedule(@Res() res: any): Promise<any> {
     try {
       // 다가오는 일정 리스트 조회
       const userId = res.locals.user ? res.locals.user.userId : null;
-      const notice = await this.noticeService.findNotice(userId);
+      const schedule = await this.scheduleService.findSchedule(userId);
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
-      if (notice.length === 0) {
-        return res.status(HttpStatus.NOT_FOUND).json({
-          errormessage: '다가오는 일정 리스트 조회 결과가 없습니다.',
-        });
+      if (schedule.length === 0) {
+        // 조회 된 일정이 없을 경우 null로 반환
+        return res.status(HttpStatus.NOT_FOUND).json(null);
       }
       // 다가오는 일정 리스트 조회 결과가 있을 경우
-      return res.status(HttpStatus.OK).json(notice);
+      return res.status(HttpStatus.OK).json(schedule);
     } catch (error) {
       console.error(error); // 로깅
       throw new HttpException(
@@ -64,16 +62,16 @@ export class NoticeController {
   }
 
   // 공지사항 생성
-  @Post('/:crewId/notices')
-  async createNotice(
+  @Post('/:crewId/schedules')
+  async createschedule(
     @Param('crewId') crewId: number,
-    @Body() createNoticeDto: CreateNoticeDto,
+    @Body() createscheduleDto: CreateScheduleDto,
     @Res() res: any,
   ): Promise<any> {
-    const userId = res.locals.user ? res.locals.user.userId : null;
+    const { userId } = res.locals.user;
 
-    const result = await this.noticeService.createNotice(
-      createNoticeDto,
+    const result = await this.scheduleService.createSchedule(
+      createscheduleDto,
       userId,
       crewId,
     );
@@ -82,37 +80,36 @@ export class NoticeController {
   }
 
   // 공지사항 수정
-  @Put('edit/:crewId/:noticeId')
-  async editNotice(
-    @Request() req,
+  @Put('edit/:crewId/:scheduleId')
+  async editschedule(
     @Res() res: any,
     @Param('crewId') crewId: number,
-    @Param('noticeId') noticeId: number,
-    @Body() editNoticeDto: EditNoticeDto,
+    @Param('scheduleId') scheduleId: number,
+    @Body() editscheduleDto: EditScheduleDto,
   ): Promise<any> {
-    const userId = res.locals.user ? res.locals.user.userId : null;
-    const result = await this.noticeService.editNotice(
+    const { userId } = res.locals.user;
+    const result = await this.scheduleService.editSchedule(
       userId,
       crewId,
-      noticeId,
-      editNoticeDto,
+      scheduleId,
+      editscheduleDto,
     );
     return res.json(result);
   }
 
   // 공지사항 상세 조회
-  @Get('detail/:crewId/:noticeId')
-  async findNoticeDetail(
-    @Param('noticeId') noticeId: number,
+  @Get('detail/:crewId/:scheduleId')
+  async findscheduleDetail(
+    @Param('scheduleId') scheduleId: number,
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
     try {
-      const notice = await this.noticeService.findNoticeDetail(
-        noticeId,
+      const schedule = await this.scheduleService.findScheduleDetail(
+        scheduleId,
         crewId,
       );
-      return res.status(HttpStatus.OK).json(notice);
+      return res.status(HttpStatus.OK).json(schedule);
     } catch (error) {
       console.error(error); // 로깅
       throw new HttpException(
@@ -123,14 +120,17 @@ export class NoticeController {
   }
 
   // 공지사항 삭제
-  @Delete('del/:crewId/:noticeId')
-  async deleteNotice(
+  @Delete('del/:crewId/:scheduleId')
+  async deleteschedule(
     @Param('crewId') crewId: number,
-    @Param('noticeId') noticeId: number,
+    @Param('scheduleId') scheduleId: number,
     @Res() res: any,
   ): Promise<any> {
     try {
-      const result = await this.noticeService.deleteNotice(noticeId, crewId);
+      const result = await this.scheduleService.deleteSchedule(
+        scheduleId,
+        crewId,
+      );
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
       console.error(error); // 로깅

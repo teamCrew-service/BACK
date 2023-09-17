@@ -1,19 +1,19 @@
 import { IsString, IsDate, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CreateNoticeDto {
+export class CreateScheduleDto {
   @IsString()
   @IsNotEmpty()
-  noticeTitle: string;
+  scheduleTitle: string;
 
   @IsString()
   @IsNotEmpty()
-  noticeContent: string;
+  scheduleContent: string;
 
   @IsDate()
   @IsOptional()
-  noticeDDay: Date;
+  scheduleDDay: Date;
 
   @IsString()
   @IsNotEmpty()
-  noticeAddress: string;
+  scheduleAddress: string;
 }

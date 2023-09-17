@@ -7,7 +7,7 @@ import { Crew } from './entities/crew.entity';
 import { CrewController } from './crew.controller';
 import { SignupModule } from 'src/signup/signup.module';
 import { MemberModule } from 'src/member/member.module';
-import { NoticeModule } from 'src/notice/notice.module';
+import { ScheduleModule } from 'src/schedule/schedule.module';
 import { LikeModule } from 'src/like/like.module';
 
 @Module({
@@ -16,7 +16,7 @@ import { LikeModule } from 'src/like/like.module';
     forwardRef(() => HomeModule),
     forwardRef(() => SignupModule),
     forwardRef(() => MemberModule),
-    forwardRef(() => NoticeModule),
+    forwardRef(() => ScheduleModule),
     forwardRef(() => LikeModule),
   ],
   providers: [CrewService, CrewRepository],
