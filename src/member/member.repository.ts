@@ -23,7 +23,7 @@ export class MemberRepository {
     const allMember = await this.memberRepository
       .createQueryBuilder('member')
       .select(['memberId', 'userId'])
-      .where('member.crewId = :id', { id: crewId })
+      .where('member.crewId = :crewId', { crewId })
       .getRawMany();
     return allMember;
   }

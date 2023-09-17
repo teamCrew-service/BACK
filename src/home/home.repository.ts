@@ -21,10 +21,14 @@ export class HomeRepository {
         'crew.thumbnail',
         'crew.crewDDay',
         'crew.crewAddress',
+        'crew.crewMaxMember',
         'crew.latitude',
         'crew.longtitude',
+        'COUNT(member.crewId) AS crewAttendedMember',
       ])
-      .getMany();
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .groupBy('crew.crewId')
+      .getRawMany();
 
     return crew;
   }
@@ -40,11 +44,15 @@ export class HomeRepository {
         'crew.thumbnail',
         'crew.crewDDay',
         'crew.crewAddress',
+        'crew.crewMaxMember',
         'crew.latitude',
         'crew.longtitude',
+        'COUNT(member.crewId) AS crewAttendedMember',
       ])
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
-      .getMany();
+      .getRawMany();
 
     return crew;
   }
@@ -60,7 +68,11 @@ export class HomeRepository {
         'crew.thumbnail',
         'crew.crewDDay',
         'crew.crewAddress',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
       ])
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
       .getRawMany();
 

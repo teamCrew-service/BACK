@@ -76,12 +76,17 @@ export class SignupController {
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: '모임의 방장입니다.' });
     }
-    for (let i = 0; i < member.length; i++) {
-      if (member.userId === userId) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '모임에 이미 가입했습니다.' });
+    if (crew.crewMaxMember === member.length) {
+      for (let i = 0; i < member.length; i++) {
+        if (member[i] === userId) {
+          return res
+            .status(HttpStatus.BAD_REQUEST)
+            .json({ message: '모임에 이미 가입했습니다.' });
+        }
       }
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '모임 인원이 가득 찼습니다.' });
     }
     await this.memberService.addMember(crewId, userId);
     return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });

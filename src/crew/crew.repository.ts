@@ -49,7 +49,7 @@ export class CrewRepository {
     return crew;
   }
 
-  /* 모임 글 상세 조회(참여 전) */
+  /* 모임 글 상세 조회 */
   async findCrewDetail(crewId: number): Promise<any> {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
@@ -133,8 +133,15 @@ export class CrewRepository {
   async findByCrewId(crewId: number): Promise<any> {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
-      .select(['crewId', 'category', 'crewType', 'crewAddress', 'crewTitle'])
-      .where('crew.crewId: id', { id: crewId })
+      .select([
+        'crewId',
+        'category',
+        'crewType',
+        'crewAddress',
+        'crewTitle',
+        'crewMaxMember',
+      ])
+      .where('crew.crewId = :crewId', { crewId })
       .getRawOne();
     return crew;
   }
