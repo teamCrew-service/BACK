@@ -13,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SignupModule } from './signup/signup.module';
 import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
-import { NoticeModule } from './notice/notice.module';
+import { ScheduleModule } from './schedule/schedule.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
 import { MemberModule } from './member/member.module';
 import { JwtService } from '@nestjs/jwt';
@@ -42,7 +42,7 @@ import { TopicModule } from './topic/topic.module';
     SignupModule,
     HomeModule,
     CrewModule,
-    NoticeModule,
+    ScheduleModule,
     MemberModule,
     LikeModule,
     TopicModule,
@@ -60,11 +60,16 @@ export class AppModule implements NestModule {
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
-      { path: 'notice/comingDate', method: RequestMethod.GET },
-      { path: 'notice/:crewId/notices', method: RequestMethod.POST },
-      { path: 'notice/edit/:noticeId', method: RequestMethod.PUT },
-      { path: 'notice/detail/:crewId/:noticeId', method: RequestMethod.GET },
-      { path: 'notice/del/:crewId/:noticeId', method: RequestMethod.DELETE },
+      { path: 'schedule/:crewId/schedules', method: RequestMethod.POST },
+      { path: 'schedule/edit/:scheduleId', method: RequestMethod.PUT },
+      {
+        path: 'schedule/detail/:crewId/:scheduleId',
+        method: RequestMethod.GET,
+      },
+      {
+        path: 'schedule/del/:crewId/:scheduleId',
+        method: RequestMethod.DELETE,
+      },
       { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
       { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
       { path: 'signup/:crewId', method: RequestMethod.POST },
@@ -78,6 +83,9 @@ export class AppModule implements NestModule {
     );
     consumer
       .apply(LoginMiddleware)
-      .forRoutes({ path: ':crewId', method: RequestMethod.GET });
+      .forRoutes(
+        { path: ':crewId', method: RequestMethod.GET },
+        { path: 'schedule/comingDate', method: RequestMethod.GET },
+      );
   }
 }

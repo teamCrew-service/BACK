@@ -11,32 +11,32 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('notice')
-export class Notice {
+@Entity('schedule')
+export class Schedule {
   @PrimaryGeneratedColumn()
-  noticeId: number;
+  scheduleId: number;
 
-  @ManyToOne(() => Users, (user) => user.notice)
+  @ManyToOne(() => Users, (user) => user.schedule)
   @JoinColumn({ name: 'userId' })
   // user: Users;
   userId: number;
 
-  @ManyToOne(() => Crew, (crew) => crew.notice)
+  @ManyToOne(() => Crew, (crew) => crew.schedule)
   @JoinColumn({ name: 'crewId' })
   // crew: Crew;
   crewId: number;
 
   @Column()
-  noticeTitle: string;
+  scheduleTitle: string;
 
   @Column()
-  noticeContent: string;
+  scheduleContent: string;
 
   @Column()
-  noticeDDay: Date;
+  scheduleDDay: Date;
 
   @Column()
-  noticeAddress: string;
+  scheduleAddress: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
