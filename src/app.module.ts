@@ -20,6 +20,9 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginMiddleware } from './middleware/login.middleware';
 import { LikeModule } from './like/like.module';
 import { TopicModule } from './topic/topic.module';
+import { NoticeModule } from './notice/notice.module';
+import { VoteformModule } from './voteform/voteform.module';
+import { VoteModule } from './vote/vote.module';
 
 @Module({
   imports: [
@@ -46,6 +49,9 @@ import { TopicModule } from './topic/topic.module';
     MemberModule,
     LikeModule,
     TopicModule,
+    NoticeModule,
+    VoteformModule,
+    VoteModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

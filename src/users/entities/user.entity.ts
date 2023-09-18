@@ -12,6 +12,9 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Like } from 'src/like/entities/like.entity';
+import { Notice } from 'src/notice/entities/notice.entity';
+import { VoteForm } from 'src/voteform/entities/voteform.entity';
+import { Vote } from 'src/vote/entities/vote.entity';
 
 @Entity('users')
 export class Users {
@@ -65,4 +68,13 @@ export class Users {
 
   @OneToMany(() => Like, (like) => like.userId)
   like: Like[];
+
+  @OneToMany(() => Notice, (notice) => notice.userId)
+  notice: Notice[];
+
+  @OneToMany(() => VoteForm, (voteForm) => voteForm.userId)
+  voteForm: VoteForm[];
+
+  @OneToMany(() => Vote, (vote) => vote.userId)
+  vote: Vote[];
 }

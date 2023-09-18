@@ -15,6 +15,9 @@ import { Signupform } from 'src/signup/entities/signupForm.entity';
 import { Signup } from 'src/signup/entities/signup.entity';
 import { Member } from 'src/member/entities/member.entity';
 import { Like } from 'src/like/entities/like.entity';
+import { Notice } from 'src/notice/entities/notice.entity';
+import { VoteForm } from 'src/voteform/entities/voteform.entity';
+import { Vote } from 'src/vote/entities/vote.entity';
 
 @Entity('crew')
 export class Crew {
@@ -39,6 +42,15 @@ export class Crew {
 
   @OneToMany(() => Like, (like) => like.crewId)
   like: Like[];
+
+  @OneToMany(() => Notice, (notice) => notice.crewId)
+  notice: Notice[];
+
+  @OneToMany(() => VoteForm, (voteForm) => voteForm.crewId)
+  voteForm: VoteForm[];
+
+  @OneToMany(() => Vote, (vote) => vote.crewId)
+  vote: Vote[];
 
   @Column()
   category: string;
