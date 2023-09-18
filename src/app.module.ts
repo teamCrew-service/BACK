@@ -67,13 +67,13 @@ export class AppModule implements NestModule {
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
       { path: 'schedule/:crewId/schedules', method: RequestMethod.POST },
-      { path: 'schedule/edit/:scheduleId', method: RequestMethod.PUT },
+      { path: 'schedule/edit/:crewId/:scheduleId', method: RequestMethod.PUT },
       {
         path: 'schedule/detail/:crewId/:scheduleId',
         method: RequestMethod.GET,
       },
       {
-        path: 'schedule/del/:crewId/:scheduleId',
+        path: 'schedule/delete/:crewId/:scheduleId',
         method: RequestMethod.DELETE,
       },
       { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
@@ -86,6 +86,11 @@ export class AppModule implements NestModule {
       },
       { path: 'signup/:signupId/confirmsignup', method: RequestMethod.PUT },
       { path: 'signup/:crewId', method: RequestMethod.GET },
+      { path: 'notice/:crewId/createNotice', method: RequestMethod.POST },
+      { path: 'notice/:crewId', method: RequestMethod.GET },
+      { path: 'notice/:crewId/:noticeId', method: RequestMethod.GET },
+      { path: 'notice/edit/:crewId/:noticeId', method: RequestMethod.PUT },
+      { path: 'notice/delete/:crewId/:noticeId', method: RequestMethod.DELETE },
     );
     consumer
       .apply(LoginMiddleware)

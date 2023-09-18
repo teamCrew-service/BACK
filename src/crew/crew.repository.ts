@@ -43,8 +43,8 @@ export class CrewRepository {
     crew.crewSignup = createCrewDto.crewSignup;
     crew.thumbnail = createCrewDto.thumbnail;
     crew.crewMaxMember = createCrewDto.crewMaxMember;
-    crew.latitude = createCrewDto.latitude;
-    crew.longtitude = createCrewDto.longtitude;
+    crew.latitude = createCrewDto.crewLatitude;
+    crew.longtitude = createCrewDto.crewLongtitude;
     await this.crewRepository.save(crew);
     return crew;
   }

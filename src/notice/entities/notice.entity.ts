@@ -38,10 +38,10 @@ export class Notice {
   noticeDDay: Date;
 
   @Column()
-  noticeLatitude: Double;
+  noticeLatitude: number;
 
   @Column()
-  noticeLongitude: Double;
+  noticeLongitude: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
