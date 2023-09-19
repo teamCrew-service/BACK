@@ -62,7 +62,7 @@ export class ScheduleController {
   }
 
   // 공지사항 생성
-  @Post('/:crewId/schedules')
+  @Post('/:crewId/createSchedule')
   async createschedule(
     @Param('crewId') crewId: number,
     @Body() createscheduleDto: CreateScheduleDto,
@@ -120,7 +120,7 @@ export class ScheduleController {
   }
 
   // 공지사항 삭제
-  @Delete('del/:crewId/:scheduleId')
+  @Delete('delete/:crewId/:scheduleId')
   async deleteschedule(
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,

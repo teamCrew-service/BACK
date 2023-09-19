@@ -123,23 +123,23 @@ export class CreateCrewDto {
   @IsNotEmpty()
   crewMaxMember: number;
 
-  //latitude
+  //crewLatitude
   @ApiProperty({
     example: 23.010203,
-    description: 'latitude',
+    description: 'crewLatitude',
     required: true,
   })
   @IsNumber()
   @IsNotEmpty()
-  latitude: number;
+  crewLatitude: number;
 
-  //longtitude
+  //crewLongtitude
   @ApiProperty({
     example: 106.102032,
-    description: 'longtitude',
+    description: 'crewLongtitude',
     required: true,
   })
   @IsNumber()
   @IsNotEmpty()
-  longtitude: number;
+  crewLongtitude: number;
 }
