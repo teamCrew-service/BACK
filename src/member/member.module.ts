@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Member } from './entities/member.entity';
 import { CrewModule } from 'src/crew/crew.module';
 import { SignupModule } from 'src/signup/signup.module';
+import { VoteFormModule } from 'src/voteform/voteform.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Member]),
     forwardRef(() => CrewModule),
     forwardRef(() => SignupModule),
+    forwardRef(() => VoteFormModule),
   ],
   providers: [MemberService, MemberRepository],
   exports: [MemberService, MemberRepository],

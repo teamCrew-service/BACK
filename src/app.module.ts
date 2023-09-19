@@ -21,7 +21,7 @@ import { LoginMiddleware } from './middleware/login.middleware';
 import { LikeModule } from './like/like.module';
 import { TopicModule } from './topic/topic.module';
 import { NoticeModule } from './notice/notice.module';
-import { VoteformModule } from './voteform/voteform.module';
+import { VoteFormModule } from './voteform/voteform.module';
 import { VoteModule } from './vote/vote.module';
 
 @Module({
@@ -50,7 +50,7 @@ import { VoteModule } from './vote/vote.module';
     LikeModule,
     TopicModule,
     NoticeModule,
-    VoteformModule,
+    VoteFormModule,
     VoteModule,
   ],
   controllers: [AppController],
@@ -91,6 +91,13 @@ export class AppModule implements NestModule {
       { path: 'notice/:crewId/:noticeId', method: RequestMethod.GET },
       { path: 'notice/edit/:crewId/:noticeId', method: RequestMethod.PUT },
       { path: 'notice/delete/:crewId/:noticeId', method: RequestMethod.DELETE },
+      { path: 'voteform/:crewId/createVoteForm', method: RequestMethod.POST },
+      { path: 'voteform/:crewId/:voteFormId', method: RequestMethod.GET },
+      { path: 'voteform/edit/:crewId/:voteFormId', method: RequestMethod.PUT },
+      {
+        path: 'voteform/delete/:crewId/:voteFormId',
+        method: RequestMethod.DELETE,
+      },
     );
     consumer
       .apply(LoginMiddleware)

@@ -19,6 +19,7 @@ import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './dto/createNotice.dto';
 import { CrewService } from 'src/crew/crew.service';
 import { EditNoticeDto } from './dto/editNotice.dto';
+import { VoteFormService } from 'src/voteform/voteform.service';
 
 @Controller('notice')
 @ApiTags('Notice API')
@@ -26,6 +27,7 @@ export class NoticeController {
   constructor(
     private readonly noticeService: NoticeService,
     private readonly crewService: CrewService,
+    private readonly voteFormService: VoteFormService,
   ) {}
 
   /* 공지 등록 */
@@ -94,12 +96,13 @@ export class NoticeController {
   ): Promise<any> {
     try {
       const notice = await this.noticeService.findAllNotice(crewId);
-      if (!notice) {
+      const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+      if (!notice && !voteForm) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '조회된 공지가 없습니다.' });
       } else {
-        return res.status(HttpStatus.OK).json({ notice });
+        return res.status(HttpStatus.OK).json({ notice, voteForm });
       }
     } catch (e) {
       console.error(e);
