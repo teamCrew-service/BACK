@@ -64,9 +64,19 @@ export class NoticeRepository {
     noticeId: number,
     editNoticeDto: EditNoticeDto,
   ): Promise<any> {
-    const notice = await this.noticeRepository.findOne({
-      where: { crewId, noticeId },
-    });
+    const notice = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .select([
+        'noticeTitle',
+        'noticeContent',
+        'noticeAddress',
+        'noticeDDay',
+        'noticeLatitude',
+        'noticeLongitude',
+      ])
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.noticeId = :noticeId', { noticeId })
+      .getRawOne();
 
     if (editNoticeDto.noticeTitle !== undefined) {
       notice.noticeTitle = editNoticeDto.noticeTitle;
@@ -94,9 +104,19 @@ export class NoticeRepository {
 
   /* 공지 삭제 */
   async deleteNotice(crewId: number, noticeId: number): Promise<any> {
-    const notice = await this.noticeRepository.findOne({
-      where: { crewId, noticeId },
-    });
+    const notice = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .select([
+        'noticeTitle',
+        'noticeContent',
+        'noticeAddress',
+        'noticeDDay',
+        'noticeLatitude',
+        'noticeLongitude',
+      ])
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.noticeId = :noticeId', { noticeId })
+      .getRawOne();
 
     const deletedNotice = await this.noticeRepository.softDelete(notice);
     return deletedNotice;

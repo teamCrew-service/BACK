@@ -33,9 +33,6 @@ export class VoteForm {
   voteContent: string;
 
   @Column()
-  voteStartDate: Date;
-
-  @Column()
   voteEndDate: Date;
 
   @Column({ nullable: true })
@@ -49,9 +46,6 @@ export class VoteForm {
 
   @Column({ nullable: true })
   voteOption4: string;
-
-  @Column({ nullable: true })
-  voteOption5: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
