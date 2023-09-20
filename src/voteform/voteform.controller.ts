@@ -82,12 +82,12 @@ export class VoteformController {
       example: {
         schedule: {
           voteTitle: '일산 호수공원 런닝!!',
-          voteContent: '이번주 목요일에 런닝 시간대 투표하겠습니다.',
-          voteEndDate: '2023-08-22T03:44:19.661Z',
-          voteOption1: '2시',
-          voteOption2: '3시',
-          voteOption3: '4시 30분',
-          voteOption4: null,
+          voteFormContent: '이번주 목요일에 런닝 시간대 투표하겠습니다.',
+          voteFormEndDate: '2023-08-22T03:44:19.661Z',
+          voteFormOption1: '2시',
+          voteFormOption2: '3시',
+          voteFormOption3: '4시 30분',
+          voteFormOption4: null,
         },
       },
     },

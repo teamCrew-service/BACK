@@ -21,13 +21,13 @@ export class VoteFormRepository {
     const voteForm = new VoteForm();
     voteForm.userId = userId;
     voteForm.crewId = crewId;
-    voteForm.voteTitle = createVoteFormDto.voteTitle;
-    voteForm.voteContent = createVoteFormDto.voteContent;
-    voteForm.voteEndDate = createVoteFormDto.voteEndDate;
-    voteForm.voteOption1 = createVoteFormDto.voteOption1;
-    voteForm.voteOption2 = createVoteFormDto.voteOption2;
-    voteForm.voteOption3 = createVoteFormDto.voteOption3;
-    voteForm.voteOption4 = createVoteFormDto.voteOption4;
+    voteForm.voteTitle = createVoteFormDto.voteFormTitle;
+    voteForm.voteContent = createVoteFormDto.voteFormContent;
+    voteForm.voteEndDate = createVoteFormDto.voteFormEndDate;
+    voteForm.voteOption1 = createVoteFormDto.voteFormOption1;
+    voteForm.voteOption2 = createVoteFormDto.voteFormOption2;
+    voteForm.voteOption3 = createVoteFormDto.voteFormOption3;
+    voteForm.voteOption4 = createVoteFormDto.voteFormOption4;
     await this.voteFormRepository.save(voteForm);
     return voteForm;
   }
@@ -48,13 +48,13 @@ export class VoteFormRepository {
       .select([
         'users.profileImage',
         'users.nickname',
-        'voteform.voteTitle',
-        'voteform.voteContent',
-        'voteform.voteEndDate',
-        'voteform.voteOption1',
-        'voteform.voteOption2',
-        'voteform.voteOption3',
-        'voteform.voteOption4',
+        'voteform.voteFormTitle',
+        'voteform.voteFormContent',
+        'voteform.voteFormEndDate',
+        'voteform.voteFormOption1',
+        'voteform.voteFormOption2',
+        'voteform.voteFormOption3',
+        'voteform.voteFormOption4',
       ])
       .getRawOne();
     return voteForm;
@@ -69,38 +69,38 @@ export class VoteFormRepository {
     const voteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
       .select([
-        'voteTitle',
-        'voteContent',
-        'voteEndDate',
-        'voteOption1',
-        'voteOption2',
-        'voteOption3',
-        'voteOption4',
+        'voteFormTitle',
+        'voteFormContent',
+        'voteFormEndDate',
+        'voteFormOption1',
+        'voteFormOption2',
+        'voteFormOption3',
+        'voteFormOption4',
       ])
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
       .getRawOne();
 
-    if (editVoteFormDto.voteTitle !== undefined) {
-      voteForm.voteTitle = editVoteFormDto.voteTitle;
+    if (editVoteFormDto.voteFormTitle !== undefined) {
+      voteForm.voteTitle = editVoteFormDto.voteFormTitle;
     }
-    if (editVoteFormDto.voteContent !== undefined) {
-      voteForm.voteContent = editVoteFormDto.voteContent;
+    if (editVoteFormDto.voteFormContent !== undefined) {
+      voteForm.voteContent = editVoteFormDto.voteFormContent;
     }
-    if (editVoteFormDto.voteEndDate !== undefined) {
-      voteForm.voteEndDate = editVoteFormDto.voteEndDate;
+    if (editVoteFormDto.voteFormEndDate !== undefined) {
+      voteForm.voteEndDate = editVoteFormDto.voteFormEndDate;
     }
-    if (editVoteFormDto.voteOption1 !== undefined) {
-      voteForm.voteOption1 = editVoteFormDto.voteOption1;
+    if (editVoteFormDto.voteFormOption1 !== undefined) {
+      voteForm.voteOption1 = editVoteFormDto.voteFormOption1;
     }
-    if (editVoteFormDto.voteOption2 !== undefined) {
-      voteForm.voteOption2 = editVoteFormDto.voteOption2;
+    if (editVoteFormDto.voteFormOption2 !== undefined) {
+      voteForm.voteOption2 = editVoteFormDto.voteFormOption2;
     }
-    if (editVoteFormDto.voteOption3 !== undefined) {
-      voteForm.voteOption3 = editVoteFormDto.voteOption3;
+    if (editVoteFormDto.voteFormOption3 !== undefined) {
+      voteForm.voteOption3 = editVoteFormDto.voteFormOption3;
     }
-    if (editVoteFormDto.voteOption4 !== undefined) {
-      voteForm.voteOption4 = editVoteFormDto.voteOption4;
+    if (editVoteFormDto.voteFormOption4 !== undefined) {
+      voteForm.voteOption4 = editVoteFormDto.voteFormOption4;
     }
 
     const editedVoteForm = await this.voteFormRepository.save(voteForm);
@@ -113,13 +113,13 @@ export class VoteFormRepository {
     const voteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
       .select([
-        'voteTitle',
-        'voteContent',
-        'voteEndDate',
-        'voteOption1',
-        'voteOption2',
-        'voteOption3',
-        'voteOption4',
+        'voteFormTitle',
+        'voteFormContent',
+        'voteFormEndDate',
+        'voteFormOption1',
+        'voteFormOption2',
+        'voteFormOption3',
+        'voteFormOption4',
       ])
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
