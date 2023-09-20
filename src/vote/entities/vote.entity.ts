@@ -27,5 +27,5 @@ export class Vote {
   voteFormId: number;
 
   @Column()
-  voteDay: string;
+  vote: string;
 }

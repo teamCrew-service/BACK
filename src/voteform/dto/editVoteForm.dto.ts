@@ -10,7 +10,7 @@ export class EditVoteFormDto {
   })
   @IsString()
   @IsOptional()
-  voteTitle: string;
+  voteFormTitle: string;
 
   //voteContent
   @ApiProperty({
@@ -20,7 +20,7 @@ export class EditVoteFormDto {
   })
   @IsString()
   @IsOptional()
-  voteContent: string;
+  voteFormContent: string;
 
   //voteEndDate
   @ApiProperty({
@@ -30,7 +30,7 @@ export class EditVoteFormDto {
   })
   @IsDate()
   @IsOptional()
-  voteEndDate: Date;
+  voteFormEndDate: Date;
 
   //voteOption1
   @ApiProperty({
@@ -40,7 +40,7 @@ export class EditVoteFormDto {
   })
   @IsString()
   @IsOptional()
-  voteOption1: string;
+  voteFormOption1: string;
 
   //voteOption2
   @ApiProperty({
@@ -50,7 +50,7 @@ export class EditVoteFormDto {
   })
   @IsString()
   @IsOptional()
-  voteOption2: string;
+  voteFormOption2: string;
 
   //voteOption3
   @ApiProperty({
@@ -60,7 +60,7 @@ export class EditVoteFormDto {
   })
   @IsString()
   @IsOptional()
-  voteOption3: string;
+  voteFormOption3: string;
 
   //voteOption4
   @ApiProperty({
@@ -70,5 +70,5 @@ export class EditVoteFormDto {
   })
   @IsString()
   @IsOptional()
-  voteOption4: string;
+  voteFormOption4: string;
 }

@@ -98,6 +98,8 @@ export class AppModule implements NestModule {
         path: 'voteform/delete/:crewId/:voteFormId',
         method: RequestMethod.DELETE,
       },
+      { path: 'vote/:crewId/:voteFormId', method: RequestMethod.POST },
+      { path: 'vote/:crewId', method: RequestMethod.GET },
     );
     consumer
       .apply(LoginMiddleware)
