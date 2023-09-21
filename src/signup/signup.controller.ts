@@ -76,7 +76,7 @@ export class SignupController {
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: '모임의 방장입니다.' });
     }
-    if (crew.crewMaxMember !== member.length) {
+    if (crew.crewMaxMember === member.length) {
       for (let i = 0; i < member.length; i++) {
         if (member[i].userId === userId) {
           return res

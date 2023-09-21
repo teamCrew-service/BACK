@@ -15,6 +15,7 @@ import { Like } from 'src/like/entities/like.entity';
 import { Notice } from 'src/notice/entities/notice.entity';
 import { VoteForm } from 'src/voteform/entities/voteform.entity';
 import { Vote } from 'src/vote/entities/vote.entity';
+import { Participant } from 'src/participant/entities/participant.entity';
 
 @Entity('users')
 export class Users {
@@ -77,4 +78,7 @@ export class Users {
 
   @OneToMany(() => Vote, (vote) => vote.userId)
   vote: Vote[];
+
+  @OneToMany(() => Participant, (participant) => participant.userId)
+  participant: Participant[];
 }

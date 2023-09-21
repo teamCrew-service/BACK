@@ -138,6 +138,7 @@ export class CrewRepository {
       .createQueryBuilder('crew')
       .select([
         'crewId',
+        'userId',
         'category',
         'crewType',
         'crewAddress',

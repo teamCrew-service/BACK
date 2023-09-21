@@ -18,6 +18,7 @@ import { Like } from 'src/like/entities/like.entity';
 import { Notice } from 'src/notice/entities/notice.entity';
 import { VoteForm } from 'src/voteform/entities/voteform.entity';
 import { Vote } from 'src/vote/entities/vote.entity';
+import { Participant } from 'src/participant/entities/participant.entity';
 
 @Entity('crew')
 export class Crew {
@@ -51,6 +52,9 @@ export class Crew {
 
   @OneToMany(() => Vote, (vote) => vote.crewId)
   vote: Vote[];
+
+  @OneToMany(() => Participant, (participant) => participant.crewId)
+  participant: Participant[];
 
   @Column()
   category: string;
