@@ -13,8 +13,7 @@ export class MemberService {
 
   /* member 조회 */
   async findAllMember(crewId: number): Promise<any> {
-    const allMember = await this.memberRepository.findAllMember(crewId);
-    const member = allMember.map((user) => user.userId);
+    const member = await this.memberRepository.findAllMember(crewId);
     return member;
   }
 

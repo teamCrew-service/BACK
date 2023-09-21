@@ -9,6 +9,8 @@ import { SignupModule } from 'src/signup/signup.module';
 import { MemberModule } from 'src/member/member.module';
 import { ScheduleModule } from 'src/schedule/schedule.module';
 import { LikeModule } from 'src/like/like.module';
+import { NoticeModule } from 'src/notice/notice.module';
+import { VoteFormModule } from 'src/voteform/voteform.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { LikeModule } from 'src/like/like.module';
     forwardRef(() => MemberModule),
     forwardRef(() => ScheduleModule),
     forwardRef(() => LikeModule),
+    forwardRef(() => NoticeModule),
+    forwardRef(() => VoteFormModule),
   ],
   providers: [CrewService, CrewRepository],
   exports: [CrewService, CrewRepository],

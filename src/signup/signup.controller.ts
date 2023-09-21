@@ -76,9 +76,9 @@ export class SignupController {
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: '모임의 방장입니다.' });
     }
-    if (crew.crewMaxMember === member.length) {
+    if (crew.crewMaxMember !== member.length) {
       for (let i = 0; i < member.length; i++) {
-        if (member[i] === userId) {
+        if (member[i].userId === userId) {
           return res
             .status(HttpStatus.BAD_REQUEST)
             .json({ message: '모임에 이미 가입했습니다.' });
@@ -147,7 +147,7 @@ export class SignupController {
     );
     if (submitedSignup) {
       return res.status(HttpStatus.CONFLICT).json({
-        message: '가입서를 작성한 Crew입니다. 모임장의 승인을 기다려주세요',
+        message: '이미 가입서를 작성했습니다. 모임장의 승인을 기다려주세요',
       });
     }
     if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
