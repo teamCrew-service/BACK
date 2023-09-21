@@ -23,6 +23,7 @@ import { TopicModule } from './topic/topic.module';
 import { NoticeModule } from './notice/notice.module';
 import { VoteFormModule } from './voteform/voteform.module';
 import { VoteModule } from './vote/vote.module';
+import { ParticipantModule } from './participant/participant.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { VoteModule } from './vote/vote.module';
     NoticeModule,
     VoteFormModule,
     VoteModule,
+    ParticipantModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

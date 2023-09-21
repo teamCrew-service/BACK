@@ -14,11 +14,19 @@ import { ScheduleService } from './schedule.service';
 import { CreateScheduleDto } from './dto/createSchedule.dto';
 import { EditScheduleDto } from './dto/editSchedule.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import { ParticipantService } from 'src/participant/participant.service';
+import { CrewService } from 'src/crew/crew.service';
+import { MemberService } from 'src/member/member.service';
 
 @Controller('schedule')
 @ApiTags('Schedule API')
 export class ScheduleController {
-  constructor(private readonly scheduleService: ScheduleService) {}
+  constructor(
+    private readonly scheduleService: ScheduleService,
+    private readonly crewService: CrewService,
+    private readonly memberService: MemberService,
+    private readonly participantService: ParticipantService,
+  ) {}
 
   // 공지사항 조회
   @Get('comingDate')
@@ -68,15 +76,26 @@ export class ScheduleController {
     @Body() createscheduleDto: CreateScheduleDto,
     @Res() res: any,
   ): Promise<any> {
-    const { userId } = res.locals.user;
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (crew.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '일정 등록 권한이 없습니다.' });
+      }
 
-    const result = await this.scheduleService.createSchedule(
-      createscheduleDto,
-      userId,
-      crewId,
-    );
+      const result = await this.scheduleService.createSchedule(
+        createscheduleDto,
+        userId,
+        crewId,
+      );
 
-    return res.json(result);
+      return res.json(result);
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleController/createschedule');
+    }
   }
 
   // 공지사항 수정
@@ -87,14 +106,25 @@ export class ScheduleController {
     @Param('scheduleId') scheduleId: number,
     @Body() editscheduleDto: EditScheduleDto,
   ): Promise<any> {
-    const { userId } = res.locals.user;
-    const result = await this.scheduleService.editSchedule(
-      userId,
-      crewId,
-      scheduleId,
-      editscheduleDto,
-    );
-    return res.json(result);
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (crew.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '일정 등록 권한이 없습니다.' });
+      }
+      const result = await this.scheduleService.editSchedule(
+        userId,
+        crewId,
+        scheduleId,
+        editscheduleDto,
+      );
+      return res.json(result);
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleController/editschedule');
+    }
   }
 
   // 공지사항 상세 조회
@@ -127,6 +157,13 @@ export class ScheduleController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (crew.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '일정 등록 권한이 없습니다.' });
+      }
       const result = await this.scheduleService.deleteSchedule(
         scheduleId,
         crewId,
@@ -138,6 +175,49 @@ export class ScheduleController {
         `공지사항 삭제 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  /* schedule에 참가하기 */
+  @Post('participate/:crewId/:scheduleId')
+  async participateSchedule(
+    @Param('crewId') crewId: number,
+    @Param('scheduleId') scheduleId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      const member = await this.memberService.findAllMember(crewId);
+      const participant = await this.participantService.findAllParticipant(
+        crewId,
+        scheduleId,
+      );
+
+      if (crew.userId === userId) {
+        return res.status(HttpStatus.OK).json({ message: '모임장입니다.' });
+      }
+
+      // 참가자 조회해서 참가 인원인지, 참가 명수 넘었는지 확인하기
+
+      for (let i = 0; i < member.length; i++) {
+        if (userId === member[i].userId) {
+          await this.participantService.participateSchedule(
+            userId,
+            crewId,
+            scheduleId,
+          );
+          return res
+            .status(HttpStatus.OK)
+            .json({ message: '일정에 참가 성공' });
+        }
+      }
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: 'crew원이 아닙니다. 일정에 참가할 권한이 없습니다.' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleController/participateSchedule');
     }
   }
 }

@@ -43,10 +43,7 @@ export class UsersRepository {
   }
 
   // 최초 유저 정보 입력
-  async userInfo(
-    @Body() addUserInfoDto: AddUserInfoDto,
-    userId: number,
-  ): Promise<any> {
+  async userInfo(addUserInfoDto: AddUserInfoDto, userId: number): Promise<any> {
     try {
       const user = await this.usersRepository.findOne({ where: { userId } });
       user.nickname = addUserInfoDto.nickname;

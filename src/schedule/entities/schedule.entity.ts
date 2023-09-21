@@ -1,4 +1,5 @@
 import { Crew } from 'src/crew/entities/crew.entity';
+import { Participant } from 'src/participant/entities/participant.entity';
 import { Users } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -7,6 +8,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -46,5 +48,7 @@ export class Schedule {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt: Date;
-  user: any;
+
+  @OneToMany(() => Participant, (participant) => participant.scheduleId)
+  participant: Participant[];
 }
