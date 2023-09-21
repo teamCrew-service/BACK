@@ -10,7 +10,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CrewService } from './crew.service';
-import { CreateCrewDto } from './dto/createCrew.dto';
 import { EditCrewDto } from './dto/editCrew.dto';
 import {
   ApiBearerAuth,
@@ -20,10 +19,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger/dist';
 import { SignupService } from 'src/signup/signup.service';
-import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
 import { MemberService } from 'src/member/member.service';
 import { ScheduleService } from 'src/schedule/schedule.service';
 import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
+import { NoticeService } from 'src/notice/notice.service';
+import { VoteFormService } from 'src/voteform/voteform.service';
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
@@ -32,6 +32,8 @@ export class CrewController {
     private readonly signupService: SignupService,
     private readonly memberService: MemberService,
     private readonly scheduleService: ScheduleService,
+    private readonly noticeService: NoticeService,
+    private readonly voteFormService: VoteFormService,
   ) {}
 
   /* 모임 생성 */
@@ -139,35 +141,60 @@ export class CrewController {
     const userId = res.locals.user ? res.locals.user.userId : null;
     const crew = await this.crewService.findCrewDetail(crewId);
     const member = await this.memberService.findAllMember(crewId);
+    console.log(userId);
+
+    // 모임이 생긴 기간
+    const today: any = new Date();
+    const startDate: any = crew.crew_createdAt;
+    const timeDifference: number = today - startDate;
+    const daysDifference: number = timeDifference / (1000 * 60 * 60 * 24);
+    const createdCrewPeriod: number = Math.floor(daysDifference);
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우
     if (userId === null) {
       return res
         .status(HttpStatus.OK)
-        .json({ crew, member, personType: 'person' });
+        .json({ createdCrewPeriod, crew, member, personType: 'person' });
     }
 
+    // crew 일정
     const schedule = await this.scheduleService.findScheduleByCrew(crewId);
     // const signup = await this.signupService.findMySignup(userId, crewId);
 
+    // crew 공지
+    const notice = await this.noticeService.findAllNotice(crewId);
+    const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+
     // 방장일 경우
     if (userId === crew.userId) {
-      return res
-        .status(HttpStatus.OK)
-        .json({ crew, member, schedule, personType: 'captain' });
+      return res.status(HttpStatus.OK).json({
+        createdCrewPeriod,
+        crew,
+        member,
+        schedule,
+        notice,
+        voteForm,
+        personType: 'captain',
+      });
     }
     for (let i = 0; i < member.length; i++) {
       // member일 경우
-      if (userId === member[i].member_userId) {
-        return res
-          .status(HttpStatus.OK)
-          .json({ crew, member, schedule, personType: 'member' });
+      if (userId === member[i].userId) {
+        return res.status(HttpStatus.OK).json({
+          createdCrewPeriod,
+          crew,
+          member,
+          schedule,
+          notice,
+          voteForm,
+          personType: 'member',
+        });
       }
     }
     return res
       .status(HttpStatus.OK)
-      .json({ crew, member, personType: 'person' });
+      .json({ createdCrewPeriod, crew, member, personType: 'person' });
   }
 
   /* 모임글 수정 */

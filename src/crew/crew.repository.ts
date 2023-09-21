@@ -54,23 +54,26 @@ export class CrewRepository {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
       .select([
-        'crewId',
-        'userId',
-        'category',
-        'crewAddress',
-        'crewType',
-        'crewDDay',
-        'crewMemberInfo',
-        'crewAgeInfo',
-        'crewSignup',
-        'crewTitle',
-        'crewContent',
-        'thumbnail',
-        'crewMaxMember',
-        'latitude',
-        'longtitude',
-        'deletedAt',
+        'crew.crewId',
+        'crew.userId',
+        'crew.category',
+        'crew.crewAddress',
+        'crew.crewType',
+        'crew.crewDDay',
+        'crew.crewMemberInfo',
+        'crew.crewAgeInfo',
+        'crew.crewSignup',
+        'crew.crewTitle',
+        'crew.crewContent',
+        'crew.thumbnail',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.latitude',
+        'crew.longtitude',
+        'crew.createdAt',
+        'crew.deletedAt',
       ])
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .where('crew.crewId = :id', { id: crewId })
       .getRawOne();
 

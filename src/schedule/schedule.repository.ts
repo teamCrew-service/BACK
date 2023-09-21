@@ -12,7 +12,7 @@ export class ScheduleRepository {
     private readonly scheduleRepository: Repository<Schedule>,
   ) {}
 
-  // 공지사항 조회
+  // 일정 조회
   async findSchedule(userId: number): Promise<any> {
     const schedules = await this.scheduleRepository
       .createQueryBuilder('schedule')
@@ -30,7 +30,7 @@ export class ScheduleRepository {
     return schedules;
   }
 
-  // 공지사항 생성
+  // 일정 생성
   async createSchedule(
     createScheduleDto: CreateScheduleDto,
     userId: number,
@@ -49,7 +49,7 @@ export class ScheduleRepository {
     return createdSchedule;
   }
 
-  // 공지사항 수정
+  // 일정 수정
   async editSchedule(
     editScheduleDto: EditScheduleDto,
     userId: number,
@@ -75,7 +75,7 @@ export class ScheduleRepository {
     return updatedSchedule;
   }
 
-  // 공지사항 상세 조회
+  // 일정 상세 조회
   async findScheduleDetail(scheduleId: number, crewId: number): Promise<any> {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
@@ -94,7 +94,7 @@ export class ScheduleRepository {
     return schedule;
   }
 
-  // 공지사항 삭제
+  // 일정 삭제
   async deleteSchedule(scheduleId: number, crewId: number): Promise<any> {
     const schedule = await this.scheduleRepository.findOne({
       where: { scheduleId, crewId },
