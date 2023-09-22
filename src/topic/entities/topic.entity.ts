@@ -9,13 +9,13 @@ import { Users } from '../../users/entities/user.entity';
 
 @Entity('topic')
 export class Topic {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   topicId: number;
 
   @ManyToOne(() => Users, (user) => user.topic)
   @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   interestTopic: string;
 }

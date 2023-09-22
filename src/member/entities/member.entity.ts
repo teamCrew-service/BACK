@@ -11,7 +11,7 @@ import {
 
 @Entity('member')
 export class Member {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   memberId: number;
 
   @ManyToOne(() => Crew, (crew) => crew.member)
@@ -22,9 +22,9 @@ export class Member {
   @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ nullable: true })
   deletedAt: Date;
 }

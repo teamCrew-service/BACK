@@ -19,31 +19,31 @@ import { Participant } from 'src/participant/entities/participant.entity';
 
 @Entity('users')
 export class Users {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   userId: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   provider: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   email: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   nickname: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   profileImage: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   age: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   gender: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   myMessage: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   location: string;
 
   @CreateDateColumn({ type: 'timestamp' })

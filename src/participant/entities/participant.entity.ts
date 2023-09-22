@@ -5,7 +5,7 @@ import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('participant')
 export class Participant {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   participantId: number;
 
   @ManyToOne(() => Schedule, (schedule) => schedule.participant)

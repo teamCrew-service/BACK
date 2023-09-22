@@ -22,7 +22,7 @@ import { Participant } from 'src/participant/entities/participant.entity';
 
 @Entity('crew')
 export class Crew {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   crewId: number;
 
   @ManyToOne(() => Users, (user) => user.crew)
@@ -56,46 +56,46 @@ export class Crew {
   @OneToMany(() => Participant, (participant) => participant.crewId)
   participant: Participant[];
 
-  @Column()
+  @Column({ type: 'varchar' })
   category: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   crewAddress: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   crewType: string;
 
-  @Column()
+  @Column({ type: 'date' })
   crewDDay: Date;
 
-  @Column()
+  @Column({ type: 'varchar' })
   crewMemberInfo: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   crewTimeInfo: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   crewAgeInfo: string;
 
-  @Column()
+  @Column({ type: 'boolean' })
   crewSignup: boolean;
 
-  @Column()
+  @Column({ type: 'varchar' })
   crewTitle: string;
 
-  @Column()
+  @Column({ type: 'mediumtext' })
   crewContent: string;
 
   @Column({ nullable: true })
   thumbnail: string;
 
-  @Column()
+  @Column({ type: 'bigint' })
   crewMaxMember: number;
 
-  @Column()
+  @Column({ type: 'double' })
   latitude: number;
 
-  @Column()
+  @Column({ type: 'double' })
   longtitude: number;
 
   @CreateDateColumn({ type: 'timestamp' })

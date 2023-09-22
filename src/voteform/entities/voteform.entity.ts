@@ -15,7 +15,7 @@ import {
 
 @Entity('voteform')
 export class VoteForm {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   voteFormId: number;
 
   @ManyToOne(() => Users, (user) => user.voteForm)
@@ -26,25 +26,25 @@ export class VoteForm {
   @JoinColumn({ name: 'crewId' })
   crewId: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   voteTitle: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   voteContent: string;
 
-  @Column()
+  @Column({ type: 'date' })
   voteEndDate: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   voteOption1: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   voteOption2: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   voteOption3: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   voteOption4: string;
 
   @CreateDateColumn({ type: 'timestamp' })

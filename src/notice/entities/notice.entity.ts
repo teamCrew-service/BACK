@@ -13,7 +13,7 @@ import {
 
 @Entity('notice')
 export class Notice {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   noticeId: number;
 
   @ManyToOne(() => Users, (user) => user.notice)
@@ -24,16 +24,16 @@ export class Notice {
   @JoinColumn({ name: 'crweId' })
   crewId: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   noticeTitle: string;
 
-  @Column()
+  @Column({ type: 'mediumtext' })
   noticeContent: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   noticeAddress: string;
 
-  @Column()
+  @Column({ type: 'date' })
   noticeDDay: Date;
 
   @CreateDateColumn({ type: 'timestamp' })

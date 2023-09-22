@@ -11,7 +11,7 @@ import {
 
 @Entity('like')
 export class Like {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   likeId: number;
 
   @ManyToOne(() => Users, (user) => user.like)

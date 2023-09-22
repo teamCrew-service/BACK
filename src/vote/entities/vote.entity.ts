@@ -11,7 +11,7 @@ import {
 
 @Entity('vote')
 export class Vote {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   voteId: number;
 
   @ManyToOne(() => Users, (user) => user.vote)
@@ -26,6 +26,6 @@ export class Vote {
   @JoinColumn({ name: 'voteFormId' })
   voteFormId: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   vote: string;
 }
