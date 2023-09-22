@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsDate,
@@ -35,7 +36,7 @@ export class CreateScheduleDto {
     required: true,
   })
   @IsDate()
-  @IsNotEmpty()
+  @Type(() => Date)
   scheduleDDay: Date;
 
   // scheduleAddress

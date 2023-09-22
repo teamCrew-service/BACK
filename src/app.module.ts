@@ -68,7 +68,7 @@ export class AppModule implements NestModule {
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
-      { path: 'schedule/:crewId/schedules', method: RequestMethod.POST },
+      { path: 'schedule/:crewId/createSchedule', method: RequestMethod.POST },
       { path: 'schedule/edit/:crewId/:scheduleId', method: RequestMethod.PUT },
       {
         path: 'schedule/detail/:crewId/:scheduleId',
