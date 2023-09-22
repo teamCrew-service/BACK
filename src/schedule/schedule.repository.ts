@@ -80,7 +80,13 @@ export class ScheduleRepository {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
       .leftJoin('schedule.crewId', 'crew') // crew 테이블과의 join
-      .leftJoin('crew.member', 'member') // crew와 member 테이블과의 join
+      .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
+      .leftJoin(
+        'participant',
+        'participant',
+        'participant.crewId = schedule.crewId',
+      )
+      .leftJoin('users', 'users', 'users.userId = schedule.userId')
       .where('schedule.scheduleId = :scheduleId', { scheduleId }) // 해당 scheduleId를 가진 멤버만 필터링
       .andWhere('crew.crewId = :crewId', { crewId }) // 해당 crewId를 가진 멤버만 필터링
       .select([
@@ -88,6 +94,9 @@ export class ScheduleRepository {
         'schedule.scheduleDDay',
         'schedule.scheduleContent',
         'schedule.scheduleAddress',
+        'crew.crewMaxMember',
+        'COUNT(participant.crewId) AS scheduleAttendedMember',
+        'users.profileImage AS captainProfileImage',
       ]) // 필요한 필드만 선택
       .getOne();
 

@@ -1,19 +1,44 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class EditScheduleDto {
-  @IsOptional()
+  // scheduleTitle
+  @ApiProperty({
+    example: '일요일 달리기!!',
+    description: 'scheduleTitle',
+    required: true,
+  })
   @IsString()
+  @IsOptional()
   scheduleTitle: string;
 
-  @IsOptional()
+  // scheduleContent
+  @ApiProperty({
+    example: '일요일 달리기 정모가 있습니다!! 많이 나와주세요!!',
+    description: 'scheduleTitle',
+    required: true,
+  })
   @IsString()
-  scheduleAddress: string;
-
   @IsOptional()
+  scheduleContent: string;
+
+  // scheduleDDay
+  @ApiProperty({
+    example: '24일 오후 4시',
+    description: 'scheduleDDay',
+    required: true,
+  })
   @IsDate()
+  @IsOptional()
   scheduleDDay: Date;
 
-  @IsOptional()
+  // scheduleAddress
+  @ApiProperty({
+    example: '일산 호수공원',
+    description: 'scheduleAddress',
+    required: true,
+  })
   @IsString()
-  scheduleContent: string;
+  @IsOptional()
+  scheduleAddress: string;
 }
