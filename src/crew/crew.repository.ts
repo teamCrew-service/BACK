@@ -55,7 +55,10 @@ export class CrewRepository {
       .createQueryBuilder('crew')
       .select([
         'crew.crewId',
-        'crew.userId',
+        'crew.userId AS captainId',
+        'users.location AS captainLocation',
+        'users.nickname AS captainNickname',
+        'users.profileImage AS captainProfileImage',
         'crew.category',
         'crew.crewAddress',
         'crew.crewType',
@@ -74,6 +77,7 @@ export class CrewRepository {
         'crew.deletedAt',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .leftJoin('users', 'users', 'users.userId = crew.userId')
       .where('crew.crewId = :id', { id: crewId })
       .getRawOne();
 

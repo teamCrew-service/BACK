@@ -142,7 +142,6 @@ export class CrewController {
     const userId = res.locals.user ? res.locals.user.userId : null;
     const crew = await this.crewService.findCrewDetail(crewId);
     const member = await this.memberService.findAllMember(crewId);
-    console.log(userId);
 
     // 모임이 생긴 기간
     const today: any = new Date();
@@ -168,7 +167,7 @@ export class CrewController {
     const voteForm = await this.voteFormService.findAllVoteForm(crewId);
 
     // 방장일 경우
-    if (userId === crew.userId) {
+    if (userId === crew.crew_userId) {
       return res.status(HttpStatus.OK).json({
         createdCrewPeriod,
         crew,

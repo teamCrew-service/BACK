@@ -22,8 +22,16 @@ export class MemberRepository {
   async findAllMember(crewId: number): Promise<any> {
     const allMember = await this.memberRepository
       .createQueryBuilder('member')
-      .select(['memberId', 'userId'])
+      .leftJoin('users', 'users', 'users.userId = member.userId')
+      .select([
+        'member.memberId',
+        'member.userId',
+        'users.nickname',
+        'users.location',
+        'users.profileImage',
+      ])
       .where('member.crewId = :crewId', { crewId })
+      .groupBy('member.memberId')
       .getRawMany();
     return allMember;
   }
