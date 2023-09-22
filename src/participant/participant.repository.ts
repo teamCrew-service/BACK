@@ -32,11 +32,11 @@ export class ParticipantRepository {
       .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
       .leftJoin('users', 'users', 'users.userId = participant.userId')
       .select([
-        'participant.scheduleId',
+        'participant.participantId',
         'participant.userId',
         'users.profileImage',
       ])
-      .groupBy('participant.scheduleId')
+      .groupBy('participant.participantId')
       .getRawMany();
     return participant;
   }

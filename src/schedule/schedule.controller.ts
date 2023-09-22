@@ -13,7 +13,13 @@ import {
 import { ScheduleService } from './schedule.service';
 import { CreateScheduleDto } from './dto/createSchedule.dto';
 import { EditScheduleDto } from './dto/editSchedule.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger/dist';
 import { ParticipantService } from 'src/participant/participant.service';
 import { CrewService } from 'src/crew/crew.service';
 import { MemberService } from 'src/member/member.service';
@@ -28,7 +34,7 @@ export class ScheduleController {
     private readonly participantService: ParticipantService,
   ) {}
 
-  // 공지사항 조회
+  // 일정 조회
   @Get('comingDate')
   @ApiOperation({
     summary: '다가오는 일정 리스트 조회 API',
@@ -47,6 +53,7 @@ export class ScheduleController {
       },
     },
   })
+  @ApiBearerAuth('accessToken')
   async findschedule(@Res() res: any): Promise<any> {
     try {
       // 다가오는 일정 리스트 조회
@@ -69,8 +76,18 @@ export class ScheduleController {
     }
   }
 
-  // 공지사항 생성
+  // 일정 생성
   @Post('/:crewId/createSchedule')
+  @ApiOperation({
+    summary: '일정 생성 API',
+    description: '일정을 생성합니다.',
+  })
+  @ApiParam({ name: 'crewId' })
+  @ApiResponse({
+    status: 201,
+    description: '일정 생성 성공',
+  })
+  @ApiBearerAuth('accessToken')
   async createschedule(
     @Param('crewId') crewId: number,
     @Body() createscheduleDto: CreateScheduleDto,
@@ -98,8 +115,18 @@ export class ScheduleController {
     }
   }
 
-  // 공지사항 수정
+  // 일정 수정
   @Put('edit/:crewId/:scheduleId')
+  @ApiOperation({
+    summary: '일정 수정 API',
+    description: '원하는 일정을 수정합니다.',
+  })
+  @ApiParam({ name: 'crewId', description: 'scheduleId' })
+  @ApiResponse({
+    status: 200,
+    description: '일정 수정 성공',
+  })
+  @ApiBearerAuth('accessToken')
   async editschedule(
     @Res() res: any,
     @Param('crewId') crewId: number,
@@ -127,8 +154,36 @@ export class ScheduleController {
     }
   }
 
-  // 공지사항 상세 조회
+  // 일정 상세 조회
   @Get('detail/:crewId/:scheduleId')
+  @ApiOperation({
+    summary: '일정 상세 조회 API',
+    description: 'scheduleId에 해당하는 일정 글을 상세 조회.',
+  })
+  @ApiParam({ name: 'crewId', description: 'scheduleId' })
+  @ApiResponse({
+    status: 200,
+    description: '일정을 상세 조회합니다.',
+    schema: {
+      example: {
+        schedule: {
+          schedule_scheduleTitle: '퇴근 후 40분 걷기',
+          schedule_scheduleDDay: '2023-08-19T03:44:19.661Z',
+          schedule_scheduleContent: '오늘 퇴근 후 40분 걷기 합니다',
+          schedule_scheduleAddress: '일산 호수공원',
+          crew_crewMaxMember: 8,
+          scheduleAttendedMember: '6',
+          captainProfileImage: 'url',
+        },
+        participant: {
+          participant_participantId: 1,
+          participant_userId: 1,
+          users_profileImage: 'url',
+        },
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
   async findscheduleDetail(
     @Param('scheduleId') scheduleId: number,
     @Param('crewId') crewId: number,
@@ -139,18 +194,37 @@ export class ScheduleController {
         scheduleId,
         crewId,
       );
-      return res.status(HttpStatus.OK).json(schedule);
+      const participant = await this.participantService.findAllParticipant(
+        crewId,
+        scheduleId,
+      );
+      return res.status(HttpStatus.OK).json({ schedule, participant });
     } catch (error) {
       console.error(error); // 로깅
       throw new HttpException(
-        `공지사항 상세 조회 실패: ${error.message}`,
+        `일정 상세 조회 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  // 공지사항 삭제
+  // 일정 삭제
   @Delete('delete/:crewId/:scheduleId')
+  @ApiOperation({
+    summary: '일정 글 삭제 API',
+    description: '일정을 삭제합니다.',
+  })
+  @ApiParam({ name: 'crewId', description: 'scheduleId' })
+  @ApiResponse({
+    status: 200,
+    description: '일정을 삭제합니다.',
+    schema: {
+      example: {
+        message: '일정 삭제 성공했습니다.',
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
   async deleteschedule(
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,
@@ -172,7 +246,7 @@ export class ScheduleController {
     } catch (error) {
       console.error(error); // 로깅
       throw new HttpException(
-        `공지사항 삭제 실패: ${error.message}`,
+        `일정 삭제 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -180,6 +254,16 @@ export class ScheduleController {
 
   /* schedule에 참가하기 */
   @Post('participate/:crewId/:scheduleId')
+  @ApiOperation({
+    summary: '일정 참여 API',
+    description: '일정 참여',
+  })
+  @ApiParam({ name: 'crewId', description: 'scheduleId' })
+  @ApiResponse({
+    status: 200,
+    description: '일정 참여 완료',
+  })
+  @ApiBearerAuth('accessToken')
   async participateSchedule(
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,
@@ -199,6 +283,13 @@ export class ScheduleController {
       }
 
       // 참가자 조회해서 참가 인원인지, 참가 명수 넘었는지 확인하기
+      for (let i = 0; i < participant.length; i++) {
+        if (userId === participant.participant_userId) {
+          return res
+            .status(HttpStatus.BAD_REQUEST)
+            .json({ message: '이미 참여한 인원입니다.' });
+        }
+      }
 
       for (let i = 0; i < member.length; i++) {
         if (userId === member[i].userId) {
