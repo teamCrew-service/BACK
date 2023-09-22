@@ -145,17 +145,16 @@ export class CrewController {
 
     // 모임이 생긴 기간
     const today: any = new Date();
-    const startDate: any = crew.crew_createdAt;
-    const timeDifference: number = today - startDate;
-    const daysDifference: number = timeDifference / (1000 * 60 * 60 * 24);
-    const createdCrewPeriod: number = Math.floor(daysDifference);
+    const todayDate = today.getDate();
+    const startDate: any = crew.crew_createdAt.getDate();
+    const timeDifference: number = todayDate - startDate;
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우
     if (userId === null) {
       return res
         .status(HttpStatus.OK)
-        .json({ createdCrewPeriod, crew, member, personType: 'person' });
+        .json({ timeDifference, crew, member, personType: 'person' });
     }
 
     // crew 일정
@@ -169,7 +168,7 @@ export class CrewController {
     // 방장일 경우
     if (userId === crew.captainId) {
       return res.status(HttpStatus.OK).json({
-        createdCrewPeriod,
+        timeDifference,
         crew,
         member,
         schedule,
@@ -182,7 +181,7 @@ export class CrewController {
       // member일 경우
       if (userId === member[i].userId) {
         return res.status(HttpStatus.OK).json({
-          createdCrewPeriod,
+          timeDifference,
           crew,
           member,
           schedule,
@@ -194,7 +193,7 @@ export class CrewController {
     }
     return res
       .status(HttpStatus.OK)
-      .json({ createdCrewPeriod, crew, member, personType: 'person' });
+      .json({ timeDifference, crew, member, personType: 'person' });
   }
 
   /* 모임글 수정 */
