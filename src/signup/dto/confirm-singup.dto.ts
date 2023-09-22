@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class ConfirmSingupDto {
   //permission
@@ -9,5 +9,6 @@ export class ConfirmSingupDto {
     required: true,
   })
   @IsBoolean()
+  @IsNotEmpty()
   readonly permission: boolean;
 }
