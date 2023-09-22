@@ -41,7 +41,7 @@ export class ScheduleRepository {
     schedule.crewId = crewId;
     schedule.scheduleTitle = createScheduleDto.scheduleTitle;
     schedule.scheduleContent = createScheduleDto.scheduleContent;
-    schedule.scheduleDDay = createScheduleDto?.scheduleDDay;
+    schedule.scheduleDDay = createScheduleDto.scheduleDDay;
     schedule.scheduleAddress = createScheduleDto.scheduleAddress;
     schedule.scheduleLatitude = createScheduleDto.scheduleLatitude;
     schedule.scheduleLongitude = createScheduleDto.scheduleLongitude;
