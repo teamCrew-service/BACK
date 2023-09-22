@@ -144,11 +144,9 @@ export class CrewController {
     const member = await this.memberService.findAllMember(crewId);
 
     // 모임이 생긴 기간
-    const today: any = new Date();
-    const startDate: any = crew.crew_createdAt;
-    const timeDifference: number = today - startDate;
-    const daysDifference: number = timeDifference / (1000 * 60 * 60 * 24);
-    const createdCrewPeriod: number = Math.floor(daysDifference);
+    const today: any = new Date().getDate();
+    const startDate: any = crew.crew_createdAt.getDate();
+    const createdCrewPeriod: number = today - startDate;
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우
