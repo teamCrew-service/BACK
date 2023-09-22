@@ -42,24 +42,4 @@ export class CreateNoticeDto {
   @IsDate()
   @IsNotEmpty()
   noticeDDay: Date;
-
-  // noticeLatitude
-  @ApiProperty({
-    example: 23.010203,
-    description: 'noticeLatitude',
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  noticeLatitude: number;
-
-  // noticeLongitude
-  @ApiProperty({
-    example: 106.102032,
-    description: 'noticeLongitude',
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  noticeLongitude: number;
 }

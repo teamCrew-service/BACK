@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class EditScheduleDto {
   // scheduleTitle
@@ -41,4 +41,24 @@ export class EditScheduleDto {
   @IsString()
   @IsOptional()
   scheduleAddress: string;
+
+  // scheduleLatitude
+  @ApiProperty({
+    example: 23.010203,
+    description: 'scheduleLatitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  scheduleLatitude: number;
+
+  // scheduleLongitude
+  @ApiProperty({
+    example: 106.102032,
+    description: 'scheduleLongitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  scheduleLongitude: number;
 }

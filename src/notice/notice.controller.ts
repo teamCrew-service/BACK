@@ -83,8 +83,6 @@ export class NoticeController {
             '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
           noticeAddress: '일산 호수공원',
           noticeDDay: '2023-08-19T03:44:19.661Z',
-          noticeLatitude: 23.010203,
-          noticeLongitude: 106.102032,
         },
       },
     },
@@ -126,8 +124,6 @@ export class NoticeController {
           '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
         noticeAddress: '일산 호수공원',
         noticeDDay: '2023-08-19T03:44:19.661Z',
-        noticeLatitude: 23.010203,
-        noticeLongitude: 106.102032,
       },
     },
   })
