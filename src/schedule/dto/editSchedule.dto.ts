@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class EditScheduleDto {
@@ -29,6 +30,7 @@ export class EditScheduleDto {
     required: true,
   })
   @IsDate()
+  @Type(() => Date)
   @IsOptional()
   scheduleDDay: Date;
 

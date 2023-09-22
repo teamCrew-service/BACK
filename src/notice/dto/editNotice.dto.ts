@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class EditNoticeDto {
   // noticeTitle
@@ -40,6 +41,7 @@ export class EditNoticeDto {
     required: true,
   })
   @IsDate()
+  @Type(() => Date)
   @IsOptional()
   noticeDDay: Date;
 }

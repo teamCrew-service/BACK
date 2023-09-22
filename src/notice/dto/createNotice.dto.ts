@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateNoticeDto {
   // noticeTitle
@@ -40,6 +41,7 @@ export class CreateNoticeDto {
     required: true,
   })
   @IsDate()
+  @Type(() => Date)
   @IsNotEmpty()
   noticeDDay: Date;
 }
