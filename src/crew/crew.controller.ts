@@ -178,7 +178,7 @@ export class CrewController {
     }
     for (let i = 0; i < member.length; i++) {
       // member일 경우
-      if (userId === member[i].userId) {
+      if (userId === member[i].member_userId) {
         return res.status(HttpStatus.OK).json({
           createdCrewPeriod,
           crew,
