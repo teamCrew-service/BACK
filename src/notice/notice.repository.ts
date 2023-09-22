@@ -24,8 +24,6 @@ export class NoticeRepository {
     notice.noticeContent = createNoticeDto.noticeContent;
     notice.noticeAddress = createNoticeDto.noticeAddress;
     notice.noticeDDay = createNoticeDto.noticeDDay;
-    notice.noticeLatitude = createNoticeDto.noticeLatitude;
-    notice.noticeLongitude = createNoticeDto.noticeLongitude;
 
     const createdNotice = await this.noticeRepository.save(notice);
     return createdNotice;
@@ -44,14 +42,7 @@ export class NoticeRepository {
   async findNoticeDetail(crewId: number, noticeId: number): Promise<any> {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select([
-        'noticeTitle',
-        'noticeContent',
-        'noticeAddress',
-        'noticeDDay',
-        'noticeLatitude',
-        'noticeLongitude',
-      ])
+      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
       .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();
@@ -66,14 +57,7 @@ export class NoticeRepository {
   ): Promise<any> {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select([
-        'noticeTitle',
-        'noticeContent',
-        'noticeAddress',
-        'noticeDDay',
-        'noticeLatitude',
-        'noticeLongitude',
-      ])
+      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
       .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();
@@ -90,12 +74,6 @@ export class NoticeRepository {
     if (editNoticeDto.noticeDDay !== undefined) {
       notice.noticeDDay = editNoticeDto.noticeDDay;
     }
-    if (editNoticeDto.noticeLatitude !== undefined) {
-      notice.noticeLatitude = editNoticeDto.noticeLatitude;
-    }
-    if (editNoticeDto.noticeLongitude !== undefined) {
-      notice.noticeLongitude = editNoticeDto.noticeLongitude;
-    }
 
     const editedNotice = await this.noticeRepository.save(notice);
 
@@ -106,14 +84,7 @@ export class NoticeRepository {
   async deleteNotice(crewId: number, noticeId: number): Promise<any> {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select([
-        'noticeTitle',
-        'noticeContent',
-        'noticeAddress',
-        'noticeDDay',
-        'noticeLatitude',
-        'noticeLongitude',
-      ])
+      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
       .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();

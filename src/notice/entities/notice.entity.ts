@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -36,12 +35,6 @@ export class Notice {
 
   @Column()
   noticeDDay: Date;
-
-  @Column()
-  noticeLatitude: number;
-
-  @Column()
-  noticeLongitude: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

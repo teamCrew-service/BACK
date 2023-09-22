@@ -43,6 +43,8 @@ export class ScheduleRepository {
     schedule.scheduleContent = createScheduleDto.scheduleContent;
     schedule.scheduleDDay = createScheduleDto?.scheduleDDay;
     schedule.scheduleAddress = createScheduleDto.scheduleAddress;
+    schedule.scheduleLatitude = createScheduleDto.scheduleLatitude;
+    schedule.scheduleLongitude = createScheduleDto.scheduleLongitude;
 
     const createdSchedule = await this.scheduleRepository.save(schedule);
 
@@ -69,6 +71,10 @@ export class ScheduleRepository {
       editScheduleDto.scheduleDDay || schedule.scheduleDDay;
     schedule.scheduleContent =
       editScheduleDto.scheduleContent || schedule.scheduleContent;
+    schedule.scheduleLatitude =
+      editScheduleDto.scheduleLatitude || schedule.scheduleLatitude;
+    schedule.scheduleLongitude =
+      editScheduleDto.scheduleLongitude || schedule.scheduleLongitude;
 
     const updatedSchedule = await this.scheduleRepository.save(schedule);
 
@@ -94,6 +100,8 @@ export class ScheduleRepository {
         'schedule.scheduleDDay',
         'schedule.scheduleContent',
         'schedule.scheduleAddress',
+        'schedule.scheduleLatitude',
+        'schedule.scheduleLongitude',
         'crew.crewMaxMember',
         'COUNT(participant.crewId) AS scheduleAttendedMember',
         'users.profileImage AS captainProfileImage',
@@ -123,6 +131,8 @@ export class ScheduleRepository {
         'scheduleContent',
         'scheduleDDay',
         'scheduleAddress',
+        'scheduleLatitude',
+        'scheduleLongitude',
       ])
       .where('schedule.crewId = :id', { id: crewId })
       .getRawMany();

@@ -40,6 +40,12 @@ export class Schedule {
   @Column()
   scheduleAddress: string;
 
+  @Column()
+  scheduleLatitude: number;
+
+  @Column()
+  scheduleLongitude: number;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
