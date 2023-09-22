@@ -48,7 +48,7 @@ export class NoticeController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
-      const crew = await this.crewService.findCrewDetail(crewId);
+      const crew = await this.crewService.findByCrewId(crewId);
 
       // 모임장이 아닌 경우
       if (crew.userId !== userId) {
