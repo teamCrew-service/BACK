@@ -188,7 +188,7 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     const { userId } = res.locals.user;
-    const crew = await this.crewService.findCrewDetail(crewId);
+    const crew = await this.crewService.findByCrewId(crewId);
     if (crew.userId === userId) {
       const singup = await this.signupService.findAllSubmitted(crewId);
       return res.status(HttpStatus.OK).json(singup);
