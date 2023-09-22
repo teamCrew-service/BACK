@@ -15,7 +15,7 @@ import {
 
 @Entity('schedule')
 export class Schedule {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   scheduleId: number;
 
   @ManyToOne(() => Users, (user) => user.schedule)
@@ -28,22 +28,22 @@ export class Schedule {
   // crew: Crew;
   crewId: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   scheduleTitle: string;
 
-  @Column()
+  @Column({ type: 'mediumtext' })
   scheduleContent: string;
 
-  @Column()
+  @Column({ type: 'date' })
   scheduleDDay: Date;
 
-  @Column()
+  @Column({ type: 'varchar' })
   scheduleAddress: string;
 
-  @Column()
+  @Column({ type: 'double' })
   scheduleLatitude: number;
 
-  @Column()
+  @Column({ type: 'double' })
   scheduleLongitude: number;
 
   @CreateDateColumn({ type: 'timestamp' })

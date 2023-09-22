@@ -12,7 +12,7 @@ import { Signup } from './signup.entity';
 
 @Entity()
 export class Signupform {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   signupFormId: number;
 
   @ManyToOne(() => Crew, (crew) => crew.signupForm)

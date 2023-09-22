@@ -39,7 +39,7 @@ import { ParticipantModule } from './participant/participant.module';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       // synchronize: true,
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,
