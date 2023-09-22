@@ -167,7 +167,7 @@ export class CrewController {
     const voteForm = await this.voteFormService.findAllVoteForm(crewId);
 
     // 방장일 경우
-    if (userId === crew.crew_userId) {
+    if (userId === crew.captainId) {
       return res.status(HttpStatus.OK).json({
         createdCrewPeriod,
         crew,
