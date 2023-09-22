@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class EditVoteFormDto {
@@ -29,6 +30,7 @@ export class EditVoteFormDto {
     required: true,
   })
   @IsDate()
+  @Type(() => Date)
   @IsOptional()
   voteFormEndDate: Date;
 

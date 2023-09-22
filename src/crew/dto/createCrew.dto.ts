@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger/dist';
+import { Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateCrewDto {
@@ -39,6 +40,7 @@ export class CreateCrewDto {
     required: true,
   })
   @IsDate()
+  @Type(() => Date)
   @IsNotEmpty()
   crewDDay: Date;
 
