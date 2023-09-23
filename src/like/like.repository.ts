@@ -34,8 +34,21 @@ export class LikeRepository {
   async findLikedCrew(userId: number): Promise<any> {
     const likedCrew = await this.likeRepository
       .createQueryBuilder('like')
-      .select(['likeId', 'crewId'])
+      .leftJoin('crew', 'crew', 'crew.crewId = like.crewId')
+      .leftJoin('member', 'member', 'member.crewId = like.crewId')
+      .select([
+        'like.likeId',
+        'like.crewId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crewTitle',
+        'crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
+      ])
       .where('like.userId = :userId', { userId })
+      .groupBy('like.likeId')
       .getRawMany();
     return likedCrew;
   }

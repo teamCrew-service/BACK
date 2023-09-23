@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
+import { EditUserInfoDto } from './dto/editUserInfo-user.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -43,15 +44,18 @@ export class UsersRepository {
   }
 
   // 최초 유저 정보 입력
-  async userInfo(addUserInfoDto: AddUserInfoDto, userId: number): Promise<any> {
+  async userInfo(
+    editUserInfoDto: EditUserInfoDto,
+    userId: number,
+  ): Promise<any> {
     try {
       const user = await this.usersRepository.findOne({ where: { userId } });
-      user.nickname = addUserInfoDto.nickname;
-      user.age = addUserInfoDto.age;
-      user.gender = addUserInfoDto.gender;
-      user.profileImage = addUserInfoDto.profileImage;
-      user.myMessage = addUserInfoDto.myMessage;
-      user.location = addUserInfoDto.location;
+      user.nickname = editUserInfoDto.nickname;
+      user.age = editUserInfoDto.age;
+      user.gender = editUserInfoDto.gender;
+      user.profileImage = editUserInfoDto.profileImage;
+      user.myMessage = editUserInfoDto.myMessage;
+      user.location = editUserInfoDto.location;
       await this.usersRepository.save(user);
       return user;
     } catch (e) {

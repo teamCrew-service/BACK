@@ -27,6 +27,7 @@ import { CheckNicknameDto } from './dto/checkNickname-user.dto';
 import { TopicAndInfoDto } from './dto/topicAndInfo-user.dto';
 import { LikeService } from 'src/like/like.service';
 import { MemberService } from 'src/member/member.service';
+import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
 
 @Controller()
 @ApiTags('User API')
@@ -381,14 +382,19 @@ export class UsersController {
   })
   @ApiBearerAuth('accessToken')
   async editMypage(
-    @Body() topicAndInfoDto: TopicAndInfoDto,
+    @Body() editTopicAndInfoDto: EditTopicAndInfoDto,
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { addUserInfoDto, topicDto } = topicAndInfoDto;
+      let { editUserInfoDto, editTopicDto } = editTopicAndInfoDto;
       const { userId } = res.locals.user;
-      await this.usersService.userInfo(addUserInfoDto, userId);
-      await this.usersService.editTopic(topicDto, userId);
+      if (!editTopicAndInfoDto) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '수정할 내용이 없습니다.' });
+      }
+      await this.usersService.userInfo(editUserInfoDto, userId);
+      await this.usersService.editTopic(editTopicDto, userId);
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
     } catch (e) {
       console.error(e);
@@ -411,18 +417,26 @@ export class UsersController {
       example: {
         likedCrew: [
           {
-            crewId: 1,
-            category: '여행',
-            crewType: '단기',
-            crewAddress: '김포공항',
-            crewTitle: '제주도로 같이 여행 떠나요~~',
+            like_likeId: 1,
+            like_crewId: 1,
+            crew_category: '여행',
+            crew_crewType: '단기',
+            crew_crewAddress: '김포공항',
+            crew_crewTitle: '제주도로 같이 여행 떠나요~~',
+            crew_crewMaxMember: 8,
+            crewAttendedMember: '3',
+            crew_thumbnail: 'url',
           },
           {
-            crewId: 6,
-            category: '자기 개발',
-            crewType: '장기',
-            crewAddress: '백석역',
-            crewTitle: '영어 스터디 모임',
+            like_likeId: 2,
+            like_crewId: 2,
+            crew_category: '자기 개발',
+            crew_crewType: '장기',
+            crew_crewAddress: '백석역',
+            crew_crewTitle: '영어 스터디 모임',
+            crew_crewMaxMember: 8,
+            crewAttendedMember: '3',
+            crew_thumbnail: 'url',
           },
         ],
       },
@@ -430,16 +444,20 @@ export class UsersController {
   })
   @ApiBearerAuth('accessToken')
   async findLikedCrew(@Res() res: any): Promise<any> {
-    const { userId } = res.locals.user;
-    const likedCrew = await this.likeService.findLikedCrew(userId);
-    const crewList = [];
-    for (let i = 0; i < likedCrew.length; i++) {
-      const crewId = likedCrew[i].crewId;
-      const crew = await this.crewService.findByCrewId(crewId);
-      crewList.push(crew);
-    }
+    try {
+      const { userId } = res.locals.user;
+      const likedCrew = await this.likeService.findLikedCrew(userId);
 
-    return res.status(HttpStatus.OK).json({ likedCrew: crewList });
+      if (likedCrew.length < 1) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '찜한 crew가 없습니다.' });
+      }
+      return res.status(HttpStatus.OK).json({ likedCrew });
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/findLikedCrew');
+    }
   }
 
   /* 내가 참여한 모임 */
@@ -455,18 +473,26 @@ export class UsersController {
       example: {
         joinedCrew: [
           {
-            crewId: 1,
-            category: '여행',
-            crewType: '단기',
-            crewAddress: '김포공항',
-            crewTitle: '제주도로 같이 여행 떠나요~~',
+            member_likeId: 1,
+            member_crewId: 1,
+            crew_category: '여행',
+            crew_crewType: '단기',
+            crew_crewAddress: '김포공항',
+            crew_crewTitle: '제주도로 같이 여행 떠나요~~',
+            crew_crewMaxMember: 8,
+            crewAttendedMember: '3',
+            crew_thumbnail: 'url',
           },
           {
-            crewId: 6,
-            category: '자기 개발',
-            crewType: '장기',
-            crewAddress: '백석역',
-            crewTitle: '영어 스터디 모임',
+            member_likeId: 2,
+            member_crewId: 2,
+            crew_category: '자기 개발',
+            crew_crewType: '장기',
+            crew_crewAddress: '백석역',
+            crew_crewTitle: '영어 스터디 모임',
+            crew_crewMaxMember: 8,
+            crewAttendedMember: '3',
+            crew_thumbnail: 'url',
           },
         ],
       },
@@ -474,15 +500,75 @@ export class UsersController {
   })
   @ApiBearerAuth('accessToken')
   async findJoinedCrew(@Res() res: any): Promise<any> {
-    const { userId } = res.locals.user;
-    // user가 참여한 모임
-    const joinedCrew = await this.memberService.findJoinedCrew(userId);
-    const memberCrewList = [];
-    for (let i = 0; i < joinedCrew.length; i++) {
-      const crewId = joinedCrew[i].crewId;
-      const crew = await this.crewService.findByCrewId(crewId);
-      memberCrewList.push(crew);
+    try {
+      const { userId } = res.locals.user;
+      // user가 참여한 모임
+      const joinedCrew = await this.memberService.findJoinedCrew(userId);
+      if (joinedCrew.length < 1) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '참여한 모임이 아직 없습니다.' });
+      }
+
+      return res.status(HttpStatus.OK).json({ joinedCrew });
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/findJoinedCrew');
     }
-    return res.status(HttpStatus.OK).json({ joinedCrew: memberCrewList });
+  }
+
+  /* 나의 모임 */
+  @Get('mycrew/mycreatedcrew')
+  @ApiOperation({
+    summary: '내가 생성한 모임 조회 API',
+    description: 'user가 생성한 모임 조회',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '내가 생성한 모임의 정보를 조회',
+    schema: {
+      example: {
+        myCrew: [
+          {
+            member_likeId: 1,
+            member_crewId: 1,
+            crew_category: '여행',
+            crew_crewType: '단기',
+            crew_crewAddress: '김포공항',
+            crew_crewTitle: '제주도로 같이 여행 떠나요~~',
+            crew_crewMaxMember: 8,
+            crewAttendedMember: '3',
+            crew_thumbnail: 'url',
+          },
+          {
+            member_likeId: 2,
+            member_crewId: 2,
+            crew_category: '자기 개발',
+            crew_crewType: '장기',
+            crew_crewAddress: '백석역',
+            crew_crewTitle: '영어 스터디 모임',
+            crew_crewMaxMember: 8,
+            crewAttendedMember: '3',
+            crew_thumbnail: 'url',
+          },
+        ],
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
+  async findMyCrew(@Res() res: any): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const myCrew = await this.crewService.findMyCrew(userId);
+      if (myCrew.length < 1) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '생성한 crew가 아직 없습니다.' });
+      }
+      return res.status(HttpStatus.OK).json(myCrew);
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/findMyCrew');
+    }
   }
 }

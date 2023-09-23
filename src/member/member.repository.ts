@@ -40,8 +40,20 @@ export class MemberRepository {
   async findJoinedCrew(userId: number): Promise<any> {
     const joinedCrew = await this.memberRepository
       .createQueryBuilder('member')
-      .select(['crewId', 'memberId'])
+      .leftJoin('crew', 'crew', 'crew.crewId = member.crewId')
+      .select([
+        'member.memberId',
+        'member.crewId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crew.crewTitle',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
+      ])
       .where('member.userId=:userId', { userId })
+      .groupBy('member.memberId')
       .getRawMany();
     return joinedCrew;
   }
