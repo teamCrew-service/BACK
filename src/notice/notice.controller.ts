@@ -77,12 +77,19 @@ export class NoticeController {
     description: 'crewId에 해당하는 공지를 모두 조회.',
     schema: {
       example: {
-        schedule: {
+        notice: {
           noticeTitle: '일산 호수공원 런닝!!',
           noticeContent:
             '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
           noticeAddress: '일산 호수공원',
           noticeDDay: '2023-08-19T03:44:19.661Z',
+        },
+        voteForm: {
+          voteFormId: 1,
+          crewId: 1,
+          voteTitle: '이번 주에 만날 사람. 투표 부탁드립니다!',
+          voteContent: '홍대 근처 사시는 분들 함께 달리면 좋을 것 같아요!',
+          voteEndDate: '2023-08-19T03:44:19.661Z',
         },
       },
     },

@@ -34,7 +34,15 @@ export class VoteFormRepository {
 
   /* 투표 공지 전체 목록 조회 */
   async findAllVoteForm(crewId: number): Promise<any> {
-    const voteForm = await this.voteFormRepository.find({ where: { crewId } });
+    const voteForm = await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .select([
+        'voteFormId',
+        'crewId',
+        'voteTitle',
+        'voteContent',
+        'voteEndDate',
+      ]);
     return voteForm;
   }
 
