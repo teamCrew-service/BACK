@@ -17,6 +17,7 @@ export class HomeRepository {
       .select([
         'crew.crewId',
         'crew.category',
+        'crew.crewType',
         'crew.crewTitle',
         'crew.thumbnail',
         'crew.crewDDay',
@@ -40,6 +41,7 @@ export class HomeRepository {
       .select([
         'crew.crewId',
         'crew.category',
+        'crew.crewType',
         'crew.crewTitle',
         'crew.thumbnail',
         'crew.crewDDay',
@@ -64,6 +66,7 @@ export class HomeRepository {
       .select([
         'crew.crewId',
         'crew.category',
+        'crew.crewType',
         'crew.crewTitle',
         'crew.thumbnail',
         'crew.crewDDay',
