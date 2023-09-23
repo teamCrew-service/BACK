@@ -112,6 +112,22 @@ export class CrewController {
             scheduleContent: '일찍 퇴근 하는 분들 모여요!!',
             scheduleAddress: '일산 호수공원',
           },
+          allNotice: {
+            notice: {
+              noticeTitle: '일산 호수공원 런닝!!',
+              noticeContent:
+                '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
+              noticeAddress: '일산 호수공원',
+              noticeDDay: '2023-08-19T03:44:19.661Z',
+            },
+            voteForm: {
+              voteFormId: 1,
+              crewId: 1,
+              voteTitle: '이번 주에 만날 사람. 투표 부탁드립니다!',
+              voteContent: '홍대 근처 사시는 분들 함께 달리면 좋을 것 같아요!',
+              voteEndDate: '2023-08-19T03:44:19.661Z',
+            },
+          },
           personType: 'captain',
         },
         example3: {
@@ -129,6 +145,22 @@ export class CrewController {
             scheduleDDay: '2023-08-19T03:44:19.661Z',
             scheduleContent: '일찍 퇴근 하는 분들 모여요!!',
             scheduleAddress: '일산 호수공원',
+          },
+          allNotice: {
+            notice: {
+              noticeTitle: '일산 호수공원 런닝!!',
+              noticeContent:
+                '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
+              noticeAddress: '일산 호수공원',
+              noticeDDay: '2023-08-19T03:44:19.661Z',
+            },
+            voteForm: {
+              voteFormId: 1,
+              crewId: 1,
+              voteTitle: '이번 주에 만날 사람. 투표 부탁드립니다!',
+              voteContent: '홍대 근처 사시는 분들 함께 달리면 좋을 것 같아요!',
+              voteEndDate: '2023-08-19T03:44:19.661Z',
+            },
           },
           personType: 'member',
         },
@@ -161,8 +193,7 @@ export class CrewController {
     // const signup = await this.signupService.findMySignup(userId, crewId);
 
     // crew 공지
-    const notice = await this.noticeService.findAllNotice(crewId);
-    const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+    const allNotice = await this.noticeService.findAllNotice(crewId);
 
     // 방장일 경우
     if (userId === crew.captainId) {
@@ -171,8 +202,7 @@ export class CrewController {
         crew,
         member,
         schedule,
-        notice,
-        voteForm,
+        allNotice,
         personType: 'captain',
       });
     }
@@ -184,8 +214,7 @@ export class CrewController {
           crew,
           member,
           schedule,
-          notice,
-          voteForm,
+          allNotice,
           personType: 'member',
         });
       }
