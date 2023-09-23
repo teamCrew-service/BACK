@@ -3,6 +3,8 @@ import { UsersRepository } from './users.repository';
 import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { TopicDto } from '../topic/dto/topic.dto';
 import { TopicService } from 'src/topic/topic.service';
+import { EditTopicDto } from 'src/topic/dto/editTopic.dto';
+import { EditUserInfoDto } from './dto/editUserInfo-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,9 +36,12 @@ export class UsersService {
   }
 
   // 새로운 유저 추가 정보 입력
-  async userInfo(addUserInfoDto: AddUserInfoDto, userId: number): Promise<any> {
+  async userInfo(
+    editUserInfoDto: EditUserInfoDto,
+    userId: number,
+  ): Promise<any> {
     const addUserInfo = await this.usersRepository.userInfo(
-      addUserInfoDto,
+      editUserInfoDto,
       userId,
     );
     return addUserInfo;
@@ -55,8 +60,8 @@ export class UsersService {
   }
 
   //edit topic
-  async editTopic(topicDto: TopicDto, userId: number): Promise<any> {
-    const editTopic = await this.topicService.editTopic(topicDto, userId);
+  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
+    const editTopic = await this.topicService.editTopic(editTopicDto, userId);
     return editTopic;
   }
 

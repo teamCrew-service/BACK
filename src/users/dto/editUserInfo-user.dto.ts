@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class AddUserInfoDto {
+export class EditUserInfoDto {
   // nickname
   @ApiProperty({
     example: '돌핀맨',
     description: 'nickname',
     required: true,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly nickname: string;
 
@@ -18,7 +18,7 @@ export class AddUserInfoDto {
     description: '나이',
     required: true,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   readonly age: number;
 
@@ -28,7 +28,7 @@ export class AddUserInfoDto {
     description: '성별',
     required: true,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly gender: string;
 
@@ -59,6 +59,6 @@ export class AddUserInfoDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   readonly location: string;
 }

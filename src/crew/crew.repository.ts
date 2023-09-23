@@ -153,4 +153,25 @@ export class CrewRepository {
       .getRawOne();
     return crew;
   }
+
+  /* userId를 이용해 내가 생성한 모임 조회하기 */
+  async findMyCrew(userId: number): Promise<any> {
+    const myCrew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .select([
+        'crew.crewId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crew.crewTitle',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
+      ])
+      .where('crew.userId = :userId', { userId })
+      .groupBy('crew.crewId')
+      .getRawMany();
+    return myCrew;
+  }
 }

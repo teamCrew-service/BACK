@@ -87,4 +87,10 @@ export class CrewService {
     const crew = await this.crewRepository.findByCrewId(crewId);
     return crew;
   }
+
+  /* userId를 이용해 내가 생성한 모임 조회하기 */
+  async findMyCrew(userId: number): Promise<any> {
+    const myCrew = await this.crewRepository.findMyCrew(userId);
+    return myCrew;
+  }
 }

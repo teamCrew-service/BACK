@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from './entities/topic.entity';
 import { Repository } from 'typeorm';
 import { TopicDto } from './dto/topic.dto';
+import { EditTopicDto } from './dto/editTopic.dto';
 
 @Injectable()
 export class TopicRepository {
@@ -48,9 +49,9 @@ export class TopicRepository {
   }
 
   /* 관심사 수정*/
-  async editTopic(topicDto: TopicDto, userId: number): Promise<any> {
+  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
     try {
-      const interestTopic = topicDto.interestTopic;
+      const interestTopic = editTopicDto.interestTopic;
 
       // 기존의 topic 삭제
       await this.topicRepository

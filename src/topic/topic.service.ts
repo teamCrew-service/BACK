@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TopicRepository } from 'src/topic/topic.repository';
 import { TopicDto } from './dto/topic.dto';
+import { EditTopicDto } from './dto/editTopic.dto';
 
 @Injectable()
 export class TopicService {
@@ -19,8 +20,11 @@ export class TopicService {
   }
 
   /* 관심사 수정 */
-  async editTopic(topicDto: TopicDto, userId: number): Promise<any> {
-    const editTopic = await this.topicRepository.editTopic(topicDto, userId);
+  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
+    const editTopic = await this.topicRepository.editTopic(
+      editTopicDto,
+      userId,
+    );
     return editTopic;
   }
 }
