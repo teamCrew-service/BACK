@@ -108,7 +108,7 @@ export class AppModule implements NestModule {
       .apply(LoginMiddleware)
       .forRoutes(
         { path: 'crew/:crewId', method: RequestMethod.GET },
-        { path: 'schedule/comingDate', method: RequestMethod.GET },
+        { path: 'home/comingDate', method: RequestMethod.GET },
       );
   }
 }
