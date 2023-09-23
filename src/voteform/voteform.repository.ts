@@ -42,7 +42,9 @@ export class VoteFormRepository {
         'voteTitle',
         'voteContent',
         'voteEndDate',
-      ]);
+      ])
+      .where('voteform.crewId = :crewId', { crewId })
+      .getRawMany();
     return voteForm;
   }
 
