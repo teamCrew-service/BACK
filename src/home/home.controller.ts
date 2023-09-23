@@ -7,14 +7,61 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger/dist';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger/dist';
 
 @Controller('home')
 @ApiTags('Home API')
 export class HomeController {
   constructor(private readonly homeService: HomeService) {}
 
-  // 내 주변 모임 찾기
+  /* 다가오는 일정 */
+  @Get('comingDate')
+  @ApiOperation({
+    summary: '다가오는 일정 리스트 조회 API',
+    description: '다가오는 일정 리스트 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '다가오는 일정 리스트 조회합니다.',
+    schema: {
+      example: {
+        schedule: {
+          scheduleTitle: '퇴근 후 40분 걷기',
+          scheduleDDay: '2023-08-19T03:44:19.661Z',
+        },
+        participatedUser: { profileImage: 'URI' },
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
+  async findSchedule(@Res() res: any): Promise<any> {
+    try {
+      // 다가오는 일정 리스트 조회
+      const userId = res.locals.user ? res.locals.user.userId : null;
+      const schedule = await this.homeService.findSchedule(userId);
+
+      // 다가오는 일정 리스트 조회 결과가 없을 경우
+      if (schedule.length === 0) {
+        // 조회 된 일정이 없을 경우 null로 반환
+        return res.status(HttpStatus.NOT_FOUND).json(null);
+      }
+      // 다가오는 일정 리스트 조회 결과가 있을 경우
+      return res.status(HttpStatus.OK).json(schedule);
+    } catch (error) {
+      console.error(error); // 로깅
+      throw new HttpException(
+        `리스트 조회 실패: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /* 내 주변 모임 찾기 */
   @Get('map')
   @ApiOperation({
     summary: '내 주변 모임 찾기 API',
@@ -58,7 +105,7 @@ export class HomeController {
     }
   }
 
-  // 내 주변 모임 찾기(카테고리별)
+  /* 내 주변 모임 찾기(카테고리별) */
   @Get('map/:category')
   @ApiOperation({
     summary: '내 주변 모임 찾기(카테고리별) API',
@@ -105,15 +152,15 @@ export class HomeController {
     }
   }
 
-  // 카테고리별 모임 찾기
+  /* 관심사별 모임 찾기 */
   @Get(':category')
   @ApiOperation({
-    summary: '카테고리별 모임 찾기 API',
-    description: '카테고리별 모임을 조회합니다.',
+    summary: '관심사별 모임 찾기 API',
+    description: '관심사별 모임을 조회합니다.',
   })
   @ApiResponse({
     status: 200,
-    description: '카테고리별 모임을 조회합니다.',
+    description: '관심사별 모임을 조회합니다.',
     schema: {
       example: {
         crewId: 1,
@@ -136,7 +183,7 @@ export class HomeController {
       // 조회 결과가 없을 경우
       if (crew.length === 0) {
         return res.status(HttpStatus.NOT_FOUND).json({
-          errormessage: '카테고리별로 조회한 결과가 없습니다.',
+          errormessage: '관심사별로 조회한 결과가 없습니다.',
         });
       }
 
@@ -146,7 +193,7 @@ export class HomeController {
       console.error(e);
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: '카테고리별 리스트 조회 실패' });
+        .json({ message: '관심사별 리스트 조회 실패' });
     }
   }
 }

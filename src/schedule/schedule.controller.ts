@@ -34,48 +34,6 @@ export class ScheduleController {
     private readonly participantService: ParticipantService,
   ) {}
 
-  // 일정 조회
-  @Get('comingDate')
-  @ApiOperation({
-    summary: '다가오는 일정 리스트 조회 API',
-    description: '다가오는 일정 리스트 조회합니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '다가오는 일정 리스트 조회합니다.',
-    schema: {
-      example: {
-        schedule: {
-          scheduleFTitle: '퇴근 후 40분 걷기',
-          scheduleDDay: '2023-08-19T03:44:19.661Z',
-        },
-        participatedUser: { profileImage: 'URI' },
-      },
-    },
-  })
-  @ApiBearerAuth('accessToken')
-  async findschedule(@Res() res: any): Promise<any> {
-    try {
-      // 다가오는 일정 리스트 조회
-      const userId = res.locals.user ? res.locals.user.userId : null;
-      const schedule = await this.scheduleService.findSchedule(userId);
-
-      // 다가오는 일정 리스트 조회 결과가 없을 경우
-      if (schedule.length === 0) {
-        // 조회 된 일정이 없을 경우 null로 반환
-        return res.status(HttpStatus.NOT_FOUND).json(null);
-      }
-      // 다가오는 일정 리스트 조회 결과가 있을 경우
-      return res.status(HttpStatus.OK).json(schedule);
-    } catch (error) {
-      console.error(error); // 로깅
-      throw new HttpException(
-        `리스트 조회 실패: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
   // 일정 생성
   @Post('/:crewId/createSchedule')
   @ApiOperation({

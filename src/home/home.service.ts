@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
 // import { Crew } from 'src/crew/entities/crew.entity';
 import { HomeRepository } from './home.repository';
+import { ScheduleService } from 'src/schedule/schedule.service';
 
 @Injectable()
 export class HomeService {
-  constructor(private homeRepository: HomeRepository) {}
+  constructor(
+    private homeRepository: HomeRepository,
+    private scheduleService: ScheduleService,
+  ) {}
+
+  // 다가오는 일정
+  async findSchedule(userId: number): Promise<any> {
+    const schedule = await this.scheduleService.findSchedule(userId);
+    return schedule;
+  }
 
   // 내 주변 모임 찾기
   async getCrew(): Promise<any> {
