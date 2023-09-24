@@ -36,6 +36,7 @@ export class NoticeRepository {
       .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
       .where('notice.crewId = :crewId', { crewId })
       .getRawMany();
+    return notice;
   }
 
   /* 공지 상세 조회 */

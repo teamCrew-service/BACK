@@ -12,15 +12,19 @@ export class ScheduleService {
     const schedule = await this.scheduleRepository.findSchedule(userId);
 
     // map 함수를 사용하여 schedule를 순회하면서 필요한 데이터만 추출 후 새로운 배열로 반환
-    const processedSchedules = schedule.map((schedule) => {
-      return {
-        scheduleTitle: schedule.scheduleTitle,
-        scheduleDDay: schedule.scheduleDDay,
-        profileImage: schedule.userId ? schedule.userId.profileImage : null, // user.profileImage가 존재하지 않을 경우 null
-      };
-    });
-
-    return processedSchedules;
+    if (schedule.length < 1) {
+      const processedSchedule = [];
+      return processedSchedule;
+    } else {
+      const processedSchedules = schedule.map((schedule) => {
+        return {
+          scheduleTitle: schedule.scheduleTitle,
+          scheduleDDay: schedule.scheduleDDay,
+          profileImage: schedule.userId ? schedule.userId.profileImage : [], // user.profileImage가 존재하지 않을 경우 null
+        };
+      });
+      return processedSchedules;
+    }
   }
 
   // 공지사항 생성

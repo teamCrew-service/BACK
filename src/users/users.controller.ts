@@ -201,13 +201,18 @@ export class UsersController {
     @Body() topicAndInfoDto: TopicAndInfoDto,
     @Res() res: any,
   ): Promise<any> {
-    let { addUserInfoDto, topicDto } = topicAndInfoDto;
-    const { userId } = res.locals.user;
-    await this.usersService.userInfo(addUserInfoDto, userId);
-    await this.usersService.addTopic(topicDto, userId);
-    return res
-      .status(HttpStatus.CREATED)
-      .json({ message: '추가 정보 입력 완료' });
+    try {
+      let { addUserInfoDto, topicDto } = topicAndInfoDto;
+      const { userId } = res.locals.user;
+      await this.usersService.userInfo(addUserInfoDto, userId);
+      await this.usersService.addTopic(topicDto, userId);
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: '추가 정보 입력 완료' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/addUserInfo');
+    }
   }
 
   /* 닉네임 체크 API */
