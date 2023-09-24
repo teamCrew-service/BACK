@@ -102,13 +102,9 @@ export class NoticeController {
     try {
       const notice = await this.noticeService.findAllNotice(crewId);
       const voteForm = await this.voteFormService.findAllVoteForm(crewId);
-      if (!notice && !voteForm) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '조회된 공지가 없습니다.' });
-      } else {
-        return res.status(HttpStatus.OK).json({ notice, voteForm });
-      }
+
+      const allNotice = { notice, voteForm };
+      return res.status(HttpStatus.OK).json(allNotice);
     } catch (e) {
       console.error(e);
       throw new Error('noticeController/findAllNotice');

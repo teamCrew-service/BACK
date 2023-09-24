@@ -68,28 +68,33 @@ export class SignupController {
   })
   @ApiBearerAuth('accessToken')
   async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
-    const { userId } = res.locals.user;
-    const crew = await this.crewService.findByCrewId(crewId);
-    const member = await this.memberService.findAllMember(crewId);
-    if (crew.userId === userId) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '모임의 방장입니다.' });
-    }
-    if (crew.crewMaxMember === member.length) {
-      for (let i = 0; i < member.length; i++) {
-        if (member[i].userId === userId) {
-          return res
-            .status(HttpStatus.BAD_REQUEST)
-            .json({ message: '모임에 이미 가입했습니다.' });
-        }
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      const member = await this.memberService.findAllMember(crewId);
+      if (crew.userId === userId) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임의 방장입니다.' });
       }
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '모임 인원이 가득 찼습니다.' });
+      if (crew.crewMaxMember === member.length) {
+        for (let i = 0; i < member.length; i++) {
+          if (member[i].member_userId === userId) {
+            return res
+              .status(HttpStatus.BAD_REQUEST)
+              .json({ message: '모임에 이미 가입했습니다.' });
+          }
+        }
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임 인원이 가득 찼습니다.' });
+      }
+      await this.memberService.addMember(crewId, userId);
+      return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/signup');
     }
-    await this.memberService.addMember(crewId, userId);
-    return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
   }
 
   /* 모임 가입(form 불러오기) */
@@ -117,8 +122,15 @@ export class SignupController {
     signupFormId: number,
     @Res() res: any,
   ): Promise<any> {
-    const signupForm = await this.signupService.findOneSignupForm(signupFormId);
-    return res.status(HttpStatus.OK).json(signupForm);
+    try {
+      const signupForm = await this.signupService.findOneSignupForm(
+        signupFormId,
+      );
+      return res.status(HttpStatus.OK).json(signupForm);
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/findOneSignupForm');
+    }
   }
 
   /* 모임 가입 작성 */
@@ -140,31 +152,36 @@ export class SignupController {
     @Body() submitSignupDto: SubmitSignupDto,
     @Res() res: any,
   ): Promise<any> {
-    const { userId } = res.locals.user;
-    const submitedSignup = await this.signupService.findMySignup(
-      userId,
-      crewId,
-    );
-    if (submitedSignup) {
-      return res.status(HttpStatus.CONFLICT).json({
-        message: '이미 가입서를 작성했습니다. 모임장의 승인을 기다려주세요',
-      });
+    try {
+      const { userId } = res.locals.user;
+      const submitedSignup = await this.signupService.findMySignup(
+        userId,
+        crewId,
+      );
+      if (submitedSignup) {
+        return res.status(HttpStatus.CONFLICT).json({
+          message: '이미 가입서를 작성했습니다. 모임장의 승인을 기다려주세요',
+        });
+      }
+      if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
+        throw new Error('작성을 완료해주세요');
+      }
+      await this.signupService.submitSignup(
+        userId,
+        crewId,
+        signupFormId,
+        submitSignupDto,
+      );
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: '모임 가입서 작성 완료' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/submitSignup');
     }
-    if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
-      throw new Error('작성을 완료해주세요');
-    }
-    await this.signupService.submitSignup(
-      userId,
-      crewId,
-      signupFormId,
-      submitSignupDto,
-    );
-    return res
-      .status(HttpStatus.CREATED)
-      .json({ message: '모임 가입서 작성 완료' });
   }
 
-  /* 제출한 가입서 조회 */
+  /* (모임장) 제출한 가입서 조회 */
   @Get('signup/:crewId')
   @ApiOperation({
     summary: '제출한 가입서 조회 API',
@@ -187,15 +204,20 @@ export class SignupController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
-    const { userId } = res.locals.user;
-    const crew = await this.crewService.findByCrewId(crewId);
-    if (crew.userId === userId) {
-      const singup = await this.signupService.findAllSubmitted(crewId);
-      return res.status(HttpStatus.OK).json(singup);
-    } else {
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: '모임장이 아닙니다. 접근 권한이 없습니다.' });
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (crew.userId === userId) {
+        const singup = await this.signupService.findAllSubmitted(crewId);
+        return res.status(HttpStatus.OK).json(singup);
+      } else {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '모임장이 아닙니다. 접근 권한이 없습니다.' });
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/findAllSubmitted');
     }
   }
 
@@ -216,7 +238,14 @@ export class SignupController {
     @Body() confirmSingupDto: ConfirmSingupDto,
     @Res() res: any,
   ): Promise<any> {
-    await this.signupService.confirmSingup(singupId, confirmSingupDto);
-    return res.status(HttpStatus.OK).json({ message: '모임 가입서 확인 완료' });
+    try {
+      await this.signupService.confirmSingup(singupId, confirmSingupDto);
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: '모임 가입서 확인 완료' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/confirmSingup');
+    }
   }
 }

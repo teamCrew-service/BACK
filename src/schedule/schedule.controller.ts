@@ -241,7 +241,7 @@ export class ScheduleController {
         return res.status(HttpStatus.OK).json({ message: '모임장입니다.' });
       }
 
-      // 참가자 조회해서 참가 인원인지, 참가 명수 넘었는지 확인하기
+      // 참가자 조회해서 참가 인원인지
       for (let i = 0; i < participant.length; i++) {
         if (userId === participant.participant_userId) {
           return res
@@ -251,7 +251,7 @@ export class ScheduleController {
       }
 
       for (let i = 0; i < member.length; i++) {
-        if (userId === member[i].userId) {
+        if (userId === member[i].member_userId) {
           await this.participantService.participateSchedule(
             userId,
             crewId,

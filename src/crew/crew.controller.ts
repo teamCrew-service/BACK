@@ -24,6 +24,7 @@ import { ScheduleService } from 'src/schedule/schedule.service';
 import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
 import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
+
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
@@ -193,7 +194,10 @@ export class CrewController {
     // const signup = await this.signupService.findMySignup(userId, crewId);
 
     // crew 공지
-    const allNotice = await this.noticeService.findAllNotice(crewId);
+    const regularNotice = await this.noticeService.findAllNotice(crewId);
+    const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+
+    const allNotice = { regularNotice, voteForm };
 
     // 방장일 경우
     if (userId === crew.captainId) {

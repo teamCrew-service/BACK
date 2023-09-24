@@ -101,7 +101,7 @@ export class VoteController {
       const member = await this.memberService.findAllMember(crewId);
 
       for (let i = 0; i < member.length; i++) {
-        if (member[i].userId === userId || crew.userId === userId) {
+        if (member[i].member_userId === userId || crew.userId === userId) {
           const voteDetail = await this.voteService.findAllVote(crewId);
           return res.status(HttpStatus.OK).json(voteDetail);
         }
@@ -138,7 +138,7 @@ export class VoteController {
       const member = await this.memberService.findAllMember(crewId);
 
       for (let i = 0; i < member.length; i++) {
-        if (member[i].userId === userId || crew.userId === userId) {
+        if (member[i].member_userId === userId || crew.userId === userId) {
           await this.voteService.editVote(
             userId,
             crewId,

@@ -46,10 +46,10 @@ export class HomeController {
       const schedule = await this.homeService.findSchedule(userId);
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
-      if (schedule.length === 0) {
-        // 조회 된 일정이 없을 경우 null로 반환
-        return res.status(HttpStatus.NOT_FOUND).json(null);
-      }
+      // if (schedule.length === 0) {
+      //   // 조회 된 일정이 없을 경우 null로 반환
+      //   return res.status(HttpStatus.NOT_FOUND).json(null);
+      // }
       // 다가오는 일정 리스트 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json(schedule);
     } catch (error) {
@@ -89,11 +89,11 @@ export class HomeController {
       const crew = await this.homeService.getCrew();
 
       // 내 주변 모임 조회 결과가 없을 경우
-      if (crew.length === 0) {
-        return res.status(HttpStatus.NOT_FOUND).json({
-          errormessage: '내 주변 모임 조회 결과가 없습니다.',
-        });
-      }
+      // if (crew.length === 0) {
+      //   return res.status(HttpStatus.NOT_FOUND).json({
+      //     errormessage: '내 주변 모임 조회 결과가 없습니다.',
+      //   });
+      // }
       // 내 주변 모임 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (error) {
@@ -136,11 +136,11 @@ export class HomeController {
       const crew = await this.homeService.findCrewByCategoryAndMap(category);
 
       // 카테고리별로 조회한 결과가 없을 경우
-      if (crew.length === 0) {
-        return res.status(HttpStatus.NOT_FOUND).json({
-          errormessage: '카테고리별로 조회한 결과가 없습니다.',
-        });
-      }
+      // if (crew.length === 0) {
+      //   return res.status(HttpStatus.NOT_FOUND).json({
+      //     errormessage: '카테고리별로 조회한 결과가 없습니다.',
+      //   });
+      // }
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (error) {
@@ -181,11 +181,11 @@ export class HomeController {
       const crew = await this.homeService.findCrewByCategory(category);
 
       // 조회 결과가 없을 경우
-      if (crew.length === 0) {
-        return res.status(HttpStatus.NOT_FOUND).json({
-          errormessage: '관심사별로 조회한 결과가 없습니다.',
-        });
-      }
+      // if (crew.length === 0) {
+      //   return res.status(HttpStatus.NOT_FOUND).json({
+      //     errormessage: '관심사별로 조회한 결과가 없습니다.',
+      //   });
+      // }
 
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
