@@ -16,22 +16,20 @@ export class ScheduleRepository {
   // 일정 조회
   async findSchedule(userId: number): Promise<any[]> {
     const query = `
-       SELECT
-              schedule.scheduleTitle,
-              schedule.scheduleDDay,
-              users.profileImage AS user_profileImage, -- 일정을 작성한 사람의 이미지
-              users_member.profileImage AS member_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
-              users.userId,
-              member.userId AS member_userId,
-              users.nickname AS user_userName,
-              users_member.nickname AS member_userName,
-              crew.crewId
-         FROM schedule
-    LEFT JOIN users ON schedule.userId = users.userId -- 일정을 작성한 사람과 users 테이블 조인
-    LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
-    LEFT JOIN member ON crew.crewId = member.crewId -- 크루에 포함된 멤버와 member 테이블 조인
-    LEFT JOIN users AS users_member ON member.userId = users_member.userId -- 멤버의 이미지를 users 테이블에서 가져옴
-        WHERE crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId});`;
+     SELECT 
+            schedule.scheduleTitle,
+            schedule.scheduleDDay,
+            users_member.profileImage AS member_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
+            users.userId,
+            member.userId AS member_userId,
+            crew.crewId,
+            users_member.nickname AS member_userName
+       FROM  schedule
+  LEFT JOIN  users ON schedule.userId = users.userId -- 일정을 작성한 사람과 users 테이블 조인
+  LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
+  LEFT JOIN member ON crew.crewId = member.crewId -- 크루에 포함된 멤버와 member 테이블 조인
+  LEFT JOIN users AS users_member ON member.userId = users_member.userId -- 멤버의 이미지를 users 테이블에서 가져옴
+      WHERE crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId});`;
 
     const result = await this.entityManager.query(query);
     return result;
