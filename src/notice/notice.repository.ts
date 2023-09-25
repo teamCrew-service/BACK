@@ -33,8 +33,17 @@ export class NoticeRepository {
   async findAllNotice(crewId: number): Promise<any> {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
+      .select([
+        'noticeTitle',
+        'noticeContent',
+        'noticeAddress',
+        'noticeDDay',
+        'noticeIsDone',
+        'createdAt',
+      ])
       .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.deletedAt IS NULL')
+      .orderBy('notice.createdAt', 'DESC')
       .getRawMany();
     return notice;
   }

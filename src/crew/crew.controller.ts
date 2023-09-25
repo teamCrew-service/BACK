@@ -24,6 +24,7 @@ import { ScheduleService } from 'src/schedule/schedule.service';
 import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
 import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
+import { LikeService } from 'src/like/like.service';
 
 @Controller('crew')
 @ApiTags('Crew API')
@@ -35,6 +36,7 @@ export class CrewController {
     private readonly scheduleService: ScheduleService,
     private readonly noticeService: NoticeService,
     private readonly voteFormService: VoteFormService,
+    private readonly likeService: LikeService,
   ) {}
 
   /* 모임 생성 */
@@ -175,6 +177,7 @@ export class CrewController {
     const userId = res.locals.user ? res.locals.user.userId : null;
     const crew = await this.crewService.findCrewDetail(crewId);
     const member = await this.memberService.findAllMember(crewId);
+    const likeCount = await this.likeService.countLikedCrew(crewId);
 
     // 모임이 생긴 기간
     const today: any = new Date().getDate();
@@ -191,7 +194,6 @@ export class CrewController {
 
     // crew 일정
     const schedule = await this.scheduleService.findScheduleByCrew(crewId);
-    // const signup = await this.signupService.findMySignup(userId, crewId);
 
     // crew 공지
     const regularNotice = await this.noticeService.findAllNotice(crewId);
@@ -207,6 +209,7 @@ export class CrewController {
         member,
         schedule,
         allNotice,
+        likeCount,
         personType: 'captain',
       });
     }
@@ -219,13 +222,18 @@ export class CrewController {
           member,
           schedule,
           allNotice,
+          likeCount,
           personType: 'member',
         });
       }
     }
-    return res
-      .status(HttpStatus.OK)
-      .json({ createdCrewPeriod, crew, member, personType: 'person' });
+    return res.status(HttpStatus.OK).json({
+      createdCrewPeriod,
+      crew,
+      member,
+      likeCount,
+      personType: 'person',
+    });
   }
 
   /* 모임글 수정 */

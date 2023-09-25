@@ -25,4 +25,12 @@ export class LikeService {
     const likedCrewId = await this.likeRepository.findLikedCrew(userId);
     return likedCrewId;
   }
+
+  /* crew를 찜한 횟수 확인 */
+  async countLikedCrew(crewId: number): Promise<any> {
+    const likedCrew = await this.likeRepository.countLikedCrew(crewId);
+
+    const likeCount = likedCrew.length;
+    return likeCount;
+  }
 }

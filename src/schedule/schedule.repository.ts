@@ -135,11 +135,15 @@ export class ScheduleRepository {
         'scheduleTitle',
         'scheduleContent',
         'scheduleDDay',
+        'scheduleIsDone',
         'scheduleAddress',
         'scheduleLatitude',
         'scheduleLongitude',
+        'createdAt',
       ])
       .where('schedule.crewId = :id', { id: crewId })
+      .andWhere('schedule.deletedAt IS NULL')
+      .orderBy('schedule.createdAt', 'DESC')
       .getRawMany();
     return schedule;
   }
