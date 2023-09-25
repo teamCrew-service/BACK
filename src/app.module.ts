@@ -41,7 +41,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       // synchronize: true,
-      synchronize: true,
+      synchronize: false,
     }),
     UsersModule,
     AuthModule,
