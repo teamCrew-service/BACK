@@ -53,6 +53,8 @@ export class MemberRepository {
         'crew.thumbnail',
       ])
       .where('member.userId=:userId', { userId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
       .groupBy('member.memberId')
       .getRawMany();
     return joinedCrew;

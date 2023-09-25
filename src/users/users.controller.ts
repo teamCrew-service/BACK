@@ -354,16 +354,16 @@ export class UsersController {
     const likedCrew = await this.likeService.findLikedCrew(userId);
     const crewList = [];
     for (let i = 0; i < likedCrew.length; i++) {
-      const crewId = likedCrew[i].crewId;
-      const crew = await this.crewService.findByCrewId(crewId);
+      const crewId = likedCrew[i].like_crewId;
+      const crew = await this.crewService.findCrewDetailByCrewId(crewId);
       crewList.push(crew);
     }
     // user가 참여한 모임
     const joinedCrew = await this.memberService.findJoinedCrew(userId);
     const memberCrewList = [];
     for (let i = 0; i < joinedCrew.length; i++) {
-      const crewId = joinedCrew[i].crewId;
-      const crew = await this.crewService.findByCrewId(crewId);
+      const crewId = joinedCrew[i].member_crewId;
+      const crew = await this.crewService.findCrewDetailByCrewId(crewId);
       memberCrewList.push(crew);
     }
     return res.status(HttpStatus.OK).json({
