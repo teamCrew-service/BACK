@@ -3,31 +3,36 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/createSchedule.dto';
 import { EditScheduleDto } from './dto/editSchedule.dto';
-import { Repository } from 'typeorm';
+import { Repository, EntityManager } from 'typeorm';
 
 @Injectable()
 export class ScheduleRepository {
   constructor(
     @InjectRepository(Schedule)
     private readonly scheduleRepository: Repository<Schedule>,
+    private readonly entityManager: EntityManager,
   ) {}
 
   // 일정 조회
-  async findSchedule(userId: number): Promise<any> {
-    const schedules = await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .leftJoinAndSelect('schedule.userId', 'users') // users 테이블과 조인하여 profileImage를 가져옴
-      .leftJoin('schedule.crewId', 'crew') // crew 테이블과의 join
-      .leftJoin('crew.member', 'member') // crew와 member 테이블과의 join
-      .where('member.userId = :userId', { userId }) // 해당 userId를 가진 멤버만 필터링
-      .select([
-        'schedule.scheduleTitle',
-        'schedule.scheduleDDay',
-        'users.profileImage',
-      ]) // 필요한 필드만 선택
-      .getMany();
+  async findSchedule(userId: number): Promise<any[]> {
+    const query = `
+     SELECT 
+            schedule.scheduleTitle,
+            schedule.scheduleDDay,
+            users_member.profileImage AS member_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
+            users.userId,
+            member.userId AS member_userId,
+            crew.crewId,
+            users_member.nickname AS member_userName
+       FROM  schedule
+  LEFT JOIN  users ON schedule.userId = users.userId -- 일정을 작성한 사람과 users 테이블 조인
+  LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
+  LEFT JOIN member ON crew.crewId = member.crewId -- 크루에 포함된 멤버와 member 테이블 조인
+  LEFT JOIN users AS users_member ON member.userId = users_member.userId -- 멤버의 이미지를 users 테이블에서 가져옴
+      WHERE crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId});`;
 
-    return schedules;
+    const result = await this.entityManager.query(query);
+    return result;
   }
 
   // 일정 생성

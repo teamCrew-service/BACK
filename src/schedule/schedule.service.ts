@@ -8,32 +8,59 @@ import { Cron } from '@nestjs/schedule';
 export class ScheduleService {
   constructor(private readonly scheduleRepository: ScheduleRepository) {}
 
+
   @Cron('0 0 * * * *')
   async scheduleCron() {
     await this.scheduleRepository.updateScheduleIsDone();
   }
 
-  // 공지사항 조회
-  async findSchedule(userId: number) {
-    const schedule = await this.scheduleRepository.findSchedule(userId);
+  // 일정 조회
+  async findSchedule(userId: number): Promise<any[]> {
+    const rawData = await this.scheduleRepository.findSchedule(userId);
 
-    // map 함수를 사용하여 schedule를 순회하면서 필요한 데이터만 추출 후 새로운 배열로 반환
-    if (schedule.length < 1) {
-      const processedSchedule = [];
-      return processedSchedule;
-    } else {
-      const processedSchedules = schedule.map((schedule) => {
-        return {
-          scheduleTitle: schedule.scheduleTitle,
-          scheduleDDay: schedule.scheduleDDay,
-          profileImage: schedule.userId ? schedule.userId.profileImage : [], // user.profileImage가 존재하지 않을 경우 null
+
+    // 일정별로 데이터를 묶는 맵을 생성
+    const scheduleMap = new Map();
+
+    for (const data of rawData) {
+      const scheduleKey = data.scheduleTitle + data.scheduleDDay; // 일정 제목과 날짜를 키로 사용
+      let scheduleData = scheduleMap.get(scheduleKey); // 일정별로 데이터를 묶음
+
+      // 일정이 없을 경우
+      if (!scheduleData) {
+        scheduleData = {
+          schedule: {
+            scheduleTitle: data.scheduleTitle,
+            scheduleDDay: data.scheduleDDay,
+          },
+          profileImage: [],
         };
-      });
-      return processedSchedules;
+        scheduleMap.set(scheduleKey, scheduleData);
+      }
+
+      // 멤버의 프로필 이미지를 배열에 추가
+      if (data.member_profileImage) {
+        scheduleData.profileImage.push({
+          member_profileImage: data.member_profileImage,
+          member_userId: data.member_userId,
+          member_userName: data.member_userName,
+        });
+      } else {
+        scheduleData.profileImage.push({
+          user_profileImage: null,
+          member_userId: data.member_userId,
+          member_userName: data.member_userName,
+        });
+      }
     }
+
+    // 결과 배열을 생성
+    const result = Array.from(scheduleMap.values());
+
+    return result;
   }
 
-  // 공지사항 생성
+  // 일정 생성
   async createSchedule(
     createScheduleDto: CreateScheduleDto,
     userId: number,
@@ -51,7 +78,7 @@ export class ScheduleService {
     }
   }
 
-  // 공지사항 수정
+  // 일정 수정
   async editSchedule(
     userId: number,
     crewId: number,
@@ -72,7 +99,7 @@ export class ScheduleService {
     }
   }
 
-  // 공지사항 상세 조회
+  // 일절 상세 조회
   async findScheduleDetail(scheduleId: number, crewId: number): Promise<any> {
     try {
       const schedule = await this.scheduleRepository.findScheduleDetail(
@@ -89,7 +116,7 @@ export class ScheduleService {
     }
   }
 
-  // 공지사항 삭제
+  // 일정 삭제
   async deleteSchedule(scheduleId: number, crewId: number): Promise<any> {
     try {
       const schedule = await this.scheduleRepository.deleteSchedule(
