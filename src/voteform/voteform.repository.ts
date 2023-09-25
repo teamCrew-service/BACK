@@ -138,4 +138,20 @@ export class VoteFormRepository {
     const deleteVoteForm = await this.voteFormRepository.softDelete(voteForm);
     return deleteVoteForm;
   }
+
+  /* 오늘 날짜 기준보다 날짜가 지난 투표를 찾아 IsDone을 true로 전환 */
+  async updateVoteIsDone(): Promise<any> {
+    const currentDate = new Date();
+    const voteBeforeToday = await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .where('voteform.voteEndDate < :currentDate', { currentDate })
+      .getRawMany();
+
+    for (const voteForm of voteBeforeToday) {
+      if (currentDate > voteForm) {
+        voteForm.voteIsDone = true;
+        await this.voteFormRepository.save(voteForm);
+      }
+    }
+  }
 }

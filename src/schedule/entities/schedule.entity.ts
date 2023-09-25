@@ -46,6 +46,9 @@ export class Schedule {
   @Column({ type: 'double' })
   scheduleLongitude: number;
 
+  @Column({ type: 'boolean', default: false })
+  scheduleIsDone: Boolean;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

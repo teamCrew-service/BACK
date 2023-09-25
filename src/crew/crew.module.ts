@@ -7,7 +7,7 @@ import { Crew } from './entities/crew.entity';
 import { CrewController } from './crew.controller';
 import { SignupModule } from 'src/signup/signup.module';
 import { MemberModule } from 'src/member/member.module';
-import { ScheduleModule } from 'src/schedule/schedule.module';
+import { scheduleModule } from 'src/schedule/schedule.module';
 import { LikeModule } from 'src/like/like.module';
 import { NoticeModule } from 'src/notice/notice.module';
 import { VoteFormModule } from 'src/voteform/voteform.module';
@@ -18,7 +18,7 @@ import { VoteFormModule } from 'src/voteform/voteform.module';
     forwardRef(() => HomeModule),
     forwardRef(() => SignupModule),
     forwardRef(() => MemberModule),
-    forwardRef(() => ScheduleModule),
+    forwardRef(() => scheduleModule),
     forwardRef(() => LikeModule),
     forwardRef(() => NoticeModule),
     forwardRef(() => VoteFormModule),

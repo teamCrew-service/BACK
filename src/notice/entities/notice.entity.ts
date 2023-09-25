@@ -36,6 +36,9 @@ export class Notice {
   @Column({ type: 'date' })
   noticeDDay: Date;
 
+  @Column({ type: 'boolean', default: false })
+  noticeIsDone: Boolean;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

@@ -5,13 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Crew } from 'src/crew/entities/crew.entity';
 import { HomeRepository } from './home.repository';
 import { CrewModule } from 'src/crew/crew.module';
-import { ScheduleModule } from 'src/schedule/schedule.module';
+import { scheduleModule } from 'src/schedule/schedule.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Crew]),
     forwardRef(() => CrewModule),
-    forwardRef(() => ScheduleModule),
+    forwardRef(() => scheduleModule),
   ],
   controllers: [HomeController],
   providers: [HomeService, HomeRepository],

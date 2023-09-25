@@ -2,10 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { NoticeRepository } from './notice.repository';
 import { CreateNoticeDto } from './dto/createNotice.dto';
 import { EditNoticeDto } from './dto/editNotice.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
+
+  @Cron('0 0 * * * *') // cron을 이용해 scheduling
+  // method가 자정에 맞춰 계속 noticeIsDone 부분을 scheduling
+  async noticeCron() {
+    await this.noticeRepository.updateNoticeIsDone();
+  }
 
   /* 공지 등록 */
   async createNotice(

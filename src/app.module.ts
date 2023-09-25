@@ -13,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SignupModule } from './signup/signup.module';
 import { HomeModule } from './home/home.module';
 import { CrewModule } from './crew/crew.module';
-import { ScheduleModule } from './schedule/schedule.module';
+import { scheduleModule } from './schedule/schedule.module';
 import { AuthMiddleWare } from './middleware/auth.middleware';
 import { MemberModule } from './member/member.module';
 import { JwtService } from '@nestjs/jwt';
@@ -24,9 +24,11 @@ import { NoticeModule } from './notice/notice.module';
 import { VoteFormModule } from './voteform/voteform.module';
 import { VoteModule } from './vote/vote.module';
 import { ParticipantModule } from './participant/participant.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -39,14 +41,14 @@ import { ParticipantModule } from './participant/participant.module';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       // synchronize: true,
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,
     SignupModule,
     HomeModule,
     CrewModule,
-    ScheduleModule,
+    scheduleModule, // Cron-Job Scheduling을 이용하기 위해 기존의 모듈을 대문자 ScheduleModule에서 소문자 scheduleModule로 바꿈
     MemberModule,
     LikeModule,
     TopicModule,

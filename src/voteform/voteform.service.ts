@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { VoteFormRepository } from './voteform.repository';
 import { CreateVoteFormDto } from './dto/createVoteForm.dto';
 import { EditVoteFormDto } from './dto/editVoteForm.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class VoteFormService {
   constructor(private readonly voteFormRespository: VoteFormRepository) {}
+
+  @Cron('0 0 * * * *')
+  async voteFormCron() {
+    await this.voteFormRespository.updateVoteIsDone();
+  }
 
   /* 투표 공지 등록 */
   async createVoteForm(

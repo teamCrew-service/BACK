@@ -2,10 +2,16 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ScheduleRepository } from './schedule.repository';
 import { CreateScheduleDto } from './dto/createSchedule.dto';
 import { EditScheduleDto } from './dto/editSchedule.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ScheduleService {
   constructor(private readonly scheduleRepository: ScheduleRepository) {}
+
+  @Cron('0 0 * * * *')
+  async scheduleCron() {
+    await this.scheduleRepository.updateScheduleIsDone();
+  }
 
   // 공지사항 조회
   async findSchedule(userId: number) {
