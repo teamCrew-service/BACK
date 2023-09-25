@@ -2,14 +2,22 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ScheduleRepository } from './schedule.repository';
 import { CreateScheduleDto } from './dto/createSchedule.dto';
 import { EditScheduleDto } from './dto/editSchedule.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ScheduleService {
   constructor(private readonly scheduleRepository: ScheduleRepository) {}
 
+
+  @Cron('0 0 * * * *')
+  async scheduleCron() {
+    await this.scheduleRepository.updateScheduleIsDone();
+  }
+
   // 일정 조회
   async findSchedule(userId: number): Promise<any[]> {
     const rawData = await this.scheduleRepository.findSchedule(userId);
+
 
     // 일정별로 데이터를 묶는 맵을 생성
     const scheduleMap = new Map();

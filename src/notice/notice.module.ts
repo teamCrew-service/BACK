@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notice } from './entities/notice.entity';
 import { CrewModule } from 'src/crew/crew.module';
 import { VoteFormModule } from 'src/voteform/voteform.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [

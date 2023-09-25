@@ -93,4 +93,20 @@ export class NoticeRepository {
     const deletedNotice = await this.noticeRepository.softDelete(notice);
     return deletedNotice;
   }
+
+  /* 오늘 날짜 기준보다 날짜가 지난 공지를 찾아 IsDone을 true로 전환 */
+  async updateNoticeIsDone(): Promise<any> {
+    const currentDate = new Date();
+    const noticeBeforeToday = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .where('notice.noticeDDay < :currentDate', { currentDate })
+      .getRawMany();
+
+    for (const notice of noticeBeforeToday) {
+      if (currentDate > notice) {
+        notice.noticeIsDone = true;
+        await this.noticeRepository.save(notice);
+      }
+    }
+  }
 }

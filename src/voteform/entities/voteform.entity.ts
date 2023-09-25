@@ -35,6 +35,9 @@ export class VoteForm {
   @Column({ type: 'date' })
   voteEndDate: Date;
 
+  @Column({ type: 'boolean', default: false })
+  voteIsDone: Boolean;
+
   @Column({ type: 'varchar', nullable: true })
   voteOption1: string;
 

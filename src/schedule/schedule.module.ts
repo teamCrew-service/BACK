@@ -19,4 +19,4 @@ import { MemberModule } from 'src/member/member.module';
   providers: [ScheduleService, ScheduleRepository],
   exports: [ScheduleService, ScheduleRepository],
 })
-export class ScheduleModule {}
+export class scheduleModule {}
