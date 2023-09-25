@@ -52,4 +52,14 @@ export class LikeRepository {
       .getRawMany();
     return likedCrew;
   }
+
+  /* crew를 찜한 횟수 확인 */
+  async countLikedCrew(crewId: number): Promise<any> {
+    const likedCrew = await this.likeRepository
+      .createQueryBuilder('like')
+      .select(['likeId', 'crewId'])
+      .where('like.crewId = :crewId', { crewId })
+      .getRawMany();
+    return likedCrew;
+  }
 }
