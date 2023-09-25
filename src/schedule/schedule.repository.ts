@@ -143,7 +143,7 @@ export class ScheduleRepository {
       ])
       .where('schedule.crewId = :id', { id: crewId })
       .andWhere('schedule.deletedAt IS NULL')
-      .orderBy('schedule.scheduleDDay', 'DESC')
+      .orderBy('schedule.scheduleDDay', 'ASC')
       .getRawMany();
     return schedule;
   }

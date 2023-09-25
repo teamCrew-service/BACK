@@ -43,7 +43,7 @@ export class NoticeRepository {
       ])
       .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.deletedAt IS NULL')
-      .orderBy('notice.noticeDDay', 'DESC')
+      .orderBy('notice.noticeDDay', 'ASC')
       .getRawMany();
     return notice;
   }
