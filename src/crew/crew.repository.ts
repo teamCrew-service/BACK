@@ -87,8 +87,22 @@ export class CrewRepository {
   async findCreatedCrew(userId: number): Promise<any> {
     const createdCrew = await this.crewRepository
       .createQueryBuilder('crew')
-      .select(['crewId', 'category', 'crewType', 'crewAddress', 'crewTitle'])
-      .where('crew.userId = :id', { id: userId })
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .select([
+        'crew.crewId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crew.crewTitle',
+        'crew.crewContent',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
+      ])
+      .where('crew.userId = :userId', { userId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
+      .groupBy('crew.crewId')
       .getRawMany();
     return createdCrew;
   }
@@ -147,9 +161,12 @@ export class CrewRepository {
         'crewType',
         'crewAddress',
         'crewTitle',
+        'crewContent',
         'crewMaxMember',
       ])
       .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
       .getRawOne();
     return crew;
   }
@@ -165,13 +182,41 @@ export class CrewRepository {
         'crew.crewType',
         'crew.crewAddress',
         'crew.crewTitle',
+        'crew.crewContent',
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',
       ])
       .where('crew.userId = :userId', { userId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
       .groupBy('crew.crewId')
       .getRawMany();
     return myCrew;
+  }
+
+  /* crewId로 Detail하게 조회하기 */
+  async findCrewDetailByCrewId(crewId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .select([
+        'crew.crewId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crew.crewTitle',
+        'crew.crewContent',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
+      ])
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
+      .groupBy('crew.crewId')
+      .getRawOne();
+
+    return crew;
   }
 }

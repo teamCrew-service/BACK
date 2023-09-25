@@ -42,12 +42,14 @@ export class LikeRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
-        'crewTitle',
-        'crewMaxMember',
+        'crew.crewTitle',
+        'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',
       ])
       .where('like.userId = :userId', { userId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
       .groupBy('like.likeId')
       .getRawMany();
     return likedCrew;

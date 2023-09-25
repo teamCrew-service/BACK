@@ -93,4 +93,10 @@ export class CrewService {
     const myCrew = await this.crewRepository.findMyCrew(userId);
     return myCrew;
   }
+
+  /* crewId로 Detail하게 조회하기 */
+  async findCrewDetailByCrewId(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.findCrewDetailByCrewId(crewId);
+    return crew;
+  }
 }
