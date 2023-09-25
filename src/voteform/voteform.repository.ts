@@ -46,7 +46,7 @@ export class VoteFormRepository {
       ])
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.deletedAt IS NULL')
-      .orderBy('voteform.voteEndDate', 'DESC')
+      .orderBy('voteform.voteEndDate', 'ASC')
       .getRawMany();
     return voteForm;
   }
