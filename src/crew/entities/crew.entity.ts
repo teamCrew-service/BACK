@@ -65,7 +65,7 @@ export class Crew {
   @Column({ type: 'varchar' })
   crewType: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   crewDDay: Date;
 
   @Column({ type: 'varchar' })
