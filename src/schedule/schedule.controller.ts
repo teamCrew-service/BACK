@@ -260,6 +260,10 @@ export class ScheduleController {
           return res
             .status(HttpStatus.OK)
             .json({ message: '일정에 참가 성공' });
+        } else {
+          return res
+            .status(HttpStatus.UNAUTHORIZED)
+            .json({ message: 'crew에 가입 후에 사용할 수 있는 기능입니다.' });
         }
       }
       return res
