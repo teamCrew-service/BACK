@@ -147,14 +147,12 @@ export class VoteFormRepository {
     const currentDate = new Date();
     const voteBeforeToday = await this.voteFormRepository
       .createQueryBuilder('voteform')
+      .update(VoteForm)
+      .set({ voteIsDone: true })
       .where('voteform.voteEndDate < :currentDate', { currentDate })
-      .getRawMany();
+      .andWhere('voteform.voteIsDone = :voteIsDone', { voteIsDone: false })
+      .execute();
 
-    for (const voteForm of voteBeforeToday) {
-      if (currentDate > voteForm) {
-        voteForm.voteIsDone = true;
-        await this.voteFormRepository.save(voteForm);
-      }
-    }
+    console.log(voteBeforeToday);
   }
 }
