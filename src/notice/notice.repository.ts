@@ -106,16 +106,12 @@ export class NoticeRepository {
   /* 오늘 날짜 기준보다 날짜가 지난 공지를 찾아 IsDone을 true로 전환 */
   async updateNoticeIsDone(): Promise<any> {
     const currentDate = new Date();
-    const noticeBeforeToday = await this.noticeRepository
+    await this.noticeRepository
       .createQueryBuilder('notice')
+      .update(Notice)
+      .set({ noticeIsDone: true })
       .where('notice.noticeDDay < :currentDate', { currentDate })
-      .getRawMany();
-
-    for (const notice of noticeBeforeToday) {
-      if (currentDate > notice) {
-        notice.noticeIsDone = true;
-        await this.noticeRepository.save(notice);
-      }
-    }
+      .andWhere('notice.noticeIsDone = :noticeIsDone', { noticeIsDone: false })
+      .execute();
   }
 }

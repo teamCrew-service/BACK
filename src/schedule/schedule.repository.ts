@@ -151,16 +151,14 @@ export class ScheduleRepository {
   /* 오늘 날짜 기준보다 날짜가 지난 일정을 찾아 IsDone을 true로 전환 */
   async updateScheduleIsDone(): Promise<any> {
     const currentDate = new Date();
-    const scheduleBeforeToday = await this.scheduleRepository
+    await this.scheduleRepository
       .createQueryBuilder('schedule')
-      .where('schedule.schedule < :currentDate', { currentDate })
-      .getRawMany();
-
-    for (const schedule of scheduleBeforeToday) {
-      if (currentDate > schedule) {
-        schedule.scheduleIsDone = true;
-        await this.scheduleRepository.save(schedule);
-      }
-    }
+      .update(Schedule)
+      .set({ scheduleIsDone: true })
+      .where('schedule.scheduleDDay < :currentDate', { currentDate })
+      .andWhere('schedule.scheduleIsDone = :scheduleIsDone', {
+        scheduleIsDone: false,
+      })
+      .execute();
   }
 }
