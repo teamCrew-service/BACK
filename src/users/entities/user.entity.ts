@@ -16,6 +16,7 @@ import { Notice } from 'src/notice/entities/notice.entity';
 import { VoteForm } from 'src/voteform/entities/voteform.entity';
 import { Vote } from 'src/vote/entities/vote.entity';
 import { Participant } from 'src/participant/entities/participant.entity';
+import { Image } from 'src/image/entities/image.entity';
 
 @Entity('users')
 export class Users {
@@ -81,4 +82,7 @@ export class Users {
 
   @OneToMany(() => Participant, (participant) => participant.userId)
   participant: Participant[];
+
+  @OneToMany(() => Image, (image) => image.userId)
+  image: Image[];
 }
