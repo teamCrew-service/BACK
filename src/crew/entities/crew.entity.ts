@@ -19,6 +19,7 @@ import { Notice } from 'src/notice/entities/notice.entity';
 import { VoteForm } from 'src/voteform/entities/voteform.entity';
 import { Vote } from 'src/vote/entities/vote.entity';
 import { Participant } from 'src/participant/entities/participant.entity';
+import { Image } from 'src/image/entities/image.entity';
 
 @Entity('crew')
 export class Crew {
@@ -55,6 +56,9 @@ export class Crew {
 
   @OneToMany(() => Participant, (participant) => participant.crewId)
   participant: Participant[];
+
+  @OneToMany(() => Image, (image) => image.crewId)
+  image: Image[];
 
   @Column({ type: 'varchar' })
   category: string;

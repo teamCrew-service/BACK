@@ -25,6 +25,7 @@ import { VoteFormModule } from './voteform/voteform.module';
 import { VoteModule } from './vote/vote.module';
 import { ParticipantModule } from './participant/participant.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       // synchronize: true,
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,
@@ -56,6 +57,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     VoteFormModule,
     VoteModule,
     ParticipantModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
@@ -105,6 +107,9 @@ export class AppModule implements NestModule {
       },
       { path: 'vote/:crewId/:voteFormId', method: RequestMethod.POST },
       { path: 'vote/:crewId', method: RequestMethod.GET },
+      { path: 'image/saveImage/:crewId', method: RequestMethod.POST },
+      { path: 'image/:crewId', method: RequestMethod.GET },
+      { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
     );
     consumer
       .apply(LoginMiddleware)
