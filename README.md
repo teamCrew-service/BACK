@@ -14,9 +14,13 @@
 
 ## :loudspeaker: 프로젝트 소개
 
+내 주변 모임 찾기부터 다양한 모임을 즐길 수 있도록 도와주는 플랫폼 서비스
+
 ### :calendar: 프로젝트 기간
 
 2023년 08월 06일 ~ 2023년 10월
+
+### :mag: [API Document](http://13.125.181.179/swagger)
 
 ---
 
@@ -49,7 +53,8 @@
 | 라이브러리              | 설명                          |
 | :---------------------- | :---------------------------- |
 | Nestjs                  | 서버 프레임워크               |
-| swagger                 | API 명세서 정리               |
+| express                 | 서버                          |
+| swagger                 | API 명세서 관리               |
 | typescript              | 유지, 보수 및 생산성 향상     |
 | mysql2                  | MySQL                         |
 | jwt                     | 서명 암호화                   |
@@ -60,8 +65,7 @@
 | eslint                  | 정적 코드 분석                |
 | typeorm                 | Object Relational Mapping     |
 | axios                   | Promise 기반 HTTP 클라이언트  |
-
-|
+| schedule                | 서버 내 scheduling 관리       |
 
 ---
 
