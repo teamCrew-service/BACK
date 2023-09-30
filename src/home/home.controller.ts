@@ -42,7 +42,9 @@ export class HomeController {
   async findSchedule(@Res() res: any): Promise<any> {
     try {
       // 다가오는 일정 리스트 조회
-      const userId = res.locals.user ? res.locals.user.userId : null;
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user.userId;
+      const nickname = user.nickname;
       const schedule = await this.homeService.findSchedule(userId);
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
@@ -51,7 +53,7 @@ export class HomeController {
       //   return res.status(HttpStatus.NOT_FOUND).json(null);
       // }
       // 다가오는 일정 리스트 조회 결과가 있을 경우
-      return res.status(HttpStatus.OK).json(schedule);
+      return res.status(HttpStatus.OK).json({ schedule, nickname });
     } catch (error) {
       console.error(error); // 로깅
       throw new HttpException(
