@@ -68,7 +68,9 @@ export class CrewController {
         createSignupFormDto,
       );
     }
-    return res.status(HttpStatus.CREATED).json({ message: '모임 생성 성공' });
+    return res
+      .status(HttpStatus.CREATED)
+      .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
   }
 
   /* 모임 상세 조회*/
