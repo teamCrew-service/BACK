@@ -27,4 +27,19 @@ export class ParticipantService {
     );
     return participant;
   }
+
+  /* 참여한 schedule 취소하기 */
+  async cancelParticipate(
+    crewId: number,
+    scheduleId: number,
+    userId: number,
+  ): Promise<any> {
+    const canceledParticipant =
+      await this.participantRepository.cancelParticipate(
+        crewId,
+        scheduleId,
+        userId,
+      );
+    return canceledParticipant;
+  }
 }

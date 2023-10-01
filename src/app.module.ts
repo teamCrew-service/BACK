@@ -83,6 +83,14 @@ export class AppModule implements NestModule {
         path: 'schedule/delete/:crewId/:scheduleId',
         method: RequestMethod.DELETE,
       },
+      {
+        path: 'schedule/participate/:crewId/:scheduleId',
+        method: RequestMethod.POST,
+      },
+      {
+        path: 'schedule/cancelParticipate/:crewId/:scheduleId',
+        method: RequestMethod.DELETE,
+      },
       { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
       { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
       { path: 'signup/:crewId', method: RequestMethod.POST },
