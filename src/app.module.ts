@@ -26,6 +26,7 @@ import { VoteModule } from './vote/vote.module';
 import { ParticipantModule } from './participant/participant.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ImageModule } from './image/image.module';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ImageModule } from './image/image.module';
     VoteModule,
     ParticipantModule,
     ImageModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
@@ -118,6 +120,7 @@ export class AppModule implements NestModule {
       { path: 'image/saveImage/:crewId', method: RequestMethod.POST },
       { path: 'image/:crewId', method: RequestMethod.GET },
       { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
+      { path: 'report/:crewId', method: RequestMethod.POST },
     );
     consumer
       .apply(LoginMiddleware)
