@@ -132,6 +132,7 @@ export class ScheduleRepository {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
       .select([
+        'scheduleId',
         'scheduleTitle',
         'scheduleContent',
         'scheduleDDay',
