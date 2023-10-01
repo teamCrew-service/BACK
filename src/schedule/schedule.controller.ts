@@ -217,7 +217,8 @@ export class ScheduleController {
     summary: '일정 참여 API',
     description: '일정 참여',
   })
-  @ApiParam({ name: 'crewId', description: 'scheduleId' })
+  @ApiParam({ name: 'crewId', description: '모임 Id' })
+  @ApiParam({ name: 'scheduleId', description: '일정 Id' })
   @ApiResponse({
     status: 200,
     description: '일정 참여 완료',
@@ -272,6 +273,60 @@ export class ScheduleController {
     } catch (e) {
       console.error(e);
       throw new Error('ScheduleController/participateSchedule');
+    }
+  }
+
+  /* 참여한 schedule 취소하기 */
+  @Delete('cancelParticipate/:crewId/:scheduleId')
+  @ApiOperation({
+    summary: '일정 참여 취소 API',
+    description: '일정 참여 취소',
+  })
+  @ApiParam({ name: 'crewId', description: '모임 Id' })
+  @ApiParam({ name: 'scheduleId', description: '일정 Id' })
+  @ApiResponse({
+    status: 200,
+    description: '일정 참여 취소 완료',
+  })
+  @ApiBearerAuth('accessToken')
+  async cancelParticipate(
+    @Param('crewId') crewId: number,
+    @Param('scheduleId') scheduleId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const participant = await this.participantService.findAllParticipant(
+        crewId,
+        scheduleId,
+      );
+
+      // 참가자 조회해서 참가 인원인지
+      for (let i = 0; i < participant.length; i++) {
+        if (userId === participant.participant_userId) {
+          const canceledParticipant =
+            await this.participantService.cancelParticipate(
+              crewId,
+              scheduleId,
+              userId,
+            );
+          if (canceledParticipant < 1) {
+            return res
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .json({ message: '일정 참가 취소 실패' });
+          }
+          return res
+            .status(HttpStatus.OK)
+            .json({ message: '일정 참가 취소 성공' });
+        }
+      }
+
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '참여한 인원이 아닙니다.' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleController/cancelParticipate');
     }
   }
 }

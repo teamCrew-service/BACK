@@ -40,4 +40,21 @@ export class ParticipantRepository {
       .getRawMany();
     return participant;
   }
+
+  /* 참여한 schedule 취소하기 */
+  async cancelParticipate(
+    crewId: number,
+    scheduleId: number,
+    userId: number,
+  ): Promise<any> {
+    const canceledParticipant = await this.participantRepository
+      .createQueryBuilder('participant')
+      .delete()
+      .from(Participant)
+      .where('participant.crewId = :crewId', { crewId })
+      .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
+      .andWhere('participant.userId = :userId', { userId })
+      .execute();
+    return canceledParticipant;
+  }
 }
