@@ -59,4 +59,17 @@ export class MemberRepository {
       .getRawMany();
     return joinedCrew;
   }
+
+  /* 탈퇴하기 */
+  async exitCrew(crewId: number, userId: number): Promise<any> {
+    const exitCrew = await this.memberRepository
+      .createQueryBuilder('member')
+      .delete()
+      .from(Member)
+      .where('member.crewId = :crewId', { crewId })
+      .andWhere('member.userId = :userId', { userId })
+      .execute();
+
+    return exitCrew;
+  }
 }

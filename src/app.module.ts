@@ -103,6 +103,7 @@ export class AppModule implements NestModule {
       },
       { path: 'signup/:signupId/confirmsignup', method: RequestMethod.PUT },
       { path: 'signup/:crewId', method: RequestMethod.GET },
+      { path: 'exitCrew/:crewId', method: RequestMethod.POST },
       { path: 'notice/:crewId/createNotice', method: RequestMethod.POST },
       { path: 'notice/:crewId', method: RequestMethod.GET },
       { path: 'notice/:crewId/:noticeId', method: RequestMethod.GET },
