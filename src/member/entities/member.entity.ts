@@ -24,7 +24,4 @@ export class Member {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
-
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
 }

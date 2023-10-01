@@ -248,4 +248,35 @@ export class SignupController {
       throw new Error('SignupController/confirmSingup');
     }
   }
+
+  /* 탈퇴하기 */
+  @Post('exitCrew/:crewId')
+  @ApiOperation({
+    summary: '모임 탈퇴하기 API',
+    description: '모임을 탈퇴하기',
+  })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
+  @ApiResponse({
+    status: 200,
+    description: '모임 탈퇴하기 완료',
+  })
+  @ApiBearerAuth('accessToken')
+  async exitCrew(
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const member = await this.memberService.findAllMember(crewId);
+      for (let i = 0; i < member.length; i++) {
+        if (member[i].member_userId === userId) {
+          await this.signupService.exitCrew(crewId, userId);
+          return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/exitCrew');
+    }
+  }
 }

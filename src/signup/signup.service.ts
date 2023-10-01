@@ -81,4 +81,10 @@ export class SignupService {
       return confirmedSignup;
     }
   }
+
+  /* 탈퇴하기 */
+  async exitCrew(crewId: number, userId: number): Promise<any> {
+    const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
+    return exitCrew;
+  }
 }
