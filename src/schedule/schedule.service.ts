@@ -129,8 +129,11 @@ export class ScheduleService {
   }
 
   /* crew 해당하는 schedule 조회 */
-  async findScheduleByCrew(crewId: number): Promise<any> {
-    const schedule = await this.scheduleRepository.findScheduleByCrew(crewId);
+  async findScheduleByCrew(crewId: number, userId: number): Promise<any> {
+    const schedule = await this.scheduleRepository.findScheduleByCrew(
+      crewId,
+      userId,
+    );
     return schedule;
   }
 }

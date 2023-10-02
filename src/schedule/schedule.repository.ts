@@ -128,22 +128,33 @@ export class ScheduleRepository {
   }
 
   /* crew에 해당하는 schedule 조회 */
-  async findScheduleByCrew(crewId: number): Promise<any> {
+  async findScheduleByCrew(crewId: number, userId: number): Promise<any> {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
-      .select([
-        'scheduleId',
-        'scheduleTitle',
-        'scheduleContent',
-        'scheduleDDay',
-        'scheduleIsDone',
-        'scheduleAddress',
-        'scheduleLatitude',
-        'scheduleLongitude',
-        'createdAt',
-      ])
-      .where('schedule.crewId = :id', { id: crewId })
+      .leftJoinAndSelect(
+        'schedule.participant',
+        'participant',
+        'participant.userId = :userId',
+        { userId },
+      )
+      .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
+      .where('schedule.crewId = :crewId', { crewId })
       .andWhere('schedule.deletedAt IS NULL')
+      .select([
+        'schedule.scheduleId AS scheduleId',
+        'schedule.userId AS userId',
+        'schedule.scheduleTitle AS scheduleTitle',
+        'schedule.scheduleContent AS scheduleContent',
+        'schedule.scheduleDDay AS scheduleDDay',
+        'schedule.scheduleIsDone AS scheduleIsDone',
+        'schedule.scheduleAddress AS scheduleAddress',
+        'crew.crewMaxMember AS scheduleMaxMember',
+        'COUNT(participant.scheduleId) AS scheduleAttendedMember',
+        'schedule.scheduleLatitude AS scheduleLatitude',
+        'schedule.scheduleLongitude AS scheduleLongitude',
+        'schedule.createdAt AS createdAt',
+        `CASE WHEN participant.userId IS NOT NULL OR schedule.userId = ${userId} THEN 1 ELSE 0 END AS participate`, // participant가 존재하면 1, 그렇지 않으면 0 반환
+      ])
       .orderBy('schedule.scheduleDDay', 'ASC')
       .getRawMany();
     return schedule;

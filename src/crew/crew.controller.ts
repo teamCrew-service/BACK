@@ -195,7 +195,10 @@ export class CrewController {
     }
 
     // crew 일정
-    const schedule = await this.scheduleService.findScheduleByCrew(crewId);
+    const schedule = await this.scheduleService.findScheduleByCrew(
+      crewId,
+      userId,
+    );
 
     // crew 공지
     const regularNotice = await this.noticeService.findAllNotice(crewId);
