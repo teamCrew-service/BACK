@@ -117,12 +117,24 @@ export class CrewController {
             crewAddress: '소공동',
           },
           member: [1, 11, 10],
-          schedule: {
-            scheduleTitle: '퇴근 후 40분 걷기',
-            scheduleDDay: '2023-08-19T03:44:19.661Z',
-            scheduleContent: '일찍 퇴근 하는 분들 모여요!!',
-            scheduleAddress: '일산 호수공원',
-          },
+          schedule: [
+            {
+              scheduleId: 1,
+              userId: 3,
+              scheduleTitle: '일요일 달리기!!',
+              scheduleContent:
+                '일요일 달리기 정모가 있습니다!! 많이 나와주세요!!',
+              scheduleDDay: '2023-08-18T15:00:00.000Z',
+              scheduleIsDone: 1,
+              scheduleAddress: '일산 호수공원',
+              scheduleMaxMember: '8',
+              scheduleAttendedMember: '0',
+              scheduleLatitude: 23.010203,
+              scheduleLongitude: 106.102032,
+              createdAt: '2023-09-22T02:32:18.356Z',
+              participate: '1',
+            },
+          ],
           allNotice: {
             notice: {
               noticeTitle: '일산 호수공원 런닝!!',
@@ -151,12 +163,24 @@ export class CrewController {
             crewAddress: '소공동',
           },
           member: [1, 11, 10],
-          schedule: {
-            scheduleTitle: '퇴근 후 40분 걷기',
-            scheduleDDay: '2023-08-19T03:44:19.661Z',
-            scheduleContent: '일찍 퇴근 하는 분들 모여요!!',
-            scheduleAddress: '일산 호수공원',
-          },
+          schedule: [
+            {
+              scheduleId: 1,
+              userId: 3,
+              scheduleTitle: '일요일 달리기!!',
+              scheduleContent:
+                '일요일 달리기 정모가 있습니다!! 많이 나와주세요!!',
+              scheduleDDay: '2023-08-18T15:00:00.000Z',
+              scheduleIsDone: 1,
+              scheduleAddress: '일산 호수공원',
+              scheduleMaxMember: '8',
+              scheduleAttendedMember: '0',
+              scheduleLatitude: 23.010203,
+              scheduleLongitude: 106.102032,
+              createdAt: '2023-09-22T02:32:18.356Z',
+              participate: '1',
+            },
+          ],
           allNotice: {
             notice: {
               noticeTitle: '일산 호수공원 런닝!!',
@@ -201,7 +225,10 @@ export class CrewController {
     }
 
     // crew 일정
-    const schedule = await this.scheduleService.findScheduleByCrew(crewId);
+    const schedule = await this.scheduleService.findScheduleByCrew(
+      crewId,
+      userId,
+    );
 
     // crew 공지
     const regularNotice = await this.noticeService.findAllNotice(crewId);
