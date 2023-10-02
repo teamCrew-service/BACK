@@ -11,6 +11,7 @@ import { scheduleModule } from 'src/schedule/schedule.module';
 import { LikeModule } from 'src/like/like.module';
 import { NoticeModule } from 'src/notice/notice.module';
 import { VoteFormModule } from 'src/voteform/voteform.module';
+import { ImageModule } from 'src/image/image.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { VoteFormModule } from 'src/voteform/voteform.module';
     forwardRef(() => LikeModule),
     forwardRef(() => NoticeModule),
     forwardRef(() => VoteFormModule),
+    forwardRef(() => ImageModule),
   ],
   providers: [CrewService, CrewRepository],
   exports: [CrewService, CrewRepository],

@@ -111,6 +111,10 @@ jobs:
           -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
           -e REDIRECT_URI_AUTH=${{ secrets.REDIRECT_URI_AUTH }} \
           -e REDIRECT_URI_HOME=${{ secrets.REDIRECT_URI_HOME }} \
+          -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
+          -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
+          -e AWS_REGION=${{ secrets.AWS_REGION }} \
+          -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
           --name superman --restart always ${{ env.DOCKER_IMAGE }}:latest
 
 

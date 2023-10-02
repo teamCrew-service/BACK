@@ -25,6 +25,7 @@ import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
 import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
+import { ImageService } from 'src/image/image.service';
 
 @Controller('crew')
 @ApiTags('Crew API')
@@ -37,6 +38,7 @@ export class CrewController {
     private readonly noticeService: NoticeService,
     private readonly voteFormService: VoteFormService,
     private readonly likeService: LikeService,
+    private readonly imageService: ImageService,
   ) {}
 
   /* 모임 생성 */
@@ -57,8 +59,12 @@ export class CrewController {
     let { createCrewDto, createSignupFormDto } = joinCreateCrewDto;
     const { userId } = res.locals.user;
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
-    //const thumbnail = await this.crewService.thumbnailUpload(createCrewDto);
-    // createCrewDto.thumbnail = thumbnail;
+    const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
+    const thumbnail = await this.imageService.urlToS3(
+      createCrewDto.thumbnail,
+      filename,
+    );
+    createCrewDto.thumbnail = thumbnail;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
