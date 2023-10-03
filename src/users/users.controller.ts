@@ -524,7 +524,7 @@ export class UsersController {
     }
   }
 
-  /* 나의 모임 */
+  /* 내가 만든 모임 */
   @Get('mycrew/mycreatedcrew')
   @ApiOperation({
     summary: '내가 생성한 모임 조회 API',
@@ -546,6 +546,7 @@ export class UsersController {
             crew_crewMaxMember: 8,
             crewAttendedMember: '3',
             crew_thumbnail: 'url',
+            existSignup: '0',
           },
           {
             member_likeId: 2,
@@ -557,6 +558,7 @@ export class UsersController {
             crew_crewMaxMember: 8,
             crewAttendedMember: '3',
             crew_thumbnail: 'url',
+            existSignup: '0',
           },
         ],
       },

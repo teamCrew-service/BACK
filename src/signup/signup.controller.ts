@@ -154,6 +154,12 @@ export class SignupController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (crew.userId === userId) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임장입니다.' });
+      }
       const submitedSignup = await this.signupService.findMySignup(
         userId,
         crewId,
@@ -193,9 +199,18 @@ export class SignupController {
     description: '제출한 가입서 불러오기',
     schema: {
       example: {
-        userId: 1,
-        answer1: '자기소개 또는 가입 동기',
-        answer2: '나를 표현하는 형용사 3가지는?',
+        nickname: 'CJW',
+        age: 1995,
+        location: '서울 종로구 서린동 136',
+        myMessage: '안녕하세요. 고양이를 키우고 있는 사람입니다.',
+        signupId: 1,
+        crewId: '35',
+        userId: '1',
+        answer1: 'asdf',
+        answer2: 'asdf',
+        permission: null,
+        createdAt: '2023-10-02T21:59:37.097Z',
+        interestTopics: ['친목', '음료', '책/글'],
       },
     },
   })
@@ -208,8 +223,8 @@ export class SignupController {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
       if (crew.userId === userId) {
-        const singup = await this.signupService.findAllSubmitted(crewId);
-        return res.status(HttpStatus.OK).json(singup);
+        const signup = await this.signupService.findAllSubmitted(crewId);
+        return res.status(HttpStatus.OK).json(signup);
       } else {
         return res
           .status(HttpStatus.UNAUTHORIZED)

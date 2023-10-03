@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from './signupForm.repository';
-import { SingupRepository } from './signup.repository';
+import { SignupRepository } from './signup.repository';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberRepository } from 'src/member/member.repository';
 
@@ -8,7 +8,7 @@ import { MemberRepository } from 'src/member/member.repository';
 export class SignupService {
   constructor(
     private signupFormRepository: SignupFormRepository,
-    private signupRespository: SingupRepository,
+    private signupRespository: SignupRepository,
     private memberRepository: MemberRepository,
   ) {}
 
@@ -65,6 +65,11 @@ export class SignupService {
     const findAllSubmitted = await this.signupRespository.findAllSubmitted(
       crewId,
     );
+    findAllSubmitted.forEach((a) => {
+      if (a.interestTopics) {
+        a.interestTopics = a.interestTopics.split(',');
+      }
+    });
     return findAllSubmitted;
   }
 

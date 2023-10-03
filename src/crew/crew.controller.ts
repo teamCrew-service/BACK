@@ -68,15 +68,19 @@ export class CrewController {
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
-    if (createCrewDto.crewSignup === true) {
+    if (newCrew.crewSignup === true || newCrew.crewSignup === 1) {
       await this.signupService.createSignupForm(
         newCrew.crewId,
         createSignupFormDto,
       );
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
+    } else {
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
     }
-    return res
-      .status(HttpStatus.CREATED)
-      .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
   }
 
   /* 모임 상세 조회*/

@@ -179,6 +179,11 @@ export class CrewRepository {
     const myCrew = await this.crewRepository
       .createQueryBuilder('crew')
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .leftJoin(
+        'signup',
+        'signup',
+        'signup.crewId = crew.crewId AND signup.permission IS NULL',
+      )
       .select([
         'crew.crewId',
         'crew.category',
@@ -189,6 +194,7 @@ export class CrewRepository {
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',
+        'CASE WHEN COUNT(signup.crewId) > 0 THEN TRUE ELSE FALSE END AS existSignup',
       ])
       .where('crew.userId = :userId', { userId })
       .andWhere('crew.deletedAt IS NULL')
