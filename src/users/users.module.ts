@@ -9,6 +9,7 @@ import { CrewModule } from 'src/crew/crew.module';
 import { TopicModule } from 'src/topic/topic.module';
 import { LikeModule } from 'src/like/like.module';
 import { MemberModule } from 'src/member/member.module';
+import { SignupModule } from 'src/signup/signup.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MemberModule } from 'src/member/member.module';
     forwardRef(() => TopicModule),
     forwardRef(() => LikeModule),
     forwardRef(() => MemberModule),
+    forwardRef(() => SignupModule),
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
