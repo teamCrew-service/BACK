@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 
 @Injectable()
-export class SingupRepository {
+export class SignupRepository {
   constructor(
     @InjectRepository(Signup) private signupRepository: Repository<Signup>,
   ) {}
@@ -42,17 +42,26 @@ export class SingupRepository {
   async findAllSubmitted(crewId: number): Promise<any> {
     const findAllSubmitted = await this.signupRepository
       .createQueryBuilder('signup')
+      .leftJoin('users', 'users', 'users.userId = signup.userId')
+      .leftJoin('topic', 'topic', 'topic.userId = users.userId')
+      .where('signup.crewId = :crewId', { crewId })
+      .andWhere('signup.permission IS NULL')
       .select([
-        'signupFormId',
-        'answer1',
-        'answer2',
-        'createdAt',
-        'crewId',
-        'permission',
-        'updatedAt',
-        'userId',
+        'users.nickname AS nickname',
+        'users.age AS age',
+        'users.location AS location',
+        'users.myMessage AS myMessage',
+        'signup.signupId AS signupId',
+        'signup.crewId AS crewId',
+        'signup.userId AS userId',
+        'signup.answer1 AS answer1',
+        'signup.answer2 AS answer2',
+        'signup.permission AS permission',
+        'signup.createdAt AS createdAt',
+        'GROUP_CONCAT(topic.interestTopic) AS interestTopics',
       ])
-      .where('signup.crewId = :id', { id: crewId })
+      .groupBy('signup.signupId')
+      .orderBy('signup.createdAt', 'ASC')
       .getRawMany();
     return findAllSubmitted;
   }
