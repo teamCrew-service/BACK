@@ -54,6 +54,12 @@ export class SignupService {
     return signup;
   }
 
+  /* 본인이 작성한 signup 모두 조회 */
+  async findMyAllSignup(userId: number): Promise<any> {
+    const allSignup = await this.signupRespository.findMyAllSignup(userId);
+    return allSignup;
+  }
+
   /* 제출한 가입서 조회 */
   async findAllSubmitted(crewId: number): Promise<any> {
     const findAllSubmitted = await this.signupRespository.findAllSubmitted(

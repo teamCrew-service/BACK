@@ -154,15 +154,18 @@ export class CrewRepository {
   async findByCrewId(crewId: number): Promise<any> {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .select([
-        'crewId',
-        'userId',
-        'category',
-        'crewType',
-        'crewAddress',
-        'crewTitle',
-        'crewContent',
-        'crewMaxMember',
+        'crew.crewId AS crewId',
+        'crew.userId AS userId',
+        'crew.category AS category',
+        'crew.crewType AS crewType',
+        'crew.crewAddress AS crewAddress',
+        'crew.crewTitle AS crewTitle',
+        'crew.crewContent AS crewContent',
+        'crew.crewMaxMember AS crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail AS thumbnail',
       ])
       .where('crew.crewId = :crewId', { crewId })
       .andWhere('crew.deletedAt IS NULL')

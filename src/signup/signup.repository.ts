@@ -38,6 +38,18 @@ export class SingupRepository {
     return signup;
   }
 
+  /* 본인이 작성한 signup 모두 조회하기 */
+  async findMyAllSignup(userId: number): Promise<any> {
+    const allSignup = this.signupRepository
+      .createQueryBuilder('signup')
+      .select(['signupId', 'userId', 'crewId'])
+      .where('signup.userId = :userId', { userId })
+      .andWhere('signup.permission IS NULL')
+      .getRawMany();
+
+    return allSignup;
+  }
+
   /* 제출한 가입서 조회 */
   async findAllSubmitted(crewId: number): Promise<any> {
     const findAllSubmitted = await this.signupRepository
