@@ -219,7 +219,7 @@ export class CrewController {
     // 모임이 생긴 기간
     const today: any = new Date().getDate();
     const startDate: any = crew.crew_createdAt.getDate();
-    const createdCrewPeriod: number = today - startDate;
+    const createdCrewPeriod: number = startDate - today;
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우
