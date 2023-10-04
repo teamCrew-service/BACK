@@ -27,7 +27,7 @@ export class HomeService {
   }
 
   // 카테고리별 모임 찾기
-  async findCrewByCategory(category: string): Promise<any> {
-    return this.homeRepository.findCrewByCategory(category);
+  async findCrewByCategory(category: string, userId: number): Promise<any> {
+    return this.homeRepository.findCrewByCategory(category, userId);
   }
 }

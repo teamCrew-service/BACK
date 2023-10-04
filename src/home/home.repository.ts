@@ -60,7 +60,7 @@ export class HomeRepository {
   }
 
   // 카테고리별 모임 찾기
-  async findCrewByCategory(category: string): Promise<any> {
+  async findCrewByCategory(category: string, userId: number): Promise<any> {
     const crew = await this.mapRepository
       .createQueryBuilder('crew')
       .select([
@@ -75,8 +75,12 @@ export class HomeRepository {
         'COUNT(member.crewId) AS crewAttendedMember',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .leftJoin('like', 'like', 'like.crewId = crew.crewId')
       .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
+      .andWhere('crew.userId != :userId', { userId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('like.userId', 'DESC')
       .getRawMany();
 
     return crew;

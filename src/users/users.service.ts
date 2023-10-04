@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { TopicDto } from '../topic/dto/topic.dto';
 import { TopicService } from 'src/topic/topic.service';
 import { EditTopicDto } from 'src/topic/dto/editTopic.dto';
