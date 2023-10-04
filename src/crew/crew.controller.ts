@@ -210,7 +210,8 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
-    const userId = res.locals.user ? res.locals.user.userId : null;
+    const user = res.locals.user ? res.locals.user : null;
+    const userId = user !== null ? user.userId : 0;
     const crew = await this.crewService.findCrewDetail(crewId);
     const member = await this.memberService.findAllMember(crewId);
     const likeCount = await this.likeService.countLikedCrew(crewId);

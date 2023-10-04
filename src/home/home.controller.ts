@@ -43,7 +43,7 @@ export class HomeController {
     try {
       // 다가오는 일정 리스트 조회
       const user = res.locals.user ? res.locals.user : null;
-      const userId = user.userId;
+      const userId = user !== null ? user.userId : 0;
       const nickname = user.nickname;
       const schedule = await this.homeService.findSchedule(userId);
 
