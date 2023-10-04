@@ -23,13 +23,15 @@ export class ScheduleRepository {
             users.userId,
             member.userId AS member_userId,
             crew.crewId,
+            crew.crewType,
             users_member.nickname AS member_userName
        FROM  schedule
   LEFT JOIN  users ON schedule.userId = users.userId -- 일정을 작성한 사람과 users 테이블 조인
   LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
   LEFT JOIN member ON crew.crewId = member.crewId -- 크루에 포함된 멤버와 member 테이블 조인
   LEFT JOIN users AS users_member ON member.userId = users_member.userId -- 멤버의 이미지를 users 테이블에서 가져옴
-      WHERE crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId});`;
+      WHERE crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId})
+      AND schedule.scheduleIsDone = false;`;
 
     const result = await this.entityManager.query(query);
     return result;
@@ -129,17 +131,17 @@ export class ScheduleRepository {
 
   /* crew에 해당하는 schedule 조회 */
   async findScheduleByCrew(crewId: number, userId: number): Promise<any> {
-    const schedule = await this.scheduleRepository
+    const schedules = await this.scheduleRepository
       .createQueryBuilder('schedule')
-      .leftJoinAndSelect(
-        'schedule.participant',
+      .leftJoin(
         'participant',
-        'participant.userId = :userId',
-        { userId },
+        'participant',
+        'participant.crewId = schedule.crewId',
       )
       .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
       .where('schedule.crewId = :crewId', { crewId })
       .andWhere('schedule.deletedAt IS NULL')
+      .andWhere('schedule.scheduleIsDone = :isDone', { isDone: false })
       .select([
         'schedule.scheduleId AS scheduleId',
         'schedule.userId AS userId',
@@ -153,11 +155,18 @@ export class ScheduleRepository {
         'schedule.scheduleLatitude AS scheduleLatitude',
         'schedule.scheduleLongitude AS scheduleLongitude',
         'schedule.createdAt AS createdAt',
-        `CASE WHEN participant.userId IS NOT NULL OR schedule.userId = ${userId} THEN 1 ELSE 0 END AS participate`, // participant가 존재하면 1, 그렇지 않으면 0 반환
+        `CASE WHEN participant.userId = ${userId} OR schedule.userId = ${userId} THEN true ELSE false END AS participate`, // participant가 존재하면 1, 그렇지 않으면 0 반환
       ])
+      .groupBy('schedule.scheduleId')
       .orderBy('schedule.scheduleDDay', 'ASC')
       .getRawMany();
-    return schedule;
+    if (schedules[0].scheduleId === null) {
+      const schedule = [];
+      return schedule;
+    } else {
+      const schedule = schedules;
+      return schedule;
+    }
   }
 
   /* 오늘 날짜 기준보다 날짜가 지난 일정을 찾아 IsDone을 true로 전환 */
