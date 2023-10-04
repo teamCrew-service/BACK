@@ -43,7 +43,7 @@ export class HomeController {
     try {
       // 다가오는 일정 리스트 조회
       const user = res.locals.user ? res.locals.user : null;
-      const userId = user.userId;
+      const userId = user !== null ? user.userId : 0;
       const nickname = user.nickname;
       const schedule = await this.homeService.findSchedule(userId);
 
@@ -179,15 +179,10 @@ export class HomeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
       // 카테고리별 모임 조회
-      const crew = await this.homeService.findCrewByCategory(category);
-
-      // 조회 결과가 없을 경우
-      // if (crew.length === 0) {
-      //   return res.status(HttpStatus.NOT_FOUND).json({
-      //     errormessage: '관심사별로 조회한 결과가 없습니다.',
-      //   });
-      // }
+      const crew = await this.homeService.findCrewByCategory(category, userId);
 
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
