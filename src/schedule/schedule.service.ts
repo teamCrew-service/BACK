@@ -32,6 +32,7 @@ export class ScheduleService {
             scheduleDDay: data.scheduleDDay,
             scheduleId: data.scheduleId,
             crewType: data.crewType,
+            crewId: data.crewId,
           },
           profileImage: [],
         };
