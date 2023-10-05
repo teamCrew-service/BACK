@@ -30,8 +30,10 @@ export class ScheduleRepository {
   LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
   LEFT JOIN member ON crew.crewId = member.crewId -- 크루에 포함된 멤버와 member 테이블 조인
   LEFT JOIN users AS users_member ON member.userId = users_member.userId -- 멤버의 이미지를 users 테이블에서 가져옴
-      WHERE crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId})
-      AND schedule.scheduleIsDone = false;`;
+      WHERE (crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId})
+      OR crew.userId = ${userId}) -- crew의 작성자도 schedule을 확인할 수 있도록 추가
+      AND schedule.scheduleIsDone = false
+      ORDER BY schedule.scheduleDDay;`;
 
     const result = await this.entityManager.query(query);
     return result;
