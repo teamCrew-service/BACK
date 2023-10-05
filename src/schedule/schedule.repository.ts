@@ -19,6 +19,7 @@ export class ScheduleRepository {
      SELECT 
             schedule.scheduleTitle,
             schedule.scheduleDDay,
+            schedule.scheduleId,
             users_member.profileImage AS member_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
             users.userId,
             member.userId AS member_userId,
