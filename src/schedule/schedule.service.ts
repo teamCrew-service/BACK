@@ -30,6 +30,7 @@ export class ScheduleService {
           schedule: {
             scheduleTitle: data.scheduleTitle,
             scheduleDDay: data.scheduleDDay,
+            scheduleId: data.scheduleId,
             crewType: data.crewType,
           },
           profileImage: [],
