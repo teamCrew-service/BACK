@@ -163,7 +163,7 @@ export class ScheduleRepository {
       .groupBy('schedule.scheduleId')
       .orderBy('schedule.scheduleDDay', 'ASC')
       .getRawMany();
-    if (schedules[0].scheduleId === null) {
+    if (schedules.length < 1 || schedules[0].scheduleId === null) {
       const schedule = [];
       return schedule;
     } else {
