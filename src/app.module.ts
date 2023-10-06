@@ -123,6 +123,7 @@ export class AppModule implements NestModule {
       { path: 'image/:crewId', method: RequestMethod.GET },
       { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
       { path: 'report/:crewId', method: RequestMethod.POST },
+      { path: 'deleteAccount', method: RequestMethod.DELETE },
     );
     consumer
       .apply(LoginMiddleware)
