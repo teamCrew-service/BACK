@@ -88,6 +88,7 @@ export class VoteformController {
           voteFormOption2: '3시',
           voteFormOption3: '4시 30분',
           voteFormOption4: null,
+          voteFormOption5: null,
         },
       },
     },

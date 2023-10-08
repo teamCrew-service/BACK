@@ -50,6 +50,9 @@ export class VoteForm {
   @Column({ type: 'varchar', nullable: true })
   voteOption4: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  voteOption5: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
