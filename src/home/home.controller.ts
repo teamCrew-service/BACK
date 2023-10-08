@@ -87,15 +87,12 @@ export class HomeController {
   })
   async getCrew(@Res() res: any): Promise<any> {
     try {
-      // 내 주변 모임 조회
-      const crew = await this.homeService.getCrew();
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
 
-      // 내 주변 모임 조회 결과가 없을 경우
-      // if (crew.length === 0) {
-      //   return res.status(HttpStatus.NOT_FOUND).json({
-      //     errormessage: '내 주변 모임 조회 결과가 없습니다.',
-      //   });
-      // }
+      // 내 주변 모임 조회
+      const crew = await this.homeService.getCrew(userId);
+
       // 내 주변 모임 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (error) {

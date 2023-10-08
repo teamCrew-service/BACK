@@ -33,4 +33,11 @@ export class LikeService {
     const likeCount = likedCrew.length;
     return likeCount;
   }
+
+  /* user가 crew를 찜했는지 확인하기 */
+  async confirmLiked(crewId: number, userId: number): Promise<any> {
+    const like = await this.likeRepository.confirmLiked(crewId, userId);
+
+    return like;
+  }
 }
