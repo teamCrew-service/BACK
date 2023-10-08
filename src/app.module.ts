@@ -124,6 +124,8 @@ export class AppModule implements NestModule {
       { path: 'image/:crewId', method: RequestMethod.GET },
       { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
       { path: 'report/:crewId', method: RequestMethod.POST },
+      { path: 'like/:crewId', method: RequestMethod.POST },
+      { path: 'like/:crewId', method: RequestMethod.DELETE },
       { path: 'deleteAccount', method: RequestMethod.DELETE },
     );
     consumer
@@ -131,6 +133,7 @@ export class AppModule implements NestModule {
       .forRoutes(
         { path: 'crew/:crewId', method: RequestMethod.GET },
         { path: 'home/comingDate', method: RequestMethod.GET },
+        { path: 'home/map', method: RequestMethod.GET },
         { path: 'home/:category', method: RequestMethod.GET },
       );
   }

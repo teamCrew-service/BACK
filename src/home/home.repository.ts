@@ -11,9 +11,16 @@ export class HomeRepository {
   ) {}
 
   // 내 주변 모임 찾기
-  async getCrew(): Promise<any> {
+  async getCrew(userId: number): Promise<any> {
     const crew = await this.mapRepository
       .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .leftJoin(
+        'like',
+        'like',
+        'like.crewId = crew.crewId AND like.userId = :userId',
+        { userId },
+      )
       .select([
         'crew.crewId',
         'crew.category',
@@ -26,8 +33,9 @@ export class HomeRepository {
         'crew.latitude',
         'crew.longtitude',
         'COUNT(member.crewId) AS crewAttendedMember',
+        'COUNT(like.userId) > 0 AS likeCheck',
       ])
-      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .andWhere('crew.deletedAt IS NULL')
       .groupBy('crew.crewId')
       .getRawMany();
 
@@ -50,10 +58,13 @@ export class HomeRepository {
         'crew.latitude',
         'crew.longtitude',
         'COUNT(member.crewId) AS crewAttendedMember',
+        'COUNT(like.userId) > 0 AS likeCheck',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .leftJoin('like', 'like', 'like.crewId = crew.crewId')
       .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
+      .andWhere('crew.deletedAt IS NULL')
       .getRawMany();
 
     return crew;

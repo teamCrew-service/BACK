@@ -17,8 +17,8 @@ export class HomeService {
   }
 
   // 내 주변 모임 찾기
-  async getCrew(): Promise<any> {
-    return this.homeRepository.getCrew();
+  async getCrew(userId: number): Promise<any> {
+    return this.homeRepository.getCrew(userId);
   }
 
   // 내 주변 모임 찾기(카테고리별)

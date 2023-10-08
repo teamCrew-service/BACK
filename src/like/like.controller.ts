@@ -36,6 +36,12 @@ export class LikeController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
+      const like = await this.likeService.confirmLiked(crewId, userId);
+      if (like) {
+        return res
+          .status(HttpStatus.NOT_ACCEPTABLE)
+          .json({ message: '이미 찜한 crew입니다.' });
+      }
       await this.likeService.likeCrew(crewId, userId);
       return res.status(HttpStatus.OK).json({ message: '찜하기 성공' });
     } catch (e) {
@@ -63,8 +69,14 @@ export class LikeController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
-      await this.likeService.cancelLikeCrew(crewId, userId);
-      return res.status(HttpStatus.OK).json({ message: '찜 취소하기 성공' });
+      const like = await this.likeService.confirmLiked(crewId, userId);
+      if (like) {
+        await this.likeService.cancelLikeCrew(crewId, userId);
+        return res.status(HttpStatus.OK).json({ message: '찜 취소하기 성공' });
+      }
+      return res
+        .status(HttpStatus.NOT_ACCEPTABLE)
+        .json({ message: '찜한 crew가 아닙니다.' });
     } catch (e) {
       console.error(e);
       return res
