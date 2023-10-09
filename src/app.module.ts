@@ -133,6 +133,7 @@ export class AppModule implements NestModule {
       .forRoutes(
         { path: 'crew/:crewId', method: RequestMethod.GET },
         { path: 'home/comingDate', method: RequestMethod.GET },
+        { path: 'home/wholeComingDate', method: RequestMethod.GET },
         { path: 'home/map', method: RequestMethod.GET },
         { path: 'home/:category', method: RequestMethod.GET },
       );
