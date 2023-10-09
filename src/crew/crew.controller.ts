@@ -8,13 +8,18 @@ import {
   Post,
   Put,
   Delete,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CrewService } from './crew.service';
 import { EditCrewDto } from './dto/editCrew.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
+  ApiProperty,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
@@ -26,7 +31,25 @@ import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/crew/multerConfig';
+export class FileUploadDto {
+  @ApiProperty({ type: 'files' })
+  file: any;
 
+  //파일여러개
+}
+export class FilesUploadDto {
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+  })
+  files: any[];
+}
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
@@ -64,6 +87,7 @@ export class CrewController {
       createCrewDto.thumbnail,
       filename,
     );
+
     createCrewDto.thumbnail = thumbnail;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
@@ -81,6 +105,22 @@ export class CrewController {
         .status(HttpStatus.CREATED)
         .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
     }
+  }
+
+  /*파일업로드 테스트*/
+  @Post('uploads')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: FilesUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 5, multerConfig))
+  async uploadFiles(@UploadedFiles() files, @Res() res: any) {
+    console.log(files);
+    return res
+      .status(HttpStatus.OK)
+      .json(files.map((file) => ({ url: `/uploads/${file.filename}` })));
+    return files.map((file) => ({ url: `/uploads/${file.filename}` }));
   }
 
   /* 모임 상세 조회*/
