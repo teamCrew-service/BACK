@@ -72,4 +72,10 @@ export class UsersRepository {
     const exNickname = user ? user.nickname : null;
     return exNickname;
   }
+
+  /* 탈퇴하기 */
+  async deleteAccount(userId: number): Promise<any> {
+    const deleteAccount = await this.usersRepository.delete(userId);
+    return deleteAccount;
+  }
 }

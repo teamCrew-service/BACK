@@ -68,15 +68,19 @@ export class CrewController {
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
-    if (createCrewDto.crewSignup === true) {
+    if (newCrew.crewSignup === true || newCrew.crewSignup === 1) {
       await this.signupService.createSignupForm(
         newCrew.crewId,
         createSignupFormDto,
       );
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
+    } else {
+      return res
+        .status(HttpStatus.CREATED)
+        .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
     }
-    return res
-      .status(HttpStatus.CREATED)
-      .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
   }
 
   /* 모임 상세 조회*/
@@ -206,7 +210,8 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
-    const userId = res.locals.user ? res.locals.user.userId : null;
+    const user = res.locals.user ? res.locals.user : null;
+    const userId = user !== null ? user.userId : 0;
     const crew = await this.crewService.findCrewDetail(crewId);
     const member = await this.memberService.findAllMember(crewId);
     const likeCount = await this.likeService.countLikedCrew(crewId);
@@ -214,7 +219,7 @@ export class CrewController {
     // 모임이 생긴 기간
     const today: any = new Date().getDate();
     const startDate: any = crew.crew_createdAt.getDate();
-    const createdCrewPeriod: number = today - startDate;
+    const createdCrewPeriod: number = startDate - today;
 
     /* userId를 통해 crew 방장 및 member 확인 */
     // 게스트일 경우

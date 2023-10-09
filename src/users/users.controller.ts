@@ -8,6 +8,7 @@ import {
   Post,
   Body,
   HttpStatus,
+  Delete,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
@@ -28,6 +29,7 @@ import { TopicAndInfoDto } from './dto/topicAndInfo-user.dto';
 import { LikeService } from 'src/like/like.service';
 import { MemberService } from 'src/member/member.service';
 import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
+import { SignupService } from 'src/signup/signup.service';
 
 @Controller()
 @ApiTags('User API')
@@ -38,6 +40,7 @@ export class UsersController {
     private readonly authService: AuthService,
     private readonly likeService: LikeService,
     private readonly memberService: MemberService,
+    private readonly signupService: SignupService,
   ) {}
 
   /* 카카오 로그인 서비스*/
@@ -343,36 +346,41 @@ export class UsersController {
   })
   @ApiBearerAuth('accessToken')
   async mypage(@Res() res: Response): Promise<any> {
-    const { userId } = res.locals.user;
-    // user 정보
-    const user = await this.usersService.findUserByPk(userId);
-    // user 관심사
-    const topic = await this.usersService.findTopicById(userId);
-    // user가 만든 모임
-    const createdCrew = await this.crewService.findCreatedCrew(userId);
-    // user가 찜한 모임
-    const likedCrew = await this.likeService.findLikedCrew(userId);
-    const crewList = [];
-    for (let i = 0; i < likedCrew.length; i++) {
-      const crewId = likedCrew[i].like_crewId;
-      const crew = await this.crewService.findCrewDetailByCrewId(crewId);
-      crewList.push(crew);
+    try {
+      const { userId } = res.locals.user;
+      // user 정보
+      const user = await this.usersService.findUserByPk(userId);
+      // user 관심사
+      const topic = await this.usersService.findTopicById(userId);
+      // user가 만든 모임
+      const createdCrew = await this.crewService.findCreatedCrew(userId);
+      // user가 찜한 모임
+      const likedCrew = await this.likeService.findLikedCrew(userId);
+      const crewList = [];
+      for (let i = 0; i < likedCrew.length; i++) {
+        const crewId = likedCrew[i].like_crewId;
+        const crew = await this.crewService.findCrewDetailByCrewId(crewId);
+        crewList.push(crew);
+      }
+      // user가 참여한 모임
+      const joinedCrew = await this.memberService.findJoinedCrew(userId);
+      const memberCrewList = [];
+      for (let i = 0; i < joinedCrew.length; i++) {
+        const crewId = joinedCrew[i].member_crewId;
+        const crew = await this.crewService.findCrewDetailByCrewId(crewId);
+        memberCrewList.push(crew);
+      }
+      return res.status(HttpStatus.OK).json({
+        user,
+        topic,
+        createdCrew,
+        likedCrew: crewList,
+        joinedCrew: memberCrewList,
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/mypage');
     }
-    // user가 참여한 모임
-    const joinedCrew = await this.memberService.findJoinedCrew(userId);
-    const memberCrewList = [];
-    for (let i = 0; i < joinedCrew.length; i++) {
-      const crewId = joinedCrew[i].member_crewId;
-      const crew = await this.crewService.findCrewDetailByCrewId(crewId);
-      memberCrewList.push(crew);
-    }
-    return res.status(HttpStatus.OK).json({
-      user,
-      topic,
-      createdCrew,
-      likedCrew: crewList,
-      joinedCrew: memberCrewList,
-    });
   }
 
   /* 마이페이지 edit */
@@ -522,7 +530,7 @@ export class UsersController {
     }
   }
 
-  /* 나의 모임 */
+  /* 내가 만든 모임 */
   @Get('mycrew/mycreatedcrew')
   @ApiOperation({
     summary: '내가 생성한 모임 조회 API',
@@ -544,6 +552,7 @@ export class UsersController {
             crew_crewMaxMember: 8,
             crewAttendedMember: '3',
             crew_thumbnail: 'url',
+            existSignup: '0',
           },
           {
             member_likeId: 2,
@@ -555,6 +564,7 @@ export class UsersController {
             crew_crewMaxMember: 8,
             crewAttendedMember: '3',
             crew_thumbnail: 'url',
+            existSignup: '0',
           },
         ],
       },
@@ -574,6 +584,88 @@ export class UsersController {
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/findMyCrew');
+    }
+  }
+
+  /* 대기 중인 모임 */
+  @Get('mycrew/waitingcrew')
+  @ApiOperation({
+    summary: '승인을 기다리는 모임 조회 API',
+    description: 'user가 signup한 모임 조회',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '내가 signup한 모임의 정보를 조회',
+    schema: {
+      example: {
+        waitingCrew: [
+          {
+            crewId: '35',
+            userId: '3',
+            category: '운동',
+            crewType: '번개',
+            crewAddress: '홍대입구역 1번 출구',
+            crewTitle: '오늘은 꼭 뛰어야 한다!!',
+            crewContent: '오늘 꼭 뛰고 싶은 사람들 모이세요',
+            crewMaxMember: '8',
+            crewAttendedMember: '0',
+            thumbnail:
+              'https://team-crew-bucket.s3.ap-northeast-2.amazonaws.com/%EC%98%A4%EB%8A%98%EC%9D%80%20%EA%BC%AD%20%EB%9B%B0%EC%96%B4%EC%95%BC%20%ED%95%9C%EB%8B%A4%21%21-1696316103572',
+          },
+        ],
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
+  async waitingCrew(@Res() res: any): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const allSignup = await this.signupService.findMyAllSignup(userId);
+      if (allSignup.length < 1) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '아직 가입신청한 모임이 없습니다.' });
+      } else {
+        const waitingCrew = [];
+        for (let i = 0; i < allSignup.length; i++) {
+          const crewId = parseInt(allSignup[i].crewId);
+          console.log(crewId);
+          const crew = await this.crewService.findByCrewId(crewId);
+          waitingCrew.push(crew);
+        }
+        return res.status(HttpStatus.OK).json(waitingCrew);
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/waitingCrew');
+    }
+  }
+
+  /* 탈퇴하기 */
+  @Delete('deleteAccount')
+  @ApiOperation({
+    summary: '탈퇴하기 API',
+    description: '계정 탈퇴를 위한 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '탈퇴 성공',
+  })
+  @ApiBearerAuth('accesssToken')
+  async deleteAccount(@Res() res: any): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const deleteAccount = await this.usersService.deleteAccount(userId);
+      if (!deleteAccount) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '탈퇴 실패' });
+      }
+      res.clearCookie('authorization');
+      return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/deleteAccount');
     }
   }
 }

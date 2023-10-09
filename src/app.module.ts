@@ -45,6 +45,7 @@ import { ChatModule } from './chat/chat.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      timezone: 'Asia/Seoul',
       // synchronize: true,
       synchronize: false,
     }),
@@ -86,6 +87,7 @@ export class AppModule implements NestModule {
       { path: 'mycrew/likedcrew', method: RequestMethod.GET },
       { path: 'mycrew/joinedcrew', method: RequestMethod.GET },
       { path: 'mycrew/mycreatedcrew', method: RequestMethod.GET },
+      { path: 'mycrew/waitingcrew', method: RequestMethod.GET },
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
@@ -136,12 +138,18 @@ export class AppModule implements NestModule {
       { path: 'image/:crewId', method: RequestMethod.GET },
       { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
       { path: 'report/:crewId', method: RequestMethod.POST },
+      { path: 'like/:crewId', method: RequestMethod.POST },
+      { path: 'like/:crewId', method: RequestMethod.DELETE },
+      { path: 'deleteAccount', method: RequestMethod.DELETE },
     );
     consumer
       .apply(LoginMiddleware)
       .forRoutes(
         { path: 'crew/:crewId', method: RequestMethod.GET },
         { path: 'home/comingDate', method: RequestMethod.GET },
+        { path: 'home/wholeComingDate', method: RequestMethod.GET },
+        { path: 'home/map', method: RequestMethod.GET },
+        { path: 'home/:category', method: RequestMethod.GET },
       );
   }
 }

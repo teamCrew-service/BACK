@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from './signupForm.repository';
-import { SingupRepository } from './signup.repository';
+import { SignupRepository } from './signup.repository';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberRepository } from 'src/member/member.repository';
 
@@ -8,7 +8,7 @@ import { MemberRepository } from 'src/member/member.repository';
 export class SignupService {
   constructor(
     private signupFormRepository: SignupFormRepository,
-    private signupRespository: SingupRepository,
+    private signupRespository: SignupRepository,
     private memberRepository: MemberRepository,
   ) {}
 
@@ -54,11 +54,22 @@ export class SignupService {
     return signup;
   }
 
+  /* 본인이 작성한 signup 모두 조회 */
+  async findMyAllSignup(userId: number): Promise<any> {
+    const allSignup = await this.signupRespository.findMyAllSignup(userId);
+    return allSignup;
+  }
+
   /* 제출한 가입서 조회 */
   async findAllSubmitted(crewId: number): Promise<any> {
     const findAllSubmitted = await this.signupRespository.findAllSubmitted(
       crewId,
     );
+    findAllSubmitted.forEach((a) => {
+      if (a.interestTopics) {
+        a.interestTopics = a.interestTopics.split(',');
+      }
+    });
     return findAllSubmitted;
   }
 

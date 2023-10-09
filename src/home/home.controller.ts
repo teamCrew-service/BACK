@@ -30,11 +30,25 @@ export class HomeController {
     description: '다가오는 일정 리스트 조회합니다.',
     schema: {
       example: {
-        schedule: {
-          scheduleTitle: '퇴근 후 40분 걷기',
-          scheduleDDay: '2023-08-19T03:44:19.661Z',
-        },
-        participatedUser: { profileImage: 'URI' },
+        schedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-10-10T00:00:00.000Z',
+              scheduleId: '8',
+              crewType: '장기',
+              crewId: '22',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
+        nickname: '돌핀맨',
       },
     },
   })
@@ -43,7 +57,7 @@ export class HomeController {
     try {
       // 다가오는 일정 리스트 조회
       const user = res.locals.user ? res.locals.user : null;
-      const userId = user.userId;
+      const userId = user !== null ? user.userId : 0;
       const nickname = user.nickname;
       const schedule = await this.homeService.findSchedule(userId);
 
@@ -60,6 +74,88 @@ export class HomeController {
         `리스트 조회 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  /* 다가오는 일정 전체 */
+  @Get('wholeComingDate')
+  @ApiOperation({
+    summary: '다가오는 일정 리스트 전체 조회 API',
+    description: '다가오는 일정 리스트 전체를 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '다가오는 일정 리스트 전체를 조회합니다.',
+    schema: {
+      example: {
+        schedule: {
+          scheduleTitle: '퇴근 후 40분 걷기',
+          scheduleDDay: '2023-08-19T03:44:19.661Z',
+        },
+        participatedUser: { profileImage: 'URI' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: '다가오는 일정 리스트 조회합니다.',
+    schema: {
+      example: {
+        comingSchedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-10-10T00:00:00.000Z',
+              scheduleId: '8',
+              crewType: '장기',
+              crewId: '22',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
+        participateSchedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-08-19T00:00:00.000Z',
+              scheduleId: '2',
+              crewType: '단기',
+              crewId: '10',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
+  async findWholeSchedule(@Res() res: any): Promise<any> {
+    try {
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
+      // 다가오는 일정, 참여완료 일정 조회
+      const comingSchedule = await this.homeService.findSchedule(userId);
+      const participateSchedule =
+        await this.homeService.findParticipateSchedule(userId);
+
+      return res
+        .status(HttpStatus.OK)
+        .json({ comingSchedule, participateSchedule });
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeController/findWholeSchedule');
     }
   }
 
@@ -87,15 +183,12 @@ export class HomeController {
   })
   async getCrew(@Res() res: any): Promise<any> {
     try {
-      // 내 주변 모임 조회
-      const crew = await this.homeService.getCrew();
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
 
-      // 내 주변 모임 조회 결과가 없을 경우
-      // if (crew.length === 0) {
-      //   return res.status(HttpStatus.NOT_FOUND).json({
-      //     errormessage: '내 주변 모임 조회 결과가 없습니다.',
-      //   });
-      // }
+      // 내 주변 모임 조회
+      const crew = await this.homeService.getCrew(userId);
+
       // 내 주변 모임 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (error) {
@@ -179,15 +272,10 @@ export class HomeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
       // 카테고리별 모임 조회
-      const crew = await this.homeService.findCrewByCategory(category);
-
-      // 조회 결과가 없을 경우
-      // if (crew.length === 0) {
-      //   return res.status(HttpStatus.NOT_FOUND).json({
-      //     errormessage: '관심사별로 조회한 결과가 없습니다.',
-      //   });
-      // }
+      const crew = await this.homeService.findCrewByCategory(category, userId);
 
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
