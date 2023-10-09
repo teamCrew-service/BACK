@@ -20,20 +20,47 @@ export class ScheduleRepository {
             schedule.scheduleTitle,
             schedule.scheduleDDay,
             schedule.scheduleId,
-            users_member.profileImage AS member_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
+            users_participant.profileImage AS participant_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
             users.userId,
-            member.userId AS member_userId,
+            participant.userId AS participant_userId,
             crew.crewId,
             crew.crewType,
-            users_member.nickname AS member_userName
+            users_participant.nickname AS participant_userName
        FROM  schedule
   LEFT JOIN  users ON schedule.userId = users.userId -- 일정을 작성한 사람과 users 테이블 조인
   LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
-  LEFT JOIN member ON crew.crewId = member.crewId -- 크루에 포함된 멤버와 member 테이블 조인
-  LEFT JOIN users AS users_member ON member.userId = users_member.userId -- 멤버의 이미지를 users 테이블에서 가져옴
-      WHERE (crew.crewId IN (SELECT crewId FROM member WHERE userId = ${userId})
+  LEFT JOIN participant ON crew.crewId = participant.crewId -- 크루에 포함된 멤버와 participant 테이블 조인
+  LEFT JOIN users AS users_participant ON participant.userId = users_participant.userId -- 멤버의 이미지를 users 테이블에서 가져옴
+      WHERE (crew.crewId IN (SELECT crewId FROM participant WHERE userId = ${userId})
       OR crew.userId = ${userId}) -- crew의 작성자도 schedule을 확인할 수 있도록 추가
       AND schedule.scheduleIsDone = false
+      ORDER BY schedule.scheduleDDay;`;
+
+    const result = await this.entityManager.query(query);
+    return result;
+  }
+
+  // 종료된 일정 조회
+  async findParticipateSchedule(userId: number): Promise<any> {
+    const query = `
+     SELECT 
+            schedule.scheduleTitle,
+            schedule.scheduleDDay,
+            schedule.scheduleId,
+            users_participant.profileImage AS participant_profileImage, -- 해당 크루에 포함된 멤버의 이미지 (users 테이블에서 가져옴)
+            users.userId,
+            participant.userId AS participant_userId,
+            crew.crewId,
+            crew.crewType,
+            users_participant.nickname AS participant_userName
+       FROM  schedule
+  LEFT JOIN  users ON schedule.userId = users.userId -- 일정을 작성한 사람과 users 테이블 조인
+  LEFT JOIN crew ON schedule.crewId = crew.crewId -- 일정이 속한 크루와 crew 테이블 조인
+  LEFT JOIN participant ON crew.crewId = participant.crewId -- 크루에 포함된 멤버와 participant 테이블 조인
+  LEFT JOIN users AS users_participant ON participant.userId = users_participant.userId -- 멤버의 이미지를 users 테이블에서 가져옴
+      WHERE (crew.crewId IN (SELECT crewId FROM participant WHERE userId = ${userId})
+      OR crew.userId = ${userId}) -- crew의 작성자도 schedule을 확인할 수 있도록 추가
+      AND schedule.scheduleIsDone = true
       ORDER BY schedule.scheduleDDay;`;
 
     const result = await this.entityManager.query(query);

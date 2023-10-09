@@ -30,11 +30,42 @@ export class HomeController {
     description: '다가오는 일정 리스트 조회합니다.',
     schema: {
       example: {
-        schedule: {
-          scheduleTitle: '퇴근 후 40분 걷기',
-          scheduleDDay: '2023-08-19T03:44:19.661Z',
-        },
-        participatedUser: { profileImage: 'URI' },
+        comingSchedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-10-10T00:00:00.000Z',
+              scheduleId: '8',
+              crewType: '장기',
+              crewId: '22',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
+        participateSchedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-08-19T00:00:00.000Z',
+              scheduleId: '2',
+              crewType: '단기',
+              crewId: '10',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
       },
     },
   })
@@ -60,6 +91,44 @@ export class HomeController {
         `리스트 조회 실패: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  /* 다가오는 일정 전체 */
+  @Get('wholeComingDate')
+  @ApiOperation({
+    summary: '다가오는 일정 리스트 전체 조회 API',
+    description: '다가오는 일정 리스트 전체를 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '다가오는 일정 리스트 전체를 조회합니다.',
+    schema: {
+      example: {
+        schedule: {
+          scheduleTitle: '퇴근 후 40분 걷기',
+          scheduleDDay: '2023-08-19T03:44:19.661Z',
+        },
+        participatedUser: { profileImage: 'URI' },
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
+  async findWholeSchedule(@Res() res: any): Promise<any> {
+    try {
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
+      // 다가오는 일정, 참여완료 일정 조회
+      const comingSchedule = await this.homeService.findSchedule(userId);
+      const participateSchedule =
+        await this.homeService.findParticipateSchedule(userId);
+
+      return res
+        .status(HttpStatus.OK)
+        .json({ comingSchedule, participateSchedule });
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeController/findWholeSchedule');
     }
   }
 
