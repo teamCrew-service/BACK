@@ -30,7 +30,7 @@ export class HomeController {
     description: '다가오는 일정 리스트 조회합니다.',
     schema: {
       example: {
-        comingSchedule: [
+        schedule: [
           {
             schedule: {
               scheduleTitle: '일요일 달리기!!',
@@ -48,24 +48,7 @@ export class HomeController {
             ],
           },
         ],
-        participateSchedule: [
-          {
-            schedule: {
-              scheduleTitle: '일요일 달리기!!',
-              scheduleDDay: '2023-08-19T00:00:00.000Z',
-              scheduleId: '2',
-              crewType: '단기',
-              crewId: '10',
-            },
-            profileImage: [
-              {
-                user_profileImage: null,
-                participant_userId: null,
-                participant_userName: null,
-              },
-            ],
-          },
-        ],
+        nickname: '돌핀맨',
       },
     },
   })
@@ -110,6 +93,50 @@ export class HomeController {
           scheduleDDay: '2023-08-19T03:44:19.661Z',
         },
         participatedUser: { profileImage: 'URI' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: '다가오는 일정 리스트 조회합니다.',
+    schema: {
+      example: {
+        comingSchedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-10-10T00:00:00.000Z',
+              scheduleId: '8',
+              crewType: '장기',
+              crewId: '22',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
+        participateSchedule: [
+          {
+            schedule: {
+              scheduleTitle: '일요일 달리기!!',
+              scheduleDDay: '2023-08-19T00:00:00.000Z',
+              scheduleId: '2',
+              crewType: '단기',
+              crewId: '10',
+            },
+            profileImage: [
+              {
+                user_profileImage: null,
+                participant_userId: null,
+                participant_userName: null,
+              },
+            ],
+          },
+        ],
       },
     },
   })

@@ -58,7 +58,7 @@ export class ScheduleService {
     // 결과 배열을 생성
     const result = Array.from(scheduleMap.values());
 
-    return result;
+    return result[0];
   }
 
   // 다가오는 일정, 참여 완료 일정 전체
