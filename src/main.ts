@@ -3,13 +3,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import * as debug from 'debug';
+import { Server as IOServer } from 'socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: 'http://localhost:3000',
+    // origin: 'http://localhost:80',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
+    optionsSuccessStatus: 204,
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe()); // 입력값 유효성 검사를 위한 ValidationPipe 추가
@@ -35,6 +39,19 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  await app.listen(80);
+  // await app.listen(80);
+  const server = await app.listen(80);
+  const io = new IOServer(server, {
+    path: '/chat',
+    cors: {
+      origin: '*', // 모든 도메인에 대한 액세스를 허용
+      methods: ['GET,HEAD,PUT,PATCH,POST,DELETE'], // 허용된 메서드 목록
+      credentials: true,
+    },
+  });
+
+  io.on('connection', (socket) => {
+    debug('Socket.io connection established')(socket.id);
+  });
 }
 bootstrap();

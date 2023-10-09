@@ -27,6 +27,9 @@ import { ParticipantModule } from './participant/participant.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ImageModule } from './image/image.module';
 import { ReportModule } from './report/report.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ChatModule } from './chat/chat.module';
+// import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -60,6 +63,17 @@ import { ReportModule } from './report/report.module';
     ParticipantModule,
     ImageModule,
     ReportModule,
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     uri: configService.get<string>('MONGODB_URL'),
+    //     useNewUrlParser: true,
+    //     useUnifiedTopology: true,
+    //   }),
+    // }),
+    MongooseModule.forRoot(process.env.MONGODB_URL),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
