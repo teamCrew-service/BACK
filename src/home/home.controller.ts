@@ -59,7 +59,8 @@ export class HomeController {
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
       const nickname = user.nickname;
-      const schedule = await this.homeService.findSchedule(userId);
+      const data = await this.homeService.findSchedule(userId);
+      const schedule = data[0];
 
       // 다가오는 일정 리스트 조회 결과가 없을 경우
       // if (schedule.length === 0) {
