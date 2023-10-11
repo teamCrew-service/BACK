@@ -56,7 +56,9 @@ export class CrewRepository {
       .select([
         'crew.crewId',
         'crew.userId AS captainId',
+        'users.age AS captainAge',
         'users.location AS captainLocation',
+        'users.myMessage AS captainMessage',
         'users.nickname AS captainNickname',
         'users.profileImage AS captainProfileImage',
         'crew.category',
@@ -78,7 +80,8 @@ export class CrewRepository {
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .leftJoin('users', 'users', 'users.userId = crew.userId')
-      .where('crew.crewId = :id', { id: crewId })
+      .leftJoin('topic', 'topic', 'topic.userId = crew.userId')
+      .where('crew.crewId = :crewId', { crewId })
       .getRawOne();
 
     return crew;

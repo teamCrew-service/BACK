@@ -26,12 +26,14 @@ import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
+import { TopicService } from 'src/topic/topic.service';
 
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
   constructor(
     private readonly crewService: CrewService,
+    private readonly topicService: TopicService,
     private readonly signupService: SignupService,
     private readonly memberService: MemberService,
     private readonly scheduleService: ScheduleService,
@@ -101,25 +103,89 @@ export class CrewController {
       examples: {
         example1: {
           crew: {
-            crewId: 1,
-            category: '친목',
-            crewTitle: '같이 운동하고 건강한 저녁 함께해요',
-            thumbnail: ['url1', 'url2', 'url3'],
-            crewDDay: '2023-08-19T03:44:19.661Z',
-            crewAddress: '소공동',
+            crew_crewId: '22',
+            crew_category: '공연/축제',
+            crew_crewAddress: '다대포해수욕장역 1번 출구',
+            crew_crewType: '장기',
+            crew_crewDDay: '2023-08-19T00:00:00.000Z',
+            crew_crewMemberInfo: '털털한 분',
+            crew_crewAgeInfo: '20대 초반 ~ 30대 후반',
+            crew_crewSignup: 1,
+            crew_crewTitle: '오늘은 뛸 수 있나?',
+            crew_crewContent: '오늘 꼭 뛰고 싶은 사람들 모이세요',
+            crew_thumbnail: '',
+            crew_crewMaxMember: '8',
+            crew_latitude: 35.047164,
+            crew_longtitude: 128.967317,
+            crew_createdAt: '2023-09-25T05:17:47.797Z',
+            crew_deletedAt: null,
+            captainId: '1',
+            captainAge: 1995,
+            captainLocation: '서울 종로구 서린동 136',
+            captainMessage: '안녕하세요. 고양이를 키우고 있는 사람입니다.',
+            captainNickname: 'CJW',
+            captainProfileImage:
+              'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
+            crewAttendedMember: '0',
           },
+          captainTopics: [
+            {
+              userId: '1',
+              interestTopic: '친목',
+            },
+            {
+              userId: '1',
+              interestTopic: '음료',
+            },
+            {
+              userId: '1',
+              interestTopic: '책/글',
+            },
+          ],
           member: [1, 11, 10], // 게스트일 경우 비어있는 배열
           personType: 'person',
         },
         example2: {
           crew: {
-            crewId: 1,
-            category: '친목',
-            crewTitle: '같이 운동하고 건강한 저녁 함께해요',
-            thumbnail: ['url1', 'url2', 'url3'],
-            crewDDay: '2023-08-19T03:44:19.661Z',
-            crewAddress: '소공동',
+            crew_crewId: '22',
+            crew_category: '공연/축제',
+            crew_crewAddress: '다대포해수욕장역 1번 출구',
+            crew_crewType: '장기',
+            crew_crewDDay: '2023-08-19T00:00:00.000Z',
+            crew_crewMemberInfo: '털털한 분',
+            crew_crewAgeInfo: '20대 초반 ~ 30대 후반',
+            crew_crewSignup: 1,
+            crew_crewTitle: '오늘은 뛸 수 있나?',
+            crew_crewContent: '오늘 꼭 뛰고 싶은 사람들 모이세요',
+            crew_thumbnail: '',
+            crew_crewMaxMember: '8',
+            crew_latitude: 35.047164,
+            crew_longtitude: 128.967317,
+            crew_createdAt: '2023-09-25T05:17:47.797Z',
+            crew_deletedAt: null,
+            captainId: '1',
+            captainAge: 1995,
+            captainLocation: '서울 종로구 서린동 136',
+            captainMessage: '안녕하세요. 고양이를 키우고 있는 사람입니다.',
+            captainNickname: 'CJW',
+            captainProfileImage:
+              'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
+            crewAttendedMember: '0',
           },
+          captainTopics: [
+            {
+              userId: '1',
+              interestTopic: '친목',
+            },
+            {
+              userId: '1',
+              interestTopic: '음료',
+            },
+            {
+              userId: '1',
+              interestTopic: '책/글',
+            },
+          ],
           member: [1, 11, 10],
           schedule: [
             {
@@ -159,13 +225,45 @@ export class CrewController {
         },
         example3: {
           crew: {
-            crewId: 1,
-            category: '친목',
-            crewTitle: '같이 운동하고 건강한 저녁 함께해요',
-            thumbnail: ['url1', 'url2', 'url3'],
-            crewDDay: '2023-08-19T03:44:19.661Z',
-            crewAddress: '소공동',
+            crew_crewId: '22',
+            crew_category: '공연/축제',
+            crew_crewAddress: '다대포해수욕장역 1번 출구',
+            crew_crewType: '장기',
+            crew_crewDDay: '2023-08-19T00:00:00.000Z',
+            crew_crewMemberInfo: '털털한 분',
+            crew_crewAgeInfo: '20대 초반 ~ 30대 후반',
+            crew_crewSignup: 1,
+            crew_crewTitle: '오늘은 뛸 수 있나?',
+            crew_crewContent: '오늘 꼭 뛰고 싶은 사람들 모이세요',
+            crew_thumbnail: '',
+            crew_crewMaxMember: '8',
+            crew_latitude: 35.047164,
+            crew_longtitude: 128.967317,
+            crew_createdAt: '2023-09-25T05:17:47.797Z',
+            crew_deletedAt: null,
+            captainId: '1',
+            captainAge: 1995,
+            captainLocation: '서울 종로구 서린동 136',
+            captainMessage: '안녕하세요. 고양이를 키우고 있는 사람입니다.',
+            captainNickname: 'CJW',
+            captainProfileImage:
+              'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
+            crewAttendedMember: '0',
           },
+          captainTopics: [
+            {
+              userId: '1',
+              interestTopic: '친목',
+            },
+            {
+              userId: '1',
+              interestTopic: '음료',
+            },
+            {
+              userId: '1',
+              interestTopic: '책/글',
+            },
+          ],
           member: [1, 11, 10],
           schedule: [
             {
@@ -210,70 +308,84 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
-    const user = res.locals.user ? res.locals.user : null;
-    const userId = user !== null ? user.userId : 0;
-    const crew = await this.crewService.findCrewDetail(crewId);
-    const member = await this.memberService.findAllMember(crewId);
-    const likeCount = await this.likeService.countLikedCrew(crewId);
+    try {
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
+      const crew = await this.crewService.findCrewDetail(crewId);
+      const captainId = crew.captainId;
+      const captainTopics = await this.topicService.findTopicById(captainId);
+      const member = await this.memberService.findAllMember(crewId);
+      const likeCount = await this.likeService.countLikedCrew(crewId);
 
-    // 모임이 생긴 기간
-    const today: any = new Date().getDate();
-    const startDate: any = crew.crew_createdAt.getDate();
-    const createdCrewPeriod: number = startDate - today;
+      // 모임이 생긴 기간
+      const today: any = new Date().getDate();
+      const startDate: any = crew.crew_createdAt.getDate();
+      const createdCrewPeriod: number = startDate - today;
 
-    /* userId를 통해 crew 방장 및 member 확인 */
-    // 게스트일 경우
-    if (userId === null) {
-      return res
-        .status(HttpStatus.OK)
-        .json({ createdCrewPeriod, crew, member, personType: 'person' });
-    }
-
-    // crew 일정
-    const schedule = await this.scheduleService.findScheduleByCrew(
-      crewId,
-      userId,
-    );
-
-    // crew 공지
-    const regularNotice = await this.noticeService.findAllNotice(crewId);
-    const voteForm = await this.voteFormService.findAllVoteForm(crewId);
-
-    const allNotice = { regularNotice, voteForm };
-
-    // 방장일 경우
-    if (userId === crew.captainId) {
-      return res.status(HttpStatus.OK).json({
-        createdCrewPeriod,
-        crew,
-        member,
-        schedule,
-        allNotice,
-        likeCount,
-        personType: 'captain',
-      });
-    }
-    for (let i = 0; i < member.length; i++) {
-      // member일 경우
-      if (userId === member[i].member_userId) {
+      /* userId를 통해 crew 방장 및 member 확인 */
+      // 게스트일 경우
+      if (userId === null) {
         return res.status(HttpStatus.OK).json({
           createdCrewPeriod,
           crew,
+          captainTopics,
+          member,
+          personType: 'person',
+        });
+      }
+
+      // crew 일정
+      const schedule = await this.scheduleService.findScheduleByCrew(
+        crewId,
+        userId,
+      );
+
+      // crew 공지
+      const regularNotice = await this.noticeService.findAllNotice(crewId);
+      const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+
+      const allNotice = { regularNotice, voteForm };
+
+      // 방장일 경우
+      if (userId === crew.captainId) {
+        return res.status(HttpStatus.OK).json({
+          createdCrewPeriod,
+          crew,
+          captainTopics,
           member,
           schedule,
           allNotice,
           likeCount,
-          personType: 'member',
+          personType: 'captain',
         });
       }
+      for (let i = 0; i < member.length; i++) {
+        // member일 경우
+        if (userId === member[i].member_userId) {
+          return res.status(HttpStatus.OK).json({
+            createdCrewPeriod,
+            crew,
+            captainTopics,
+            member,
+            schedule,
+            allNotice,
+            likeCount,
+            personType: 'member',
+          });
+        }
+      }
+      return res.status(HttpStatus.OK).json({
+        createdCrewPeriod,
+        crew,
+        captainTopics,
+        member,
+        likeCount,
+        personType: 'person',
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewController/findCrewDetail');
     }
-    return res.status(HttpStatus.OK).json({
-      createdCrewPeriod,
-      crew,
-      member,
-      likeCount,
-      personType: 'person',
-    });
   }
 
   /* 모임글 수정 */
