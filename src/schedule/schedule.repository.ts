@@ -171,7 +171,6 @@ export class ScheduleRepository {
       .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
       .where('schedule.crewId = :crewId', { crewId })
       .andWhere('schedule.deletedAt IS NULL')
-      .andWhere('schedule.scheduleIsDone = :isDone', { isDone: false })
       .select([
         'schedule.scheduleId AS scheduleId',
         'schedule.userId AS userId',
