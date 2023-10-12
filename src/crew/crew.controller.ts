@@ -32,14 +32,13 @@ import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from 'src/crew/multerConfig';
-export class FileUploadDto {
-  @ApiProperty({ type: 'files' })
-  file: any;
-
-  //파일여러개
-}
+import { multerConfigThumbnail } from 'src/crew/multerConfig';
+import { multerConfigImage } from 'src/crew/multerConfig';
+import { join } from 'path';
 export class FilesUploadDto {
+  @ApiProperty()
+  JoinCreateCrewDto: JoinCreateCrewDto;
+
   @ApiProperty({
     type: 'array',
     items: {
@@ -74,21 +73,27 @@ export class CrewController {
     status: 201,
     description: '모임 생성 성공',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: FilesUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
   @ApiBearerAuth('accessToken')
   async createCrew(
-    @Body() joinCreateCrewDto: JoinCreateCrewDto,
+    @UploadedFiles() files,
+    @Body('JoinCreateCrewDto') joinCreateCrewDto: any,
     @Res() res: any,
   ): Promise<any> {
-    let { createCrewDto, createSignupFormDto } = joinCreateCrewDto;
+    //console.log(joinCreateCrewDto);
+    //joinCreateCrewDto = JSON.parse(joinCreateCrewDto);
+    let { createCrewDto, createSignupFormDto } = JSON.parse(joinCreateCrewDto);
     const { userId } = res.locals.user;
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
-    const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
-    const thumbnail = await this.imageService.urlToS3(
-      createCrewDto.thumbnail,
-      filename,
-    );
-
-    createCrewDto.thumbnail = thumbnail;
+    //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
+    //const thumbnail = await this.imageService.urlToS3(createCrewDto.thumbnail,filename,);
+    //console.log(files[0].location);
+    createCrewDto.thumbnail = files[0].location;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
@@ -114,12 +119,17 @@ export class CrewController {
     description: 'image upload',
     type: FilesUploadDto,
   })
-  @UseInterceptors(FilesInterceptor('files', 5, multerConfig))
-  async uploadFiles(@UploadedFiles() files, @Res() res: any) {
-    console.log(files);
-    return res
-      .status(HttpStatus.OK)
-      .json(files.map((file) => ({ url: `/uploads/${file.filename}` })));
+  @UseInterceptors(FilesInterceptor('files', 5, multerConfigImage))
+  async uploadFiles(
+    @UploadedFiles() files,
+    @Body('JoinCreateCrewDto') body: any,
+    @Res() res: any,
+  ) {
+    return res.status(HttpStatus.OK).json(
+      files.map((files) => ({
+        url: `${files.location}`,
+      })),
+    );
     return files.map((file) => ({ url: `/uploads/${file.filename}` }));
   }
 
