@@ -470,4 +470,28 @@ export class CrewController {
       .status(HttpStatus.OK)
       .json({ message: '모임 삭제를 성공했습니다.' });
   }
+
+  /* 모임장 위임하기 */
+  @Put('changeCaptain/:crewId')
+  @ApiOperation({
+    summary: '모임장 위임 API',
+    description: '모임장을 위임합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임장 위임 성공',
+  })
+  @ApiBearerAuth('accessToken')
+  async changeCaptain(
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findOneCrew(crewId, userId);
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewContrller/changeCaptain');
+    }
+  }
 }

@@ -99,4 +99,10 @@ export class CrewService {
     const crew = await this.crewRepository.findCrewDetailByCrewId(crewId);
     return crew;
   }
+
+  /* myCrew를 하나만 조회하기 */
+  async findOneCrew(crewId: number, userId: number): Promise<any> {
+    const crew = await this.crewRepository.findOneCrew(crewId, userId);
+    return crew;
+  }
 }
