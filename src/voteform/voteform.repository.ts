@@ -144,12 +144,14 @@ export class VoteFormRepository {
 
   /* 오늘 날짜 기준보다 날짜가 지난 투표를 찾아 IsDone을 true로 전환 */
   async updateVoteIsDone(): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
     const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
     await this.voteFormRepository
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ voteIsDone: true })
-      .where('voteform.voteEndDate < :currentDate', { currentDate })
+      .where('voteform.voteEndDate < :today', { today })
       .andWhere('voteform.voteIsDone = :voteIsDone', { voteIsDone: false })
       .execute();
   }

@@ -18,6 +18,7 @@ import { Vote } from 'src/vote/entities/vote.entity';
 import { Participant } from 'src/participant/entities/participant.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Report } from 'src/report/entities/report.entity';
+import { Unsubscribe } from 'src/unsubscribe/entities/unsubscribe.entity';
 
 @Entity('users')
 export class Users {
@@ -89,4 +90,7 @@ export class Users {
 
   @OneToMany(() => Report, (report) => report.userId)
   report: Report[];
+
+  @OneToMany(() => Unsubscribe, (unsubscribe) => unsubscribe.userId)
+  unsubscribe: Unsubscribe[];
 }

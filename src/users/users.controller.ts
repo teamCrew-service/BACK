@@ -30,6 +30,7 @@ import { LikeService } from 'src/like/like.service';
 import { MemberService } from 'src/member/member.service';
 import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
 import { SignupService } from 'src/signup/signup.service';
+import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
 
 @Controller()
 @ApiTags('User API')
@@ -41,6 +42,7 @@ export class UsersController {
     private readonly likeService: LikeService,
     private readonly memberService: MemberService,
     private readonly signupService: SignupService,
+    private readonly unsubscribeService: UnsubscribeService,
   ) {}
 
   /* 카카오 로그인 서비스*/
@@ -641,31 +643,60 @@ export class UsersController {
     }
   }
 
-  /* 탈퇴하기 */
-  @Delete('deleteAccount')
+  /* 탈퇴 대기 등록 */
+  @Post('unsubscribe')
   @ApiOperation({
-    summary: '탈퇴하기 API',
-    description: '계정 탈퇴를 위한 API',
+    summary: '탈퇴 대기하기 API',
+    description: '계정 탈퇴를 위한 대기 등록 API',
   })
   @ApiResponse({
     status: 200,
-    description: '탈퇴 성공',
+    description: '탈퇴 대기 성공',
   })
   @ApiBearerAuth('accesssToken')
-  async deleteAccount(@Res() res: any): Promise<any> {
+  async unsubscribe(@Res() res: any): Promise<any> {
     try {
       const { userId } = res.locals.user;
-      const deleteAccount = await this.usersService.deleteAccount(userId);
-      if (!deleteAccount) {
+      const crewList = await this.crewService.findMyCrew(userId);
+      if (crewList > 0) {
         return res
           .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '탈퇴 실패' });
+          .json({ message: '모임장 위임을 하지 않은 crew가 있습니다.' });
       }
-      res.clearCookie('authorization');
-      return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
+      const toBeDeletedAccount =
+        await this.unsubscribeService.findOneUnsubscribe(userId);
+      if (!toBeDeletedAccount) {
+        await this.unsubscribeService.createUnsubscribe(userId);
+        return res.status(HttpStatus.OK).json({ message: '탈퇴 대기 성공' });
+      }
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/deleteAccount');
+    }
+  }
+
+  /* 탈퇴 대기 취소 */
+  @Delete('deleteUnsubscribe')
+  @ApiOperation({
+    summary: '탈퇴 대기 취소하기 API',
+    description: '계정 탈퇴를 위한 대기 취소 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '탈퇴 취소 성공',
+  })
+  @ApiBearerAuth('accesssToken')
+  async deleteUnsubscribe(@Res() res: any): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const toBeDeletedAccount =
+        await this.unsubscribeService.findOneUnsubscribe(userId);
+      if (toBeDeletedAccount) {
+        await this.unsubscribeService.deleteUnsubscribe(userId);
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/deleteUnsubscribe');
     }
   }
 }
