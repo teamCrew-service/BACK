@@ -8,11 +8,16 @@ import {
   Delete,
   Res,
   Put,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
+  ApiProperty,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -20,7 +25,22 @@ import { ImageService } from './image.service';
 import { SaveImageDto } from './dto/saveImage.dto';
 import { CrewService } from 'src/crew/crew.service';
 import { MemberService } from 'src/member/member.service';
+import { multerConfigImage } from 'src/crew/multerConfig';
+import { FilesInterceptor } from '@nestjs/platform-express';
+export class FilesUploadDto {
+  @ApiProperty()
+  SaveImageDto: SaveImageDto;
 
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+  })
+  files: any[];
+}
 @Controller('image')
 @ApiTags('Image API')
 export class ImageController {
@@ -46,8 +66,15 @@ export class ImageController {
     description: '이미지 저장 성공',
   })
   @ApiBearerAuth('accessToken')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: FilesUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 5, multerConfigImage))
   async saveImage(
-    @Body() saveImageDto: SaveImageDto,
+    @UploadedFiles() files,
+    @Body('SaveImageDto') body: any,
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
@@ -63,11 +90,21 @@ export class ImageController {
             .status(HttpStatus.BAD_REQUEST)
             .json({ message: '이미지 저장은 최대 5개까지 가능합니다.' });
         }
-        const newImage = await this.imageService.saveImage(
-          saveImageDto,
-          crewId,
-          userId,
-        );
+        const saveImageDto = JSON.parse(body);
+
+        files.forEach((file) => {
+          saveImageDto.image = file.location;
+          const newImage = this.imageService.saveImage(
+            saveImageDto,
+            crewId,
+            userId,
+          );
+        });
+        // const newImage = await this.imageService.saveImage(
+        //   saveImageDto,
+        //   crewId,
+        //   userId,
+        // );
         return res.status(HttpStatus.OK).json({ message: '이미지 저장 성공' });
       } else {
         return res
