@@ -10,6 +10,7 @@ import { TopicModule } from 'src/topic/topic.module';
 import { LikeModule } from 'src/like/like.module';
 import { MemberModule } from 'src/member/member.module';
 import { SignupModule } from 'src/signup/signup.module';
+import { UnsubscribeModule } from 'src/unsubscribe/unsubscribe.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SignupModule } from 'src/signup/signup.module';
     forwardRef(() => LikeModule),
     forwardRef(() => MemberModule),
     forwardRef(() => SignupModule),
+    forwardRef(() => UnsubscribeModule),
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
