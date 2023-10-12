@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Signup } from './signup.entity';
 
-@Entity()
+@Entity('signupform')
 export class Signupform {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   signupFormId: number;
