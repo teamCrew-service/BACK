@@ -127,6 +127,7 @@ export class CrewController {
             captainProfileImage:
               'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
             crewAttendedMember: '0',
+            signupFormId: '1',
           },
           captainTopics: [
             {
@@ -318,9 +319,12 @@ export class CrewController {
       const likeCount = await this.likeService.countLikedCrew(crewId);
 
       // 모임이 생긴 기간
-      const today: any = new Date().getDate();
-      const startDate: any = crew.crew_createdAt.getDate();
-      const createdCrewPeriod: number = startDate - today;
+      const today: any = new Date();
+      const startDate: any = new Date(crew.crew_createdAt);
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+      const createdCrewPeriod: number = Math.floor(
+        (today - startDate) / oneDayInMilliseconds,
+      );
 
       /* userId를 통해 crew 방장 및 member 확인 */
       // 게스트일 경우
