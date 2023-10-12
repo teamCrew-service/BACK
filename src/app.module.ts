@@ -128,7 +128,8 @@ export class AppModule implements NestModule {
       { path: 'report/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.DELETE },
-      { path: 'deleteAccount', method: RequestMethod.DELETE },
+      { path: 'unsubscribe', method: RequestMethod.POST },
+      { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
     );
     consumer
       .apply(LoginMiddleware)
