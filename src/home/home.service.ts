@@ -16,9 +16,15 @@ export class HomeService {
     return schedule;
   }
 
+  // 다가오는 일정, 참여완료 일정
+  async findParticipateSchedule(userId: number): Promise<any> {
+    const schedule = await this.scheduleService.findParticipateSchedule(userId);
+    return schedule;
+  }
+
   // 내 주변 모임 찾기
-  async getCrew(): Promise<any> {
-    return this.homeRepository.getCrew();
+  async getCrew(userId: number): Promise<any> {
+    return this.homeRepository.getCrew(userId);
   }
 
   // 내 주변 모임 찾기(카테고리별)
@@ -27,7 +33,7 @@ export class HomeService {
   }
 
   // 카테고리별 모임 찾기
-  async findCrewByCategory(category: string): Promise<any> {
-    return this.homeRepository.findCrewByCategory(category);
+  async findCrewByCategory(category: string, userId: number): Promise<any> {
+    return this.homeRepository.findCrewByCategory(category, userId);
   }
 }

@@ -73,4 +73,14 @@ export class CreateVoteFormDto {
   @IsString()
   @IsOptional()
   voteFormOption4: string;
+
+  //voteOption5
+  @ApiProperty({
+    example: '6시',
+    description: 'voteOption4',
+    required: true,
+  })
+  @IsString()
+  @IsOptional()
+  voteFormOption5: string;
 }

@@ -1,8 +1,7 @@
-import { Body, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 import { EditUserInfoDto } from './dto/editUserInfo-user.dto';
 
 @Injectable()
@@ -71,5 +70,11 @@ export class UsersRepository {
     });
     const exNickname = user ? user.nickname : null;
     return exNickname;
+  }
+
+  /* 탈퇴하기 */
+  async deleteAccount(userId: number): Promise<any> {
+    const deleteAccount = await this.usersRepository.delete(userId);
+    return deleteAccount;
   }
 }

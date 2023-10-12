@@ -56,7 +56,9 @@ export class CrewRepository {
       .select([
         'crew.crewId',
         'crew.userId AS captainId',
+        'users.age AS captainAge',
         'users.location AS captainLocation',
+        'users.myMessage AS captainMessage',
         'users.nickname AS captainNickname',
         'users.profileImage AS captainProfileImage',
         'crew.category',
@@ -75,10 +77,13 @@ export class CrewRepository {
         'crew.longtitude',
         'crew.createdAt',
         'crew.deletedAt',
+        'signupform.signupFormId AS signupFormId',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .leftJoin('users', 'users', 'users.userId = crew.userId')
-      .where('crew.crewId = :id', { id: crewId })
+      .leftJoin('topic', 'topic', 'topic.userId = crew.userId')
+      .leftJoin('signupform', 'signupform', 'signupform.crewId = crew.crewId')
+      .where('crew.crewId = :crewId', { crewId })
       .getRawOne();
 
     return crew;
@@ -154,15 +159,18 @@ export class CrewRepository {
   async findByCrewId(crewId: number): Promise<any> {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .select([
-        'crewId',
-        'userId',
-        'category',
-        'crewType',
-        'crewAddress',
-        'crewTitle',
-        'crewContent',
-        'crewMaxMember',
+        'crew.crewId AS crewId',
+        'crew.userId AS userId',
+        'crew.category AS category',
+        'crew.crewType AS crewType',
+        'crew.crewAddress AS crewAddress',
+        'crew.crewTitle AS crewTitle',
+        'crew.crewContent AS crewContent',
+        'crew.crewMaxMember AS crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail AS thumbnail',
       ])
       .where('crew.crewId = :crewId', { crewId })
       .andWhere('crew.deletedAt IS NULL')

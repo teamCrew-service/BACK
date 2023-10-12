@@ -20,13 +20,13 @@ export class LikeRepository {
 
   /* 찜 취소하기 */
   async cancelLikeCrew(crewId: number, userId: number): Promise<any> {
-    const like = await this.likeRepository
+    const caceledLike = await this.likeRepository
       .createQueryBuilder('like')
-      .select(['likeId', 'crewId', 'userId'])
+      .delete()
+      .from(Like)
       .where('like.crewId = :crewId', { crewId })
       .andWhere('like.userId = :userId', { userId })
-      .getRawOne();
-    const caceledLike = await this.likeRepository.remove(like);
+      .execute();
     return caceledLike;
   }
 
@@ -63,5 +63,17 @@ export class LikeRepository {
       .where('like.crewId = :crewId', { crewId })
       .getRawMany();
     return likedCrew;
+  }
+
+  /* user가 crew를 찜했는지 확인하기 */
+  async confirmLiked(crewId: number, userId: number): Promise<any> {
+    const like = await this.likeRepository
+      .createQueryBuilder('like')
+      .select(['likeId', 'crewId', 'userId'])
+      .where('like.crewId = :crewId', { crewId })
+      .andWhere('like.userId = :userId', { userId })
+      .getRawOne();
+
+    return like;
   }
 }

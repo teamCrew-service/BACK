@@ -30,6 +30,9 @@ export class ScheduleService {
           schedule: {
             scheduleTitle: data.scheduleTitle,
             scheduleDDay: data.scheduleDDay,
+            scheduleId: data.scheduleId,
+            crewType: data.crewType,
+            crewId: data.crewId,
           },
           profileImage: [],
         };
@@ -37,17 +40,67 @@ export class ScheduleService {
       }
 
       // 멤버의 프로필 이미지를 배열에 추가
-      if (data.member_profileImage) {
+      if (data.participant_profileImage) {
         scheduleData.profileImage.push({
-          member_profileImage: data.member_profileImage,
-          member_userId: data.member_userId,
-          member_userName: data.member_userName,
+          participant_profileImage: data.participant_profileImage,
+          participant_userId: data.participant_userId,
+          participant_userName: data.participant_userName,
         });
       } else {
         scheduleData.profileImage.push({
           user_profileImage: null,
-          member_userId: data.member_userId,
-          member_userName: data.member_userName,
+          participant_userId: data.participant_userId,
+          participant_userName: data.participant_userName,
+        });
+      }
+    }
+
+    // 결과 배열을 생성
+    const result = Array.from(scheduleMap.values());
+
+    return result;
+  }
+
+  // 다가오는 일정, 참여 완료 일정 전체
+  async findParticipateSchedule(userId: number): Promise<any> {
+    const rawData = await this.scheduleRepository.findParticipateSchedule(
+      userId,
+    );
+
+    // 일정별로 데이터를 묶는 맵을 생성
+    const scheduleMap = new Map();
+
+    for (const data of rawData) {
+      const scheduleKey = data.shceduleTitle + data.scheduleDDay;
+      let scheduleData = scheduleMap.get(scheduleKey);
+
+      // 일정이 없을 경우
+      if (!scheduleData) {
+        scheduleData = {
+          schedule: {
+            scheduleTitle: data.scheduleTitle,
+            scheduleDDay: data.scheduleDDay,
+            scheduleId: data.scheduleId,
+            crewType: data.crewType,
+            crewId: data.crewId,
+          },
+          profileImage: [],
+        };
+        scheduleMap.set(scheduleKey, scheduleData);
+      }
+
+      // 멤버의 프로필 이미지를 배열에 추가
+      if (data.participant_profileImage) {
+        scheduleData.profileImage.push({
+          participant_profileImage: data.participant_profileImage,
+          participant_userId: data.participant_userId,
+          participant_userName: data.participant_userName,
+        });
+      } else {
+        scheduleData.profileImage.push({
+          user_profileImage: null,
+          participant_userId: data.participant_userId,
+          participant_userName: data.participant_userName,
         });
       }
     }

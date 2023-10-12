@@ -52,7 +52,7 @@ export class VoteController {
       const member = await this.memberService.findAllMember(crewId);
 
       for (let i = 0; i < member.length; i++) {
-        if (member[i].userId === userId || crew.userId === userId) {
+        if (member[i].member_userId === userId || crew.userId === userId) {
           await this.voteService.voting(userId, crewId, voteFormId, votingDto);
           return res.status(HttpStatus.OK).json({ message: '투표 완료' });
         }

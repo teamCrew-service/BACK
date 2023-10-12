@@ -14,13 +14,29 @@
 
 ## :loudspeaker: 프로젝트 소개
 
-내 주변 모임 찾기부터 다양한 모임을 즐길 수 있도록 도와주는 플랫폼 서비스
+- 내 주변 모임 찾기부터 다양한 모임을 즐길 수 있도록 도와주는 플랫폼 서비스
 
-### :calendar: 프로젝트 기간
+### 프로젝트 목표
 
-2023년 08월 06일 ~ 2023년 10월
+- 소셜 로그인을 통해 간편한 로그인 서비스 제공
+- Map의 위치 기반 서비스를 활용한 주변 모임 찾기 / 카테고리 검색을 통해 원하는 모임 조회
+- 찜하기 기능을 통해 관심있는 모임을 등록
+- 가입이 등록된 모임에서는 가입을 통해 모임에 가입
+- 실시간 채팅을 통해 모임 구성원들과 원활한 소통 제공
+- S3를 이용한 image 관리 storage 구축
+- Docker를 이용한 CI/CD 구축
 
-### :mag: [API Document](http://13.125.181.179/swagger)
+#### 홈페이지 :
+
+#### :calendar: 프로젝트 기간 : 2023년 08월 06일 ~ 2023년 10월
+
+#### [GitHub](https://github.com/teamCrew-service)
+
+#### [Notion](https://burly-fridge-a81.notion.site/Team-CREW-d3269422b794420495da4d74548012cd?pvs=4)
+
+---
+
+### :mag: [API Document](http://13.125.234.29/swagger)
 
 ---
 
@@ -29,7 +45,6 @@
 ### Front-End
 
 - 최정운 (React) [FE팀장]
-- 이자용 (React)
 - 홍주혁 (React)
 
 ### Back-End
