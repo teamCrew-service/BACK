@@ -27,7 +27,7 @@ import { CrewService } from 'src/crew/crew.service';
 import { MemberService } from 'src/member/member.service';
 import { multerConfigImage } from 'src/crew/multerConfig';
 import { FilesInterceptor } from '@nestjs/platform-express';
-export class FilesUploadDto {
+export class ImageFilesUploadDto {
   @ApiProperty()
   SaveImageDto: SaveImageDto;
 
@@ -69,7 +69,7 @@ export class ImageController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'image upload',
-    type: FilesUploadDto,
+    type: ImageFilesUploadDto,
   })
   @UseInterceptors(FilesInterceptor('files', 5, multerConfigImage))
   async saveImage(
