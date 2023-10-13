@@ -105,4 +105,18 @@ export class CrewService {
     const crew = await this.crewRepository.findOneCrew(crewId, userId);
     return crew;
   }
+
+  /* 모임장 위임하기 */
+  async delegateCrew(
+    delegator: number,
+    crewId: number,
+    userId: number,
+  ): Promise<any> {
+    const delegate = await this.crewRepository.delegateCrew(
+      delegator,
+      crewId,
+      userId,
+    );
+    return delegate;
+  }
 }

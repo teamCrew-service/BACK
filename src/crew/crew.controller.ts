@@ -27,6 +27,7 @@ import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
 import { TopicService } from 'src/topic/topic.service';
+import { DelegateDto } from './dto/delegate.dto';
 
 @Controller('crew')
 @ApiTags('Crew API')
@@ -312,6 +313,12 @@ export class CrewController {
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
       const crew = await this.crewService.findCrewDetail(crewId);
+
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const captainId = crew.captainId;
       const captainTopics = await this.topicService.findTopicById(captainId);
       const member = await this.memberService.findAllMember(crewId);
@@ -472,7 +479,7 @@ export class CrewController {
   }
 
   /* 모임장 위임하기 */
-  @Put('changeCaptain/:crewId')
+  @Put('delegate/:crewId')
   @ApiOperation({
     summary: '모임장 위임 API',
     description: '모임장을 위임합니다.',
@@ -484,11 +491,29 @@ export class CrewController {
   @ApiBearerAuth('accessToken')
   async changeCaptain(
     @Param('crewId') crewId: number,
+    @Body() delegateDto: DelegateDto,
     @Res() res: any,
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
+      const { delegator } = delegateDto;
       const crew = await this.crewService.findOneCrew(crewId, userId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
+      const member = await this.memberService.findAllMember(crewId);
+      for (let i = 0; i < member.length; i++) {
+        if (member[i].member_userId === userId) {
+          await this.crewService.delegateCrew(delegator, crewId, userId);
+          await this.memberService.delegateMember(delegator, crewId, userId);
+        }
+      }
+
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: 'crew 멤버가 아닌 사람에게 모임장을 위임할 수 없습니다.',
+      });
     } catch (e) {
       console.error(e);
       throw new Error('CrewContrller/changeCaptain');

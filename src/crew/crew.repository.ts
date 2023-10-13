@@ -243,4 +243,20 @@ export class CrewRepository {
 
     return crew;
   }
+
+  /* 모임장 위임하기 */
+  async delegateCrew(
+    delegator: number,
+    crewId: number,
+    userId: number,
+  ): Promise<any> {
+    const delegate = await this.crewRepository
+      .createQueryBuilder()
+      .update('crew')
+      .set({ userId: delegator })
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.userId = :userid', { userId })
+      .execute();
+    return delegate;
+  }
 }
