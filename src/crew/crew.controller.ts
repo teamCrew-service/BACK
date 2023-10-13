@@ -8,13 +8,18 @@ import {
   Post,
   Put,
   Delete,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CrewService } from './crew.service';
 import { EditCrewDto } from './dto/editCrew.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
+  ApiProperty,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
@@ -26,9 +31,26 @@ import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { multerConfigThumbnail } from 'src/crew/multerConfig';
+import { multerConfigImage } from 'src/crew/multerConfig';
+import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
 
+export class CrewFilesUploadDto {
+  @ApiProperty()
+  JoinCreateCrewDto: JoinCreateCrewDto;
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+  })
+  files: any[];
+}
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
@@ -54,20 +76,27 @@ export class CrewController {
     status: 201,
     description: '모임 생성 성공',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: CrewFilesUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
   @ApiBearerAuth('accessToken')
   async createCrew(
-    @Body() joinCreateCrewDto: JoinCreateCrewDto,
+    @UploadedFiles() files,
+    @Body('JoinCreateCrewDto') joinCreateCrewDto: any,
     @Res() res: any,
   ): Promise<any> {
-    let { createCrewDto, createSignupFormDto } = joinCreateCrewDto;
+    //console.log(joinCreateCrewDto);
+    //joinCreateCrewDto = JSON.parse(joinCreateCrewDto);
+    let { createCrewDto, createSignupFormDto } = JSON.parse(joinCreateCrewDto);
     const { userId } = res.locals.user;
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
-    const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
-    const thumbnail = await this.imageService.urlToS3(
-      createCrewDto.thumbnail,
-      filename,
-    );
-    createCrewDto.thumbnail = thumbnail;
+    //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
+    //const thumbnail = await this.imageService.urlToS3(createCrewDto.thumbnail,filename,);
+    //console.log(files[0].location);
+    createCrewDto.thumbnail = files[0].location;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
@@ -84,6 +113,27 @@ export class CrewController {
         .status(HttpStatus.CREATED)
         .json({ message: '모임 생성 성공', crewId: newCrew.crewId });
     }
+  }
+
+  /*파일업로드 테스트*/
+  @Post('uploads')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: CrewFilesUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 5, multerConfigImage))
+  async uploadFiles(
+    @UploadedFiles() files,
+    @Body('JoinCreateCrewDto') body: any,
+    @Res() res: any,
+  ) {
+    return res.status(HttpStatus.OK).json(
+      files.map((files) => ({
+        url: `${files.location}`,
+      })),
+    );
+    return files.map((file) => ({ url: `/uploads/${file.filename}` }));
   }
 
   /* 모임 상세 조회*/
@@ -128,6 +178,7 @@ export class CrewController {
             captainProfileImage:
               'https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg',
             crewAttendedMember: '0',
+            signupFormId: '1',
           },
           captainTopics: [
             {
@@ -325,9 +376,12 @@ export class CrewController {
       const likeCount = await this.likeService.countLikedCrew(crewId);
 
       // 모임이 생긴 기간
-      const today: any = new Date().getDate();
-      const startDate: any = crew.crew_createdAt.getDate();
-      const createdCrewPeriod: number = startDate - today;
+      const today: any = new Date();
+      const startDate: any = new Date(crew.crew_createdAt);
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+      const createdCrewPeriod: number = Math.floor(
+        (today - startDate) / oneDayInMilliseconds,
+      );
 
       /* userId를 통해 crew 방장 및 member 확인 */
       // 게스트일 경우

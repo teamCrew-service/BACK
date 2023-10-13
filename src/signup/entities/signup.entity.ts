@@ -11,7 +11,7 @@ import {
 import { Signupform } from './signupForm.entity';
 import { Crew } from 'src/crew/entities/crew.entity';
 
-@Entity()
+@Entity('signup')
 export class Signup {
   @PrimaryGeneratedColumn()
   signupId: number;

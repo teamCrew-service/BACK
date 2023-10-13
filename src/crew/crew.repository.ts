@@ -77,10 +77,12 @@ export class CrewRepository {
         'crew.longtitude',
         'crew.createdAt',
         'crew.deletedAt',
+        'signupform.signupFormId AS signupFormId',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .leftJoin('users', 'users', 'users.userId = crew.userId')
       .leftJoin('topic', 'topic', 'topic.userId = crew.userId')
+      .leftJoin('signupform', 'signupform', 'signupform.crewId = crew.crewId')
       .where('crew.crewId = :crewId', { crewId })
       .getRawOne();
 
