@@ -36,7 +36,7 @@ import { multerConfigThumbnail } from 'src/crew/multerConfig';
 import { multerConfigImage } from 'src/crew/multerConfig';
 import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
-export class FilesUploadDto {
+export class CrewFilesUploadDto {
   @ApiProperty()
   JoinCreateCrewDto: JoinCreateCrewDto;
   @ApiProperty({
@@ -77,7 +77,7 @@ export class CrewController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'image upload',
-    type: FilesUploadDto,
+    type: CrewFilesUploadDto,
   })
   @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
   @ApiBearerAuth('accessToken')
@@ -118,7 +118,7 @@ export class CrewController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'image upload',
-    type: FilesUploadDto,
+    type: CrewFilesUploadDto,
   })
   @UseInterceptors(FilesInterceptor('files', 5, multerConfigImage))
   async uploadFiles(
