@@ -189,4 +189,10 @@ export class ScheduleService {
     );
     return schedule;
   }
+
+  /* 위임에 따라 schedule 작성자 변경 */
+  async delegateSchedule(delegator: number, crewId: number): Promise<any> {
+    await this.scheduleRepository.delegateSchedule(delegator, crewId);
+    return '일정 위임 완료';
+  }
 }

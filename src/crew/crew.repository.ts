@@ -233,4 +233,32 @@ export class CrewRepository {
 
     return crew;
   }
+
+  /* myCrew를 하나만 조회하기 */
+  async findOneCrew(crewId: number, userId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.userId = :userId', { userId })
+      .select(['crewId', 'userId'])
+      .getRawOne();
+
+    return crew;
+  }
+
+  /* 모임장 위임하기 */
+  async delegateCrew(
+    delegator: number,
+    crewId: number,
+    userId: number,
+  ): Promise<any> {
+    const delegateCrew = await this.crewRepository
+      .createQueryBuilder()
+      .update('crew')
+      .set({ userId: delegator })
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.userId = :userId', { userId })
+      .execute();
+    return delegateCrew;
+  }
 }

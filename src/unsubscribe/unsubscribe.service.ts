@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { UnsubscribeRepository } from './unsubscribe.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { Cron } from '@nestjs/schedule';
+import { TopicRepository } from 'src/topic/topic.repository';
 
 @Injectable()
 export class UnsubscribeService {
   constructor(
     private unsubscribeRepository: UnsubscribeRepository,
     private usersRepository: UsersRepository,
+    private topicRepository: TopicRepository,
   ) {}
 
   @Cron('0 0 * * * *')
@@ -20,6 +22,10 @@ export class UnsubscribeService {
           this.usersRepository.deleteAccount(account.userId),
         );
         await Promise.all(deleteAccounts);
+
+        const deleteTopics = toBeDeletedAccounts.map((account) =>
+          this.topicRepository.deleteTopic(account.userId),
+        );
 
         const deleteUnsubscribe = toBeDeletedAccounts.map((account) =>
           this.unsubscribeRepository.deleteUnsubscribe(account.userId),

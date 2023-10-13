@@ -34,6 +34,7 @@ export class NoticeRepository {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
       .select([
+        'userId',
         'noticeTitle',
         'noticeContent',
         'noticeAddress',
@@ -114,6 +115,17 @@ export class NoticeRepository {
       .set({ noticeIsDone: true })
       .where('notice.noticeDDay < :today', { today })
       .andWhere('notice.noticeIsDone = :noticeIsDone', { noticeIsDone: false })
+      .execute();
+  }
+
+  /* 위임에 따라 완료되지 않은 공지 userId를 위임자 userId로 수정 */
+  async delegateNotice(delegator: number, crewId: number): Promise<any> {
+    await this.noticeRepository
+      .createQueryBuilder('notice')
+      .update(Notice)
+      .set({ userId: delegator })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('deletedAt IS NULL')
       .execute();
   }
 }

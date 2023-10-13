@@ -65,4 +65,10 @@ export class NoticeService {
     );
     return deletedNotice;
   }
+
+  /* 위임에 따라 완료되지 않은 공지 userId를 위임자 userId로 수정 */
+  async delegateNotice(delegator: number, crewId: number): Promise<any> {
+    await this.noticeRepository.delegateNotice(delegator, crewId);
+    return '공지 위임 완료';
+  }
 }

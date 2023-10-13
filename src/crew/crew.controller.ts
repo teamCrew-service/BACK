@@ -36,6 +36,8 @@ import { multerConfigThumbnail } from 'src/crew/multerConfig';
 import { multerConfigImage } from 'src/crew/multerConfig';
 import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
+import { DelegateDto } from './dto/delegate.dto';
+
 export class CrewFilesUploadDto {
   @ApiProperty()
   JoinCreateCrewDto: JoinCreateCrewDto;
@@ -362,6 +364,12 @@ export class CrewController {
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
       const crew = await this.crewService.findCrewDetail(crewId);
+
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const captainId = crew.captainId;
       const captainTopics = await this.topicService.findTopicById(captainId);
       const member = await this.memberService.findAllMember(crewId);
@@ -522,5 +530,51 @@ export class CrewController {
     return res
       .status(HttpStatus.OK)
       .json({ message: '모임 삭제를 성공했습니다.' });
+  }
+
+  /* 모임장 위임하기 */
+  @Post('delegate/:crewId')
+  @ApiOperation({
+    summary: '모임장 위임 API',
+    description: '모임장을 위임합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임장 위임 성공',
+  })
+  @ApiBearerAuth('accessToken')
+  async delegateCrew(
+    @Param('crewId') crewId: number,
+    @Body() delegateDto: DelegateDto,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const { delegator } = delegateDto;
+      const crew = await this.crewService.findOneCrew(crewId, userId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
+      const member = await this.memberService.findAllMember(crewId);
+      for (let i = 0; i < member.length; i++) {
+        if (parseInt(member[i].member_userId) === delegator) {
+          await this.crewService.delegateCrew(delegator, crewId, userId);
+          await this.memberService.delegateMember(delegator, crewId, userId);
+          await this.noticeService.delegateNotice(delegator, crewId);
+          await this.scheduleService.delegateSchedule(delegator, crewId);
+          await this.voteFormService.delegateVoteForm(delegator, crewId);
+          return res.status(HttpStatus.OK).json({ message: '위임 완료' });
+        }
+      }
+
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: 'crew 멤버가 아닌 사람에게 모임장을 위임할 수 없습니다.',
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewContrller/changeCaptain');
+    }
   }
 }

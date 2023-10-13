@@ -155,4 +155,15 @@ export class VoteFormRepository {
       .andWhere('voteform.voteIsDone = :voteIsDone', { voteIsDone: false })
       .execute();
   }
+
+  /* 위임에 따라 투표 위임하기 */
+  async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
+    await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .update(VoteForm)
+      .set({ userId: delegator })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('deletedAt IS NULL')
+      .execute();
+  }
 }

@@ -213,4 +213,15 @@ export class ScheduleRepository {
       })
       .execute();
   }
+
+  /* 위임에 따라 schedule 작성자 변경 */
+  async delegateSchedule(delegator: number, crewId: number): Promise<any> {
+    await this.scheduleRepository
+      .createQueryBuilder('schedule')
+      .update(Schedule)
+      .set({ userId: delegator })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('deletedAt IS NULL')
+      .execute();
+  }
 }
