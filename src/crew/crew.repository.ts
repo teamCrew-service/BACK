@@ -250,13 +250,13 @@ export class CrewRepository {
     crewId: number,
     userId: number,
   ): Promise<any> {
-    const delegate = await this.crewRepository
+    const delegateCrew = await this.crewRepository
       .createQueryBuilder()
       .update('crew')
       .set({ userId: delegator })
       .where('crew.crewId = :crewId', { crewId })
-      .andWhere('crew.userId = :userid', { userId })
+      .andWhere('crew.userId = :userId', { userId })
       .execute();
-    return delegate;
+    return delegateCrew;
   }
 }

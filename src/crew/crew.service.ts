@@ -112,11 +112,11 @@ export class CrewService {
     crewId: number,
     userId: number,
   ): Promise<any> {
-    const delegate = await this.crewRepository.delegateCrew(
+    const delegateCrew = await this.crewRepository.delegateCrew(
       delegator,
       crewId,
       userId,
     );
-    return delegate;
+    return delegateCrew;
   }
 }

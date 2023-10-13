@@ -64,4 +64,10 @@ export class VoteFormService {
     );
     return editedVoteForm;
   }
+
+  /* 위임에 따라 투표 위임하기 */
+  async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
+    await this.voteFormRespository.delegateVoteForm(delegator, crewId);
+    return '투표 공지 위임 완료';
+  }
 }

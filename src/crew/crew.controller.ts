@@ -479,7 +479,7 @@ export class CrewController {
   }
 
   /* 모임장 위임하기 */
-  @Put('delegate/:crewId')
+  @Post('delegate/:crewId')
   @ApiOperation({
     summary: '모임장 위임 API',
     description: '모임장을 위임합니다.',
@@ -489,7 +489,7 @@ export class CrewController {
     description: '모임장 위임 성공',
   })
   @ApiBearerAuth('accessToken')
-  async changeCaptain(
+  async delegateCrew(
     @Param('crewId') crewId: number,
     @Body() delegateDto: DelegateDto,
     @Res() res: any,
@@ -505,9 +505,13 @@ export class CrewController {
       }
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
-        if (member[i].member_userId === userId) {
+        if (parseInt(member[i].member_userId) === delegator) {
           await this.crewService.delegateCrew(delegator, crewId, userId);
           await this.memberService.delegateMember(delegator, crewId, userId);
+          await this.noticeService.delegateNotice(delegator, crewId);
+          await this.scheduleService.delegateSchedule(delegator, crewId);
+          await this.voteFormService.delegateVoteForm(delegator, crewId);
+          return res.status(HttpStatus.OK).json({ message: '위임 완료' });
         }
       }
 
