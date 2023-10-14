@@ -79,6 +79,7 @@ export class HomeRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewTitle',
+        'crew.crewContent',
         'crew.thumbnail',
         'crew.crewDDay',
         'crew.crewAddress',
