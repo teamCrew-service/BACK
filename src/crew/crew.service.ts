@@ -22,6 +22,7 @@ export class CrewService {
     return crewList;
   }
 
+  /* 모임 생성 */
   async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
     const crew = await this.crewRepository.createCrew(createCrewDto, userId);
     return crew;

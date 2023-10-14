@@ -31,7 +31,12 @@ export class CrewRepository {
   async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
     const crew = new Crew();
     crew.userId = userId;
-    crew.category = createCrewDto.category;
+    if (createCrewDto.category.includes('%2F') === true) {
+      const category = createCrewDto.category.replace('%2F', '/');
+      crew.category = category;
+    } else {
+      crew.category = createCrewDto.category;
+    }
     crew.crewAddress = createCrewDto.crewAddress;
     crew.crewType = createCrewDto.crewType;
     crew.crewDDay = createCrewDto.crewDDay;
