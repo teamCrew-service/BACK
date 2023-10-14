@@ -88,6 +88,12 @@ export class CrewService {
     return crew;
   }
 
+  /* 대기중인 모임을 위한 조회 */
+  async findWaitingPermission(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.findWaitingPermission(crewId);
+    return crew;
+  }
+
   /* userId를 이용해 내가 생성한 모임 조회하기 */
   async findMyCrew(userId: number): Promise<any> {
     const myCrew = await this.crewRepository.findMyCrew(userId);
