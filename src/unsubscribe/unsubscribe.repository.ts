@@ -25,7 +25,7 @@ export class UnsubscribeRepository {
   }
 
   /* 탈퇴를 원하는 계정 하나 조회 */
-  async findOneUnsubscribe(userId: number): Promise<any> {
+  async findOneUnsubscribe(userId: any): Promise<any> {
     const toBeDeletedAccount = await this.unsubscribeRepository
       .createQueryBuilder('unsubscribe')
       .where('unsubscribe.userId = :userId', { userId })
