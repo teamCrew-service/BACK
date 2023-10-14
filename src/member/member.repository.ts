@@ -67,8 +67,8 @@ export class MemberRepository {
       .createQueryBuilder('member')
       .delete()
       .from(Member)
-      .where('member.crewId = :crewId', { crewId })
-      .andWhere('member.userId = :userId', { userId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('userId = :userId', { userId })
       .execute();
 
     return exitCrew;
