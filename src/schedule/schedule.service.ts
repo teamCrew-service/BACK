@@ -195,4 +195,12 @@ export class ScheduleService {
     await this.scheduleRepository.delegateSchedule(delegator, crewId);
     return '일정 위임 완료';
   }
+
+  /* 오늘 날짜에 가까운 schedule만 조회하기 */
+  async findScheduleCloseToToday(crewId: number) {
+    const schedule = await this.scheduleRepository.findScheduleCloseToToday(
+      crewId,
+    );
+    return schedule;
+  }
 }
