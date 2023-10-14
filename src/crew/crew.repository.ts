@@ -293,4 +293,13 @@ export class CrewRepository {
       .execute();
     return delegateCrew;
   }
+
+  /* Thumbnail 수정하기 */
+  async editThumbnail(crewId: number, thumbnail: string): Promise<any> {
+    const crew = await this.crewRepository.update(
+      { crewId },
+      { thumbnail: thumbnail },
+    );
+    return crew;
+  }
 }

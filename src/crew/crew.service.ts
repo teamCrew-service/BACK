@@ -126,4 +126,10 @@ export class CrewService {
     );
     return delegateCrew;
   }
+
+  /* Thumbnail 수정하기 */
+  async editThumbnail(crewId: number, thumbnail: string): Promise<any> {
+    const crew = await this.crewRepository.editThumbnail(crewId, thumbnail);
+    return crew;
+  }
 }

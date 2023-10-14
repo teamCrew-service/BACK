@@ -51,6 +51,18 @@ export class CrewFilesUploadDto {
   })
   files: any[];
 }
+
+export class CrewFilesEditDto {
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+  })
+  files: any[];
+}
 @Controller('crew')
 @ApiTags('Crew API')
 export class CrewController {
@@ -497,6 +509,60 @@ export class CrewController {
     return res
       .status(HttpStatus.OK)
       .json({ message: '모임 수정 완료했습니다.' });
+  }
+
+  /* 모임 Thumbnail 수정 */
+  @Put(':crewId/editThumbnail')
+  @ApiOperation({
+    summary: '모임 Thumbnail 수정 API',
+    description: '모임의 Thumbnail을 수정합니다.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임의 Thumbnail을 수정합니다.',
+    schema: {
+      example: {
+        crewId: 1,
+        thumbnail: 's3_url1',
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: CrewFilesEditDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
+  @ApiBearerAuth('accessToken')
+  async editThumbnail(
+    @Param('crewId') crewId: number,
+    @UploadedFiles() files,
+    @Res() res: any,
+  ): Promise<any> {
+    const { userId } = res.locals.user;
+    const crew = await this.crewService.findCrewForAuth(crewId);
+    if (crew.userId !== userId) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: '모임 Thumbnail 수정 권한이 없습니다.' });
+    }
+    const editThumbnail = await this.crewService.editThumbnail(
+      crewId,
+      files[0].location,
+    );
+    if (!editThumbnail) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '모임 Thumbnail 수정 실패했습니다.' });
+    }
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: '모임 Thumbnail 수정 완료했습니다.' });
   }
 
   /* 모임 글 삭제 */
