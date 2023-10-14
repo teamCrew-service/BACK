@@ -37,12 +37,13 @@ export class LikeRepository {
       .leftJoin('crew', 'crew', 'crew.crewId = like.crewId')
       .leftJoin('member', 'member', 'member.crewId = like.crewId')
       .select([
-        'like.likeId',
-        'like.crewId',
+        'crew.crewId',
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
         'crew.crewTitle',
+        'crew.crewContent',
+        'crew.crewDDay',
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',

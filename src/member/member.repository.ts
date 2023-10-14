@@ -42,12 +42,13 @@ export class MemberRepository {
       .createQueryBuilder('member')
       .leftJoin('crew', 'crew', 'crew.crewId = member.crewId')
       .select([
-        'member.memberId',
-        'member.crewId',
+        'crew.crewId',
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
         'crew.crewTitle',
+        'crew.crewDDay',
+        'crew.crewContent',
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',
