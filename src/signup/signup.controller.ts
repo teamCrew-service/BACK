@@ -21,6 +21,7 @@ import {
 import { CrewService } from 'src/crew/crew.service';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberService } from 'src/member/member.service';
+import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
 
 @Controller()
 @ApiTags('signup API')
@@ -29,6 +30,7 @@ export class SignupController {
     private readonly signupService: SignupService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
+    private readonly leavecrewService: LeavecrewService,
   ) {}
 
   /* 모임 가입(form 생성): 버전 업그레이드에 맞춰 사용*/
@@ -157,15 +159,24 @@ export class SignupController {
       const crew = await this.crewService.findByCrewId(crewId);
       if (crew.userId === userId) {
         return res
-          .status(HttpStatus.BAD_REQUEST)
+          .status(HttpStatus.FORBIDDEN)
           .json({ message: '모임장입니다.' });
+      }
+      const leaveUser = await this.leavecrewService.findOneLeaveUser(
+        crewId,
+        userId,
+      );
+      if (leaveUser) {
+        return res.status(HttpStatus.FORBIDDEN).json({
+          message: '탈퇴 기록이 있습니다. 7일 뒤에 다시 가입할 수 있습니다.',
+        });
       }
       const submitedSignup = await this.signupService.findMySignup(
         userId,
         crewId,
       );
       if (submitedSignup) {
-        return res.status(HttpStatus.CONFLICT).json({
+        return res.status(HttpStatus.FORBIDDEN).json({
           message: '이미 가입서를 작성했습니다. 모임장의 승인을 기다려주세요',
         });
       }
