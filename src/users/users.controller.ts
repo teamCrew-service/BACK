@@ -31,6 +31,7 @@ import { MemberService } from 'src/member/member.service';
 import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
 import { SignupService } from 'src/signup/signup.service';
 import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
+import { ScheduleService } from 'src/schedule/schedule.service';
 
 @Controller()
 @ApiTags('User API')
@@ -43,6 +44,7 @@ export class UsersController {
     private readonly memberService: MemberService,
     private readonly signupService: SignupService,
     private readonly unsubscribeService: UnsubscribeService,
+    private readonly scheduleService: ScheduleService,
   ) {}
 
   /* 카카오 로그인 서비스*/
@@ -295,39 +297,7 @@ export class UsersController {
           { userId: 1, interestTopic: '친목' },
           { userId: 1, interestTopic: '여행' },
         ],
-        createdCrew: [
-          {
-            crewId: 1,
-            category: '여행',
-            crewType: '단기',
-            crewAddress: '김포공항',
-            crewTitle: '제주도로 같이 여행 떠나요~~',
-          },
-          {
-            crewId: 6,
-            category: '자기 개발',
-            crewType: '장기',
-            crewAddress: '백석역',
-            crewTitle: '영어 스터디 모임',
-          },
-        ],
         likedCrew: [
-          {
-            crewId: 1,
-            category: '여행',
-            crewType: '단기',
-            crewAddress: '김포공항',
-            crewTitle: '제주도로 같이 여행 떠나요~~',
-          },
-          {
-            crewId: 6,
-            category: '자기 개발',
-            crewType: '장기',
-            crewAddress: '백석역',
-            crewTitle: '영어 스터디 모임',
-          },
-        ],
-        joinedCrew: [
           {
             crewId: 1,
             category: '여행',
@@ -354,30 +324,31 @@ export class UsersController {
       const user = await this.usersService.findUserByPk(userId);
       // user 관심사
       const topic = await this.usersService.findTopicById(userId);
-      // user가 만든 모임
-      const createdCrew = await this.crewService.findCreatedCrew(userId);
       // user가 찜한 모임
       const likedCrew = await this.likeService.findLikedCrew(userId);
       const crewList = [];
       for (let i = 0; i < likedCrew.length; i++) {
-        const crewId = likedCrew[i].like_crewId;
+        const crewId = likedCrew[i].crew_crewId;
         const crew = await this.crewService.findCrewDetailByCrewId(crewId);
         crewList.push(crew);
       }
-      // user가 참여한 모임
-      const joinedCrew = await this.memberService.findJoinedCrew(userId);
-      const memberCrewList = [];
-      for (let i = 0; i < joinedCrew.length; i++) {
-        const crewId = joinedCrew[i].member_crewId;
-        const crew = await this.crewService.findCrewDetailByCrewId(crewId);
-        memberCrewList.push(crew);
+
+      for (let i = 0; i < crewList.length; i++) {
+        if (crewList[i].crew_crewDDay === null) {
+          const crewId = parseInt(crewList[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            crewList[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
       }
+
       return res.status(HttpStatus.OK).json({
         user,
         topic,
-        createdCrew,
         likedCrew: crewList,
-        joinedCrew: memberCrewList,
       });
     } catch (e) {
       console.error(e);
@@ -525,6 +496,18 @@ export class UsersController {
           .json({ message: '참여한 모임이 아직 없습니다.' });
       }
 
+      for (let i = 0; i < joinedCrew.length; i++) {
+        if (joinedCrew[i].crew_crewDDay === null) {
+          const crewId = parseInt(joinedCrew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            joinedCrew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
+
       return res.status(HttpStatus.OK).json({ joinedCrew });
     } catch (e) {
       console.error(e);
@@ -582,6 +565,19 @@ export class UsersController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '생성한 crew가 아직 없습니다.' });
       }
+
+      for (let i = 0; i < myCrew.length; i++) {
+        if (myCrew[i].crew_crewDDay === null) {
+          const crewId = parseInt(myCrew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            myCrew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
+
       return res.status(HttpStatus.OK).json(myCrew);
     } catch (e) {
       console.error(e);
@@ -635,6 +631,18 @@ export class UsersController {
           const crew = await this.crewService.findByCrewId(crewId);
           waitingCrew.push(crew);
         }
+
+        for (let i = 0; i < waitingCrew.length; i++) {
+          if (waitingCrew[i].crew_crewDDay === null) {
+            const crewId = parseInt(waitingCrew[i].crew_crewId);
+            const schedule =
+              await this.scheduleService.findScheduleCloseToToday(crewId);
+            if (schedule) {
+              waitingCrew[i].crew_crewDDay = schedule.scheduleDDay;
+            }
+          }
+        }
+
         return res.status(HttpStatus.OK).json(waitingCrew);
       }
     } catch (e) {
