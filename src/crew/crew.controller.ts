@@ -455,6 +455,11 @@ export class CrewController {
     summary: '모임 글 수정 API',
     description: '모임의 상세한 내용을 수정합니다.',
   })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
   @ApiResponse({
     status: 200,
     description: '모임의 상세한 내용을 수정합니다.',
@@ -500,6 +505,11 @@ export class CrewController {
     summary: '모임 글 삭제 API',
     description: '모임의 내용을 삭제합니다.',
   })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
   @ApiResponse({
     status: 200,
     description: '모임의 내용을 삭제합니다.',
@@ -538,6 +548,11 @@ export class CrewController {
     summary: '모임장 위임 API',
     description: '모임장을 위임합니다.',
   })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
   @ApiResponse({
     status: 200,
     description: '모임장 위임 성공',
@@ -575,6 +590,33 @@ export class CrewController {
     } catch (e) {
       console.error(e);
       throw new Error('CrewContrller/changeCaptain');
+    }
+  }
+
+  /* member가 모임 탈퇴 */
+  @Post('leaveCrew/:crewId')
+  @ApiOperation({
+    summary: '모임 탈퇴 API',
+    description: '모임을 탈퇴합니다.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임 탈퇴 성공',
+  })
+  @ApiBearerAuth('accessToken')
+  async leaveCrew(
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewController/leaveCrew');
     }
   }
 }

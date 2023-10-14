@@ -179,6 +179,30 @@ export class CrewRepository {
     return crew;
   }
 
+  /* 대기중인 모임을 위한 조회 */
+  async findWaitingPermission(crewId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .select([
+        'crew.crewId',
+        'crew.userId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crew.crewTitle',
+        'crew.crewContent',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
+      ])
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
+      .getRawOne();
+    return crew;
+  }
+
   /* userId를 이용해 내가 생성한 모임 조회하기 */
   async findMyCrew(userId: number): Promise<any> {
     const myCrew = await this.crewRepository

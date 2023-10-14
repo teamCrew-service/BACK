@@ -652,7 +652,6 @@ export class UsersController {
         const waitingCrew = [];
         for (let i = 0; i < allSignup.length; i++) {
           const crewId = parseInt(allSignup[i].crewId);
-          console.log(crewId);
           const crew = await this.crewService.findByCrewId(crewId);
           waitingCrew.push(crew);
         }
