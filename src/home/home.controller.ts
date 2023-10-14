@@ -13,11 +13,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
+import { ScheduleService } from 'src/schedule/schedule.service';
 
 @Controller('home')
 @ApiTags('Home API')
 export class HomeController {
-  constructor(private readonly homeService: HomeService) {}
+  constructor(
+    private readonly homeService: HomeService,
+    private readonly scheduleService: ScheduleService,
+  ) {}
 
   /* 다가오는 일정 */
   @Get('comingDate')
@@ -190,6 +194,18 @@ export class HomeController {
       // 내 주변 모임 조회
       const crew = await this.homeService.getCrew(userId);
 
+      for (let i = 0; i < crew.length; i++) {
+        if (crew[i].crew_crewDDay === null) {
+          const crewId = parseInt(crew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            crew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
+
       // 내 주변 모임 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (error) {
@@ -237,6 +253,19 @@ export class HomeController {
       //     errormessage: '카테고리별로 조회한 결과가 없습니다.',
       //   });
       // }
+
+      for (let i = 0; i < crew.length; i++) {
+        if (crew[i].crew_crewDDay === null) {
+          const crewId = parseInt(crew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            crew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
+
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (error) {
@@ -277,6 +306,18 @@ export class HomeController {
       const userId = user !== null ? user.userId : 0;
       // 카테고리별 모임 조회
       const crew = await this.homeService.findCrewByCategory(category, userId);
+
+      for (let i = 0; i < crew.length; i++) {
+        if (crew[i].crew_crewDDay === null) {
+          const crewId = parseInt(crew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            crew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
 
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);

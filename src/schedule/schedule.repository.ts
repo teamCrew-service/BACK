@@ -224,4 +224,20 @@ export class ScheduleRepository {
       .andWhere('deletedAt IS NULL')
       .execute();
   }
+
+  /* 오늘 날짜에 가까운 schedule만 조회하기 */
+  async findScheduleCloseToToday(crewId: number) {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const schedule = await this.scheduleRepository
+      .createQueryBuilder('schedule')
+      .select(['crewId', 'scheduleDDay'])
+      .where('schedule.crewId = :crewId', { crewId })
+      .andWhere('schedule.scheduleDDay > :today', { today })
+      .orderBy('schedule.scheduleDDay', 'ASC')
+      .getRawMany();
+
+    return schedule[0];
+  }
 }
