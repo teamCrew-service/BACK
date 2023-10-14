@@ -28,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ImageModule } from './image/image.module';
 import { ReportModule } from './report/report.module';
 import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
+import { LeavecrewModule } from './leavecrew/leavecrew.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
     ImageModule,
     ReportModule,
     UnsubscribeModule,
+    LeavecrewModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

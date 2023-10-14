@@ -19,6 +19,7 @@ import { Participant } from 'src/participant/entities/participant.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Report } from 'src/report/entities/report.entity';
 import { Unsubscribe } from 'src/unsubscribe/entities/unsubscribe.entity';
+import { Leavecrew } from 'src/leavecrew/entities/leavecrew.entity';
 
 @Entity('users')
 export class Users {
@@ -93,4 +94,7 @@ export class Users {
 
   @OneToMany(() => Unsubscribe, (unsubscribe) => unsubscribe.userId)
   unsubscribe: Unsubscribe[];
+
+  @OneToMany(() => Leavecrew, (leavecrew) => leavecrew.userId)
+  leavecrew: Leavecrew[];
 }

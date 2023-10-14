@@ -26,6 +26,7 @@ export class UnsubscribeService {
         const deleteTopics = toBeDeletedAccounts.map((account) =>
           this.topicRepository.deleteTopic(account.userId),
         );
+        await Promise.all(deleteTopics);
 
         const deleteUnsubscribe = toBeDeletedAccounts.map((account) =>
           this.unsubscribeRepository.deleteUnsubscribe(account.userId),

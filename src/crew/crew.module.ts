@@ -13,6 +13,7 @@ import { NoticeModule } from 'src/notice/notice.module';
 import { VoteFormModule } from 'src/voteform/voteform.module';
 import { ImageModule } from 'src/image/image.module';
 import { TopicModule } from 'src/topic/topic.module';
+import { LeavecrewModule } from 'src/leavecrew/leavecrew.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TopicModule } from 'src/topic/topic.module';
     forwardRef(() => VoteFormModule),
     forwardRef(() => ImageModule),
     forwardRef(() => TopicModule),
+    forwardRef(() => LeavecrewModule),
   ],
   providers: [CrewService, CrewRepository],
   exports: [CrewService, CrewRepository],
