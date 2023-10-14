@@ -99,6 +99,8 @@ export class AppModule implements NestModule {
       },
       { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
       { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
+      { path: 'crew/delegate/:crewId', method: RequestMethod.POST },
+      { path: 'crew/leaveCrew/:crewId', method: RequestMethod.POST },
       { path: 'signup/:crewId', method: RequestMethod.POST },
       { path: 'signupform/:signupFormId', method: RequestMethod.GET },
       {
@@ -130,7 +132,6 @@ export class AppModule implements NestModule {
       { path: 'like/:crewId', method: RequestMethod.DELETE },
       { path: 'unsubscribe', method: RequestMethod.POST },
       { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
-      { path: 'crew/delegate/:crewId', method: RequestMethod.POST },
     );
     consumer
       .apply(LoginMiddleware)

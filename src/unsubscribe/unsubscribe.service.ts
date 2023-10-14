@@ -45,8 +45,9 @@ export class UnsubscribeService {
   }
 
   /* 탈퇴 대기 계정 하나 조회 */
-  async findOneUnsubscribe(userId: number): Promise<any> {
-    const toBeDeletedAccount = await this.findOneUnsubscribe(userId);
+  async findOneUnsubscribe(userId: any): Promise<any> {
+    const toBeDeletedAccount =
+      await this.unsubscribeRepository.findOneUnsubscribe(userId);
     return toBeDeletedAccount;
   }
 

@@ -78,10 +78,17 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
+      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+        userId,
+      );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
+        // if (unsubscribe) {
+        //   const query = '?token=' + token;
+        //   res.redirect()
+        // }
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
@@ -122,10 +129,17 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
+      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+        userId,
+      );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
+        // if (unsubscribe) {
+        //   const query = '?token=' + token;
+        //   res.redirect()
+        // }
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
@@ -165,10 +179,17 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
+      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+        userId,
+      );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
+        // if (unsubscribe) {
+        //   const query = '?token=' + token;
+        //   res.redirect()
+        // }
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
@@ -627,8 +648,7 @@ export class UsersController {
         const waitingCrew = [];
         for (let i = 0; i < allSignup.length; i++) {
           const crewId = parseInt(allSignup[i].crewId);
-          console.log(crewId);
-          const crew = await this.crewService.findByCrewId(crewId);
+          const crew = await this.crewService.findWaitingPermission(crewId);
           waitingCrew.push(crew);
         }
 
