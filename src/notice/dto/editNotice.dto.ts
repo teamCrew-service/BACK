@@ -44,4 +44,24 @@ export class EditNoticeDto {
   @Type(() => Date)
   @IsOptional()
   noticeDDay: Date;
+
+  // noticeLatitude
+  @ApiProperty({
+    example: 23.13232,
+    description: 'noticeLatitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  noticeLatitude: number;
+
+  // noticeLongitude
+  @ApiProperty({
+    example: 106.13232,
+    description: 'noticeLongitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  noticeLongitude: number;
 }
