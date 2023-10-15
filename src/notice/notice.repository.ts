@@ -24,6 +24,8 @@ export class NoticeRepository {
     notice.noticeContent = createNoticeDto.noticeContent;
     notice.noticeAddress = createNoticeDto.noticeAddress;
     notice.noticeDDay = createNoticeDto.noticeDDay;
+    notice.noticeLatitude = createNoticeDto.noticeLatitude;
+    notice.noticeLongitude = createNoticeDto.noticeLongitude;
 
     const createdNotice = await this.noticeRepository.save(notice);
     return createdNotice;
@@ -34,17 +36,20 @@ export class NoticeRepository {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
       .select([
+        'noticeId',
         'userId',
         'noticeTitle',
         'noticeContent',
         'noticeAddress',
         'noticeDDay',
+        'noticeLatitude',
+        'noticeLongitude',
         'noticeIsDone',
         'createdAt',
       ])
-      .where('notice.crewId = :crewId', { crewId })
-      .andWhere('notice.deletedAt IS NULL')
-      .orderBy('notice.noticeDDay', 'ASC')
+      .where('crewId = :crewId', { crewId })
+      .andWhere('deletedAt IS NULL')
+      .orderBy('noticeDDay', 'ASC')
       .getRawMany();
     return notice;
   }
@@ -53,8 +58,16 @@ export class NoticeRepository {
   async findNoticeDetail(crewId: number, noticeId: number): Promise<any> {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
-      .where('notice.crewId = :crewId', { crewId })
+      .select([
+        'noticeId',
+        'noticeTitle',
+        'noticeContent',
+        'noticeAddress',
+        'noticeDDay',
+        'noticeLatitude',
+        'noticeLongitude',
+      ])
+      .where('crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();
     return notice;
@@ -84,6 +97,12 @@ export class NoticeRepository {
     }
     if (editNoticeDto.noticeDDay !== undefined) {
       notice.noticeDDay = editNoticeDto.noticeDDay;
+    }
+    if (editNoticeDto.noticeLatitude !== undefined) {
+      notice.noticeLatitude = editNoticeDto.noticeLatitude;
+    }
+    if (editNoticeDto.noticeLongitude !== undefined) {
+      notice.noticeLongitude = editNoticeDto.noticeLongitude;
     }
 
     const editedNotice = await this.noticeRepository.save(notice);
