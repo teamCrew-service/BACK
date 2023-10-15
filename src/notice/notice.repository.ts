@@ -47,7 +47,7 @@ export class NoticeRepository {
         'noticeIsDone',
         'createdAt',
       ])
-      .where('crewId = :crewId', { crewId })
+      .where('notice.crewId = :crewId', { crewId })
       .andWhere('deletedAt IS NULL')
       .orderBy('noticeDDay', 'ASC')
       .getRawMany();
@@ -67,7 +67,7 @@ export class NoticeRepository {
         'noticeLatitude',
         'noticeLongitude',
       ])
-      .where('crewId = :crewId', { crewId })
+      .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();
     return notice;
