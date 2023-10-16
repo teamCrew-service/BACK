@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateVoteFormDto {
   //voteTitle
@@ -33,6 +39,26 @@ export class CreateVoteFormDto {
   @Type(() => Date)
   @IsNotEmpty()
   voteFormEndDate: Date;
+
+  //multipleVotes
+  @ApiProperty({
+    example: true,
+    description: 'multipleVotes',
+    required: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  multipleVotes: boolean;
+
+  //anonymousVote
+  @ApiProperty({
+    example: true,
+    description: 'anonymousVote',
+    required: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  anonymousVote: boolean;
 
   //voteOption1
   @ApiProperty({

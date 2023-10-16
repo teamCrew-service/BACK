@@ -41,12 +41,14 @@ export class VoteRepository {
   }
 
   /* 투표 확인하기 */
-  async findAllVote(crewId: number): Promise<any> {
-    const voteDetail = await this.voteRepository
+  async findAllVote(crewId: number, voteFormId: number): Promise<any> {
+    const vote = await this.voteRepository
       .createQueryBuilder('vote')
       .leftJoin('vote.userId', 'users')
       .where('vote.crewId = :crewId', { crewId })
+      .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
       .select([
+        'vote.voteId',
         'vote.userId',
         'users.nickname',
         'users.profileImage',
@@ -54,8 +56,21 @@ export class VoteRepository {
         'vote.voteFormId',
         'vote.vote',
       ])
+      .groupBy('vote.voteId')
       .getRawMany();
-    return voteDetail;
+    return vote;
+  }
+
+  /* 익명 투표 확인하기 */
+  async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
+    const vote = await this.voteRepository
+      .createQueryBuilder('vote')
+      .where('vote.crewId = :crewId', { crewId })
+      .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
+      .select(['voteId', 'crewId', 'voteFormId', 'vote'])
+      .groupBy('vote.voteId')
+      .getRawMany();
+    return vote;
   }
 
   /* user가 투표한 부분만 조회하기 */

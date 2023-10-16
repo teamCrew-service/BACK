@@ -23,6 +23,8 @@ export class VoteFormRepository {
     voteForm.crewId = crewId;
     voteForm.voteTitle = createVoteFormDto.voteFormTitle;
     voteForm.voteContent = createVoteFormDto.voteFormContent;
+    voteForm.multipleVotes = createVoteFormDto.multipleVotes;
+    voteForm.anonymousVote = createVoteFormDto.anonymousVote;
     voteForm.voteEndDate = createVoteFormDto.voteFormEndDate;
     voteForm.voteOption1 = createVoteFormDto.voteFormOption1;
     voteForm.voteOption2 = createVoteFormDto.voteFormOption2;
@@ -61,14 +63,32 @@ export class VoteFormRepository {
       .select([
         'users.profileImage',
         'users.nickname',
+        'voteform.voteFormId',
         'voteform.voteFormTitle',
         'voteform.voteFormContent',
+        'voteform.multipleVotes',
+        'voteform.anonymousVote',
         'voteform.voteFormEndDate',
         'voteform.voteFormOption1',
         'voteform.voteFormOption2',
         'voteform.voteFormOption3',
         'voteform.voteFormOption4',
+        'voteform.voteFormOption5',
       ])
+      .getRawOne();
+    return voteForm;
+  }
+
+  /* 투표 공지가 익명 투표인지 확인 */
+  async findVoteFormForAnonymous(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<any> {
+    const voteForm = await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .select(['voteFormId', 'anonymousVote'])
+      .where('voteform.crewId = :crewId', { crewId })
+      .andWhere('votefor.voteFormId = :voteFormId', { voteFormId })
       .getRawOne();
     return voteForm;
   }
@@ -83,6 +103,8 @@ export class VoteFormRepository {
       voteFormTitle,
       voteFormContent,
       voteFormEndDate,
+      multipleVotes,
+      anonymousVote,
       voteFormOption1,
       voteFormOption2,
       voteFormOption3,
@@ -96,6 +118,8 @@ export class VoteFormRepository {
         voteTitle: voteFormTitle,
         voteContent: voteFormContent,
         voteEndDate: voteFormEndDate,
+        multipleVotes: multipleVotes,
+        anonymousVote: anonymousVote,
         voteOption1: voteFormOption1,
         voteOption2: voteFormOption2,
         voteOption3: voteFormOption3,
@@ -109,22 +133,16 @@ export class VoteFormRepository {
 
   /* 투표 공지 삭제 */
   async deleteVoteForm(crewId: number, voteFormId: number): Promise<any> {
-    const voteForm = await this.voteFormRepository
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteVoteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
-      .select([
-        'voteFormTitle',
-        'voteFormContent',
-        'voteFormEndDate',
-        'voteFormOption1',
-        'voteFormOption2',
-        'voteFormOption3',
-        'voteFormOption4',
-      ])
+      .update(VoteForm)
+      .set({ deletedAt: today })
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
-      .getRawOne();
-
-    const deleteVoteForm = await this.voteFormRepository.softDelete(voteForm);
+      .execute();
     return deleteVoteForm;
   }
 

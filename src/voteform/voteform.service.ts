@@ -42,6 +42,18 @@ export class VoteFormService {
     return voteForm;
   }
 
+  /* 투표 공지가 익명 투표인지 확인 */
+  async findVoteFormForAnonymous(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<any> {
+    const voteForm = await this.voteFormRespository.findVoteFormForAnonymous(
+      crewId,
+      voteFormId,
+    );
+    return voteForm;
+  }
+
   /* 투표 공지 수정 */
   async editVoteForm(
     crewId: number,
