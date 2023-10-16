@@ -13,6 +13,7 @@ import { VoteFormService } from './voteform.service';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -35,6 +36,11 @@ export class VoteformController {
   @ApiOperation({
     summary: '투표 공지 등록 API',
     description: '투표 공지를 등록합니다.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
   })
   @ApiResponse({
     status: 201,
@@ -74,6 +80,16 @@ export class VoteformController {
   @ApiOperation({
     summary: '투표 공지 전체 조회 API',
     description: '투표 공지 전체를 조회하는 API.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
+  @ApiParam({
+    name: 'voteFormId',
+    type: 'number',
+    description: '투표 공지 Id',
   })
   @ApiResponse({
     status: 200,
@@ -126,6 +142,16 @@ export class VoteformController {
     summary: '투표 공지 수정 API',
     description: '원하는 투표 공지를 수정합니다.',
   })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
+  @ApiParam({
+    name: 'voteFormId',
+    type: 'number',
+    description: '투표 공지 Id',
+  })
   @ApiResponse({
     status: 200,
     description: '투표 공지 수정 성공',
@@ -167,6 +193,16 @@ export class VoteformController {
   @ApiOperation({
     summary: '투표 공지 삭제 API',
     description: '원하는 투표 공지를 삭제합니다.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
+  @ApiParam({
+    name: 'voteFormId',
+    type: 'number',
+    description: '투표 공지 Id',
   })
   @ApiResponse({
     status: 200,

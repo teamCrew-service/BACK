@@ -24,9 +24,18 @@ export class VoteService {
   }
 
   /* 투표 확인하기 */
-  async findAllVote(crewId: number): Promise<any> {
-    const voteDetail = await this.voteRepository.findAllVote(crewId);
-    return voteDetail;
+  async findAllVote(crewId: number, voteFormId: number): Promise<any> {
+    const vote = await this.voteRepository.findAllVote(crewId, voteFormId);
+    return vote;
+  }
+
+  /* 익명 투표 확인하기 */
+  async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
+    const vote = await this.voteRepository.findAllAnonymousVote(
+      crewId,
+      voteFormId,
+    );
+    return vote;
   }
 
   /* 투표 수정하기 */
