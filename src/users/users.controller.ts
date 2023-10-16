@@ -9,6 +9,8 @@ import {
   Body,
   HttpStatus,
   Delete,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
@@ -17,6 +19,8 @@ import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 import { UsersService } from './users.service';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -32,6 +36,8 @@ import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
 import { SignupService } from 'src/signup/signup.service';
 import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
 import { ScheduleService } from 'src/schedule/schedule.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/crew/multerConfig';
 
 @Controller()
 @ApiTags('User API')
@@ -387,12 +393,21 @@ export class UsersController {
     status: 201,
     description: '유저 정보 수정 완료',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: EditTopicAndInfoDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfig('profile')))
   @ApiBearerAuth('accessToken')
   async editMypage(
     @Body() editTopicAndInfoDto: EditTopicAndInfoDto,
+    @UploadedFiles() files,
     @Res() res: any,
   ): Promise<any> {
     try {
+      console.log('edit start')
+      console.log(editTopicAndInfoDto)
       let { editUserInfoDto, editTopicDto } = editTopicAndInfoDto;
       const { userId } = res.locals.user;
       if (!editTopicAndInfoDto) {
@@ -400,6 +415,7 @@ export class UsersController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '수정할 내용이 없습니다.' });
       }
+
       await this.usersService.userInfo(editUserInfoDto, userId);
       await this.usersService.editTopic(editTopicDto, userId);
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });

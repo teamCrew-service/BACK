@@ -34,9 +34,11 @@ import { ImageService } from 'src/image/image.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfigThumbnail } from 'src/crew/multerConfig';
 import { multerConfigImage } from 'src/crew/multerConfig';
+import { multerConfig } from 'src/crew/multerConfig';
 import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
+import { IsOptional } from 'class-validator';
 
 export class CrewFilesUploadDto {
   @ApiProperty()
@@ -48,8 +50,10 @@ export class CrewFilesUploadDto {
       format: 'binary',
     },
     description: 'The files to upload',
+    required: false,
   })
-  files: any[];
+  @IsOptional()
+  files?: any[];
 }
 
 export class CrewFilesEditDto {
@@ -93,7 +97,7 @@ export class CrewController {
     description: 'image upload',
     type: CrewFilesUploadDto,
   })
-  @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfig('thumbnail')))
   @ApiBearerAuth('accessToken')
   async createCrew(
     @UploadedFiles() files,
@@ -107,8 +111,9 @@ export class CrewController {
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
     //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
     //const thumbnail = await this.imageService.urlToS3(createCrewDto.thumbnail,filename,);
-    //console.log(files[0].location);
-    createCrewDto.thumbnail = files[0].location;
+    //console.log(files);
+    const s3Url = files==''?null:files[0].location
+    createCrewDto.thumbnail = s3Url;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
