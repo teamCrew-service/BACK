@@ -39,6 +39,7 @@ import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
 import { IsOptional } from 'class-validator';
+import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
 
 export class CrewFilesUploadDto {
   @ApiProperty()
@@ -80,6 +81,7 @@ export class CrewController {
     private readonly voteFormService: VoteFormService,
     private readonly likeService: LikeService,
     private readonly imageService: ImageService,
+    private readonly leavecrewService: LeavecrewService,
   ) {}
 
   /* 모임 생성 */
@@ -685,6 +687,15 @@ export class CrewController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      const { userId } = res.locals.user;
+      const leaveUser = await this.leavecrewService.findOneLeaveUser(
+        crewId,
+        userId,
+      );
+      if (!leaveUser) {
+        await this.memberService.exitCrew(crewId, userId);
+        await this.leavecrewService.createLeaveCrew(crewId, userId);
+      }
     } catch (e) {
       console.error(e);
       throw new Error('CrewController/leaveCrew');

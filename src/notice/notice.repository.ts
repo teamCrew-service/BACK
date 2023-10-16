@@ -24,6 +24,8 @@ export class NoticeRepository {
     notice.noticeContent = createNoticeDto.noticeContent;
     notice.noticeAddress = createNoticeDto.noticeAddress;
     notice.noticeDDay = createNoticeDto.noticeDDay;
+    notice.noticeLatitude = createNoticeDto.noticeLatitude;
+    notice.noticeLongitude = createNoticeDto.noticeLongitude;
 
     const createdNotice = await this.noticeRepository.save(notice);
     return createdNotice;
@@ -34,17 +36,20 @@ export class NoticeRepository {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
       .select([
+        'noticeId',
         'userId',
         'noticeTitle',
         'noticeContent',
         'noticeAddress',
         'noticeDDay',
+        'noticeLatitude',
+        'noticeLongitude',
         'noticeIsDone',
         'createdAt',
       ])
       .where('notice.crewId = :crewId', { crewId })
-      .andWhere('notice.deletedAt IS NULL')
-      .orderBy('notice.noticeDDay', 'ASC')
+      .andWhere('deletedAt IS NULL')
+      .orderBy('noticeDDay', 'ASC')
       .getRawMany();
     return notice;
   }
@@ -53,7 +58,15 @@ export class NoticeRepository {
   async findNoticeDetail(crewId: number, noticeId: number): Promise<any> {
     const notice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
+      .select([
+        'noticeId',
+        'noticeTitle',
+        'noticeContent',
+        'noticeAddress',
+        'noticeDDay',
+        'noticeLatitude',
+        'noticeLongitude',
+      ])
       .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();
@@ -66,27 +79,26 @@ export class NoticeRepository {
     noticeId: number,
     editNoticeDto: EditNoticeDto,
   ): Promise<any> {
-    const notice = await this.noticeRepository
-      .createQueryBuilder('notice')
-      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
-      .where('notice.crewId = :crewId', { crewId })
-      .andWhere('notice.noticeId = :noticeId', { noticeId })
-      .getRawOne();
+    const {
+      noticeTitle,
+      noticeContent,
+      noticeAddress,
+      noticeDDay,
+      noticeLatitude,
+      noticeLongitude,
+    } = editNoticeDto;
 
-    if (editNoticeDto.noticeTitle !== undefined) {
-      notice.noticeTitle = editNoticeDto.noticeTitle;
-    }
-    if (editNoticeDto.noticeContent !== undefined) {
-      notice.noticeContent = editNoticeDto.noticeContent;
-    }
-    if (editNoticeDto.noticeAddress !== undefined) {
-      notice.noticeAddress = editNoticeDto.noticeAddress;
-    }
-    if (editNoticeDto.noticeDDay !== undefined) {
-      notice.noticeDDay = editNoticeDto.noticeDDay;
-    }
-
-    const editedNotice = await this.noticeRepository.save(notice);
+    const editedNotice = await this.noticeRepository.update(
+      { crewId, noticeId },
+      {
+        noticeTitle,
+        noticeContent,
+        noticeAddress,
+        noticeDDay,
+        noticeLatitude,
+        noticeLongitude,
+      },
+    );
 
     return editedNotice;
   }

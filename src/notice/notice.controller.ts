@@ -191,7 +191,7 @@ export class NoticeController {
         editNoticeDto,
       );
 
-      if (editedNotice.length < 1) {
+      if (!editedNotice) {
         return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .json({ message: '공지 수정을 실패했습니다.' });

@@ -123,30 +123,28 @@ export class ScheduleService {
         userId,
         crewId,
       );
-      return { schedule, message: '공지 등록 성공' };
+      return { schedule, message: '일정 등록 성공' };
     } catch (error) {
-      throw new HttpException('공지 글 생성 실패', HttpStatus.BAD_REQUEST);
+      throw new HttpException('일정 글 생성 실패', HttpStatus.BAD_REQUEST);
     }
   }
 
   // 일정 수정
   async editSchedule(
-    userId: number,
     crewId: number,
     scheduleId: number,
     editScheduleDto: EditScheduleDto,
   ): Promise<any> {
     try {
-      const schedule = await this.scheduleRepository.editSchedule(
+      const updatedSchedule = await this.scheduleRepository.editSchedule(
         editScheduleDto,
-        userId,
         crewId,
         scheduleId,
       );
-      return { schedule, message: '공지사항 수정 성공' };
+      return updatedSchedule;
     } catch (error) {
       console.error('Error while editing schedule:', error);
-      throw new HttpException('공지사항 수정 실패', HttpStatus.BAD_REQUEST);
+      throw new HttpException('일정 수정 실패', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -157,7 +155,7 @@ export class ScheduleService {
         scheduleId,
         crewId,
       );
-      return { schedule, message: '공지사항 상세 조회 성공' };
+      return { schedule, message: '일정 상세 조회 성공' };
     } catch (error) {
       console.error('Error while finding schedule detail:', error);
       throw new HttpException(
@@ -174,7 +172,7 @@ export class ScheduleService {
         scheduleId,
         crewId,
       );
-      return { schedule, message: '공지사항 삭제 성공' };
+      return { schedule, message: '일정 삭제 성공' };
     } catch (error) {
       console.error('Error while deleting schedule:', error);
       throw new HttpException('공지사항 삭제 실패', HttpStatus.BAD_REQUEST);

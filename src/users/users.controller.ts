@@ -453,6 +453,7 @@ export class UsersController {
     try {
       let { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
       const { userId } = res.locals.user;
+
       if (!editTopicAndInfoDto) {
         return res
           .status(HttpStatus.BAD_REQUEST)
@@ -463,7 +464,9 @@ export class UsersController {
         editUserInfoDto.profileImage = profileImage;
       }
       await this.usersService.userInfo(editUserInfoDto, userId);
-      await this.usersService.editTopic(editTopicDto, userId);
+      if (editTopicDto.interestTopic) {
+        await this.usersService.editTopic(editTopicDto, userId);
+      }
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
     } catch (e) {
       console.error(e);

@@ -91,29 +91,30 @@ export class ScheduleRepository {
   // 일정 수정
   async editSchedule(
     editScheduleDto: EditScheduleDto,
-    userId: number,
     crewId: number,
     scheduleId: number,
   ): Promise<any> {
-    const schedule = await this.scheduleRepository.findOne({
-      where: { scheduleId, userId, crewId },
-    });
-
     // 수정할 필드만 선택적으로 업데이트
-    schedule.scheduleTitle =
-      editScheduleDto.scheduleTitle || schedule.scheduleTitle;
-    schedule.scheduleAddress =
-      editScheduleDto.scheduleAddress || schedule.scheduleAddress;
-    schedule.scheduleDDay =
-      editScheduleDto.scheduleDDay || schedule.scheduleDDay;
-    schedule.scheduleContent =
-      editScheduleDto.scheduleContent || schedule.scheduleContent;
-    schedule.scheduleLatitude =
-      editScheduleDto.scheduleLatitude || schedule.scheduleLatitude;
-    schedule.scheduleLongitude =
-      editScheduleDto.scheduleLongitude || schedule.scheduleLongitude;
+    const {
+      scheduleTitle,
+      scheduleAddress,
+      scheduleDDay,
+      scheduleContent,
+      scheduleLatitude,
+      scheduleLongitude,
+    } = editScheduleDto;
 
-    const updatedSchedule = await this.scheduleRepository.save(schedule);
+    const updatedSchedule = await this.scheduleRepository.update(
+      { scheduleId, crewId },
+      {
+        scheduleTitle,
+        scheduleAddress,
+        scheduleDDay,
+        scheduleContent,
+        scheduleLatitude,
+        scheduleLongitude,
+      },
+    );
 
     return updatedSchedule;
   }

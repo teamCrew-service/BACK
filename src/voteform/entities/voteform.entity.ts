@@ -32,6 +32,12 @@ export class VoteForm {
   @Column({ type: 'varchar' })
   voteContent: string;
 
+  @Column({ type: 'boolean' })
+  multipleVotes: Boolean;
+
+  @Column({ type: 'boolean' })
+  anonymousVote: Boolean;
+
   @Column({ type: 'date' })
   voteEndDate: Date;
 

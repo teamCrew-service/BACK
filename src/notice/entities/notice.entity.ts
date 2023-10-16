@@ -39,6 +39,12 @@ export class Notice {
   @Column({ type: 'boolean', default: false })
   noticeIsDone: Boolean;
 
+  @Column({ type: 'double' })
+  noticeLatitude: number;
+
+  @Column({ type: 'double' })
+  noticeLongitude: number;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

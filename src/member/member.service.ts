@@ -33,4 +33,10 @@ export class MemberService {
     await this.memberRepository.exitCrew(crewId, delegator);
     return 'member 테이블 위임 완료';
   }
+
+  /* crew 탈퇴하기 */
+  async exitCrew(crewId: number, userId: number): Promise<any> {
+    const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
+    return exitCrew;
+  }
 }
