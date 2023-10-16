@@ -52,11 +52,6 @@ export class TopicRepository {
   /* 관심사 수정*/
   async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
     try {
-      console.log(1)
-      console.log(editTopicDto);
-      console.log(typeof editTopicDto)
-      console.log(2)
-      console.log(editTopicDto.interestTopic);
       const interestTopic = editTopicDto.interestTopic;
 
       // 기존의 topic 삭제

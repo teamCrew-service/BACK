@@ -22,6 +22,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiProperty,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
@@ -38,6 +39,38 @@ import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
 import { ScheduleService } from 'src/schedule/schedule.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/crew/multerConfig';
+import { IsOptional } from 'class-validator';
+export class UserFirstUploadDto {
+  @ApiProperty()
+  topicAndInfoDto: TopicAndInfoDto;
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+    required: false,
+  })
+  @IsOptional()
+  files?: any[];
+}
+
+export class UserEditUploadDto {
+  @ApiProperty()
+  editTopicAndInfoDto: EditTopicAndInfoDto;
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+    required: false,
+  })
+  @IsOptional()
+  files?: any[];
+}
 
 @Controller()
 @ApiTags('User API')
@@ -230,14 +263,26 @@ export class UsersController {
     status: 201,
     description: '추가 정보 입력 완료',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: UserFirstUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfig('profile')))
   @ApiBearerAuth('accessToken')
   async addUserInfo(
-    @Body() topicAndInfoDto: TopicAndInfoDto,
+    @Body('topicAndInfoDto') topicAndInfoDto: any,
+    @UploadedFiles() files,
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { addUserInfoDto, topicDto } = topicAndInfoDto;
+      let { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
       const { userId } = res.locals.user;
+
+      if (files) {
+        const profileImage = files[0].location;
+        addUserInfoDto.profileImage = profileImage;
+      }
       await this.usersService.userInfo(addUserInfoDto, userId);
       await this.usersService.addTopic(topicDto, userId);
       return res
@@ -396,26 +441,27 @@ export class UsersController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'image upload',
-    type: EditTopicAndInfoDto,
+    type: UserEditUploadDto,
   })
   @UseInterceptors(FilesInterceptor('files', 1, multerConfig('profile')))
   @ApiBearerAuth('accessToken')
   async editMypage(
-    @Body() editTopicAndInfoDto: EditTopicAndInfoDto,
+    @Body('editTopicAndInfoDto') editTopicAndInfoDto: any,
     @UploadedFiles() files,
     @Res() res: any,
   ): Promise<any> {
     try {
-      console.log('edit start')
-      console.log(editTopicAndInfoDto)
-      let { editUserInfoDto, editTopicDto } = editTopicAndInfoDto;
+      let { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
       const { userId } = res.locals.user;
       if (!editTopicAndInfoDto) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '수정할 내용이 없습니다.' });
       }
-
+      if (files) {
+        const profileImage = files[0].location;
+        editUserInfoDto.profileImage = profileImage;
+      }
       await this.usersService.userInfo(editUserInfoDto, userId);
       await this.usersService.editTopic(editTopicDto, userId);
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
