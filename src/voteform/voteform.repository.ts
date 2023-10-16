@@ -79,44 +79,30 @@ export class VoteFormRepository {
     voteFormId: number,
     editVoteFormDto: EditVoteFormDto,
   ): Promise<any> {
-    const voteForm = await this.voteFormRepository
-      .createQueryBuilder('voteform')
-      .select([
-        'voteFormTitle',
-        'voteFormContent',
-        'voteFormEndDate',
-        'voteFormOption1',
-        'voteFormOption2',
-        'voteFormOption3',
-        'voteFormOption4',
-      ])
-      .where('voteform.crewId = :crewId', { crewId })
-      .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
-      .getRawOne();
+    const {
+      voteFormTitle,
+      voteFormContent,
+      voteFormEndDate,
+      voteFormOption1,
+      voteFormOption2,
+      voteFormOption3,
+      voteFormOption4,
+      voteFormOption5,
+    } = editVoteFormDto;
 
-    if (editVoteFormDto.voteFormTitle !== undefined) {
-      voteForm.voteTitle = editVoteFormDto.voteFormTitle;
-    }
-    if (editVoteFormDto.voteFormContent !== undefined) {
-      voteForm.voteContent = editVoteFormDto.voteFormContent;
-    }
-    if (editVoteFormDto.voteFormEndDate !== undefined) {
-      voteForm.voteEndDate = editVoteFormDto.voteFormEndDate;
-    }
-    if (editVoteFormDto.voteFormOption1 !== undefined) {
-      voteForm.voteOption1 = editVoteFormDto.voteFormOption1;
-    }
-    if (editVoteFormDto.voteFormOption2 !== undefined) {
-      voteForm.voteOption2 = editVoteFormDto.voteFormOption2;
-    }
-    if (editVoteFormDto.voteFormOption3 !== undefined) {
-      voteForm.voteOption3 = editVoteFormDto.voteFormOption3;
-    }
-    if (editVoteFormDto.voteFormOption4 !== undefined) {
-      voteForm.voteOption4 = editVoteFormDto.voteFormOption4;
-    }
-
-    const editedVoteForm = await this.voteFormRepository.save(voteForm);
+    const editedVoteForm = await this.voteFormRepository.update(
+      { crewId, voteFormId },
+      {
+        voteTitle: voteFormTitle,
+        voteContent: voteFormContent,
+        voteEndDate: voteFormEndDate,
+        voteOption1: voteFormOption1,
+        voteOption2: voteFormOption2,
+        voteOption3: voteFormOption3,
+        voteOption4: voteFormOption4,
+        voteOption5: voteFormOption5,
+      },
+    );
 
     return editedVoteForm;
   }

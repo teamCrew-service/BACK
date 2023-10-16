@@ -99,13 +99,17 @@ export class ScheduleController {
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '일정 등록 권한이 없습니다.' });
       }
-      const result = await this.scheduleService.editSchedule(
-        userId,
+      const updatedSchedule = await this.scheduleService.editSchedule(
         crewId,
         scheduleId,
         editscheduleDto,
       );
-      return res.json(result);
+      if (!updatedSchedule) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '일정 수정 실패' });
+      }
+      return res.status(HttpStatus.OK).json({ message: '일정 수정 성공' });
     } catch (e) {
       console.error(e);
       throw new Error('ScheduleController/editschedule');
