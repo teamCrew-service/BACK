@@ -48,14 +48,12 @@ export class UsersRepository {
     userId: number,
   ): Promise<any> {
     try {
-      const user = await this.usersRepository.findOne({ where: { userId } });
-      user.nickname = editUserInfoDto.nickname;
-      user.age = editUserInfoDto.age;
-      user.gender = editUserInfoDto.gender;
-      user.profileImage = editUserInfoDto.profileImage;
-      user.myMessage = editUserInfoDto.myMessage;
-      user.location = editUserInfoDto.location;
-      await this.usersRepository.save(user);
+      const { nickname, profileImage, age, gender, myMessage, location } =
+        editUserInfoDto;
+      const user = await this.usersRepository.update(
+        { userId },
+        { nickname, profileImage, age, gender, myMessage, location },
+      );
       return user;
     } catch (e) {
       console.error(e);
