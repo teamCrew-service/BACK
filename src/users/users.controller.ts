@@ -395,13 +395,16 @@ export class UsersController {
     try {
       let { editUserInfoDto, editTopicDto } = editTopicAndInfoDto;
       const { userId } = res.locals.user;
+
       if (!editTopicAndInfoDto) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '수정할 내용이 없습니다.' });
       }
       await this.usersService.userInfo(editUserInfoDto, userId);
-      await this.usersService.editTopic(editTopicDto, userId);
+      if (editTopicDto.interestTopic) {
+        await this.usersService.editTopic(editTopicDto, userId);
+      }
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
     } catch (e) {
       console.error(e);
