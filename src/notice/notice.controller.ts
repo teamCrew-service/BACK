@@ -57,9 +57,16 @@ export class NoticeController {
           .json({ message: '공지를 등록할 권한이 없습니다.' });
       }
 
-      await this.noticeService.createNotice(userId, crewId, createNoticeDto);
+      const notice = await this.noticeService.createNotice(
+        userId,
+        crewId,
+        createNoticeDto,
+      );
+      const noticeId = notice.noticeId;
 
-      return res.status(HttpStatus.OK).json({ message: '공지 등록 완료' });
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: '공지 등록 완료', noticeId });
     } catch (e) {
       console.error(e);
       throw new Error('noticeController/createNotice');
