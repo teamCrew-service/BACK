@@ -34,14 +34,30 @@ import { ImageService } from 'src/image/image.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfigThumbnail } from 'src/crew/multerConfig';
 import { multerConfigImage } from 'src/crew/multerConfig';
+import { multerConfig } from 'src/crew/multerConfig';
 import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
+import { IsOptional } from 'class-validator';
 import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
 
 export class CrewFilesUploadDto {
   @ApiProperty()
   JoinCreateCrewDto: JoinCreateCrewDto;
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+    required: false,
+  })
+  @IsOptional()
+  files?: any[];
+}
+
+export class CrewFilesEditDto {
   @ApiProperty({
     type: 'array',
     items: {
@@ -83,7 +99,7 @@ export class CrewController {
     description: 'image upload',
     type: CrewFilesUploadDto,
   })
-  @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfig('thumbnail')))
   @ApiBearerAuth('accessToken')
   async createCrew(
     @UploadedFiles() files,
@@ -97,8 +113,9 @@ export class CrewController {
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
     //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
     //const thumbnail = await this.imageService.urlToS3(createCrewDto.thumbnail,filename,);
-    //console.log(files[0].location);
-    createCrewDto.thumbnail = files[0].location;
+    //console.log(files);
+    const s3Url = files==''?null:files[0].location
+    createCrewDto.thumbnail = s3Url;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
@@ -499,6 +516,60 @@ export class CrewController {
     return res
       .status(HttpStatus.OK)
       .json({ message: '모임 수정 완료했습니다.' });
+  }
+
+  /* 모임 Thumbnail 수정 */
+  @Put(':crewId/editThumbnail')
+  @ApiOperation({
+    summary: '모임 Thumbnail 수정 API',
+    description: '모임의 Thumbnail을 수정합니다.',
+  })
+  @ApiParam({
+    name: 'crewId',
+    type: 'number',
+    description: '모임 Id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '모임의 Thumbnail을 수정합니다.',
+    schema: {
+      example: {
+        crewId: 1,
+        thumbnail: 's3_url1',
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: CrewFilesEditDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfigThumbnail))
+  @ApiBearerAuth('accessToken')
+  async editThumbnail(
+    @Param('crewId') crewId: number,
+    @UploadedFiles() files,
+    @Res() res: any,
+  ): Promise<any> {
+    const { userId } = res.locals.user;
+    const crew = await this.crewService.findCrewForAuth(crewId);
+    if (crew.userId !== userId) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: '모임 Thumbnail 수정 권한이 없습니다.' });
+    }
+    const editThumbnail = await this.crewService.editThumbnail(
+      crewId,
+      files[0].location,
+    );
+    if (!editThumbnail) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: '모임 Thumbnail 수정 실패했습니다.' });
+    }
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: '모임 Thumbnail 수정 완료했습니다.' });
   }
 
   /* 모임 글 삭제 */
