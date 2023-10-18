@@ -133,7 +133,7 @@ export class ScheduleController {
           schedule_scheduleDDay: '2023-08-19T03:44:19.661Z',
           schedule_scheduleContent: '오늘 퇴근 후 40분 걷기 합니다',
           schedule_scheduleAddress: '일산 호수공원',
-
+          schedule_schedulePlaceName: '고양체육관',
           crew_crewMaxMember: 8,
           scheduleAttendedMember: '6',
           captainProfileImage: 'url',
