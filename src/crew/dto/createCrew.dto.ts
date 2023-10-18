@@ -29,6 +29,16 @@ export class CreateCrewDto {
   @IsNotEmpty()
   crewAddress: string;
 
+  //crewPlaceName
+  @ApiProperty({
+    example: '고양체육관',
+    description: 'crewPlaceName',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  crewPlaceName: string;
+
   //crewType
   @ApiProperty({
     example: '번개',

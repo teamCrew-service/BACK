@@ -114,7 +114,7 @@ export class CrewController {
     //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
     //const thumbnail = await this.imageService.urlToS3(createCrewDto.thumbnail,filename,);
     //console.log(files);
-    const s3Url = files==''?null:files[0].location
+    const s3Url = files == '' ? null : files[0].location;
     createCrewDto.thumbnail = s3Url;
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
@@ -176,6 +176,7 @@ export class CrewController {
             crew_crewId: '22',
             crew_category: '공연/축제',
             crew_crewAddress: '다대포해수욕장역 1번 출구',
+            crew_crewPlaceName: '고양체육관',
             crew_crewType: '장기',
             crew_crewDDay: '2023-08-19T00:00:00.000Z',
             crew_crewMemberInfo: '털털한 분',
@@ -221,6 +222,7 @@ export class CrewController {
             crew_crewId: '22',
             crew_category: '공연/축제',
             crew_crewAddress: '다대포해수욕장역 1번 출구',
+            crew_crewPlaceName: '고양체육관',
             crew_crewType: '장기',
             crew_crewDDay: '2023-08-19T00:00:00.000Z',
             crew_crewMemberInfo: '털털한 분',
@@ -268,6 +270,7 @@ export class CrewController {
               scheduleDDay: '2023-08-18T15:00:00.000Z',
               scheduleIsDone: 1,
               scheduleAddress: '일산 호수공원',
+              schedulePlaceName: '고양체육관',
               scheduleMaxMember: '8',
               scheduleAttendedMember: '0',
               scheduleLatitude: 23.010203,
@@ -299,6 +302,7 @@ export class CrewController {
             crew_crewId: '22',
             crew_category: '공연/축제',
             crew_crewAddress: '다대포해수욕장역 1번 출구',
+            crew_crewPlaceName: '고양체육관',
             crew_crewType: '장기',
             crew_crewDDay: '2023-08-19T00:00:00.000Z',
             crew_crewMemberInfo: '털털한 분',
@@ -346,6 +350,7 @@ export class CrewController {
               scheduleDDay: '2023-08-18T15:00:00.000Z',
               scheduleIsDone: 1,
               scheduleAddress: '일산 호수공원',
+              schedulePlaceName: '고양체육관',
               scheduleMaxMember: '8',
               scheduleAttendedMember: '0',
               scheduleLatitude: 23.010203,
@@ -490,6 +495,7 @@ export class CrewController {
         thumbnail: ['url1', 'url2', 'url3'],
         crewDDay: '2023-08-19T03:44:19.661Z',
         crewAddress: '소공동',
+        crewPlaceName: '고양체육관',
       },
     },
   })

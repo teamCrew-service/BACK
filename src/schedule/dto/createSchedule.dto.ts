@@ -49,6 +49,16 @@ export class CreateScheduleDto {
   @IsNotEmpty()
   scheduleAddress: string;
 
+  //schedulePlaceName
+  @ApiProperty({
+    example: '고양체육관',
+    description: 'schedulePlaceName',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  schedulePlaceName: string;
+
   // scheduleLatitude
   @ApiProperty({
     example: 23.010203,

@@ -89,6 +89,7 @@ export class NoticeController {
           noticeContent:
             '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
           noticeAddress: '일산 호수공원',
+          noticePlaceName: '고양체육관',
           noticeDDay: '2023-08-19T03:44:19.661Z',
         },
         voteForm: {
@@ -133,6 +134,7 @@ export class NoticeController {
         noticeContent:
           '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
         noticeAddress: '일산 호수공원',
+        noticePlaceName: '고양체육관',
         noticeDDay: '2023-08-19T03:44:19.661Z',
       },
     },

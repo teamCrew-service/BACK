@@ -23,6 +23,7 @@ export class NoticeRepository {
     notice.noticeTitle = createNoticeDto.noticeTitle;
     notice.noticeContent = createNoticeDto.noticeContent;
     notice.noticeAddress = createNoticeDto.noticeAddress;
+    notice.noticePlaceName = createNoticeDto.noticePlaceName;
     notice.noticeDDay = createNoticeDto.noticeDDay;
     notice.noticeLatitude = createNoticeDto.noticeLatitude;
     notice.noticeLongitude = createNoticeDto.noticeLongitude;
@@ -41,6 +42,7 @@ export class NoticeRepository {
         'noticeTitle',
         'noticeContent',
         'noticeAddress',
+        'noticePlaceName',
         'noticeDDay',
         'noticeLatitude',
         'noticeLongitude',
@@ -63,6 +65,7 @@ export class NoticeRepository {
         'noticeTitle',
         'noticeContent',
         'noticeAddress',
+        'noticePlaceName',
         'noticeDDay',
         'noticeLatitude',
         'noticeLongitude',
@@ -83,6 +86,7 @@ export class NoticeRepository {
       noticeTitle,
       noticeContent,
       noticeAddress,
+      noticePlaceName,
       noticeDDay,
       noticeLatitude,
       noticeLongitude,
@@ -94,6 +98,7 @@ export class NoticeRepository {
         noticeTitle,
         noticeContent,
         noticeAddress,
+        noticePlaceName,
         noticeDDay,
         noticeLatitude,
         noticeLongitude,
@@ -105,14 +110,17 @@ export class NoticeRepository {
 
   /* 공지 삭제 */
   async deleteNotice(crewId: number, noticeId: number): Promise<any> {
-    const notice = await this.noticeRepository
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deletedNotice = await this.noticeRepository
       .createQueryBuilder('notice')
-      .select(['noticeTitle', 'noticeContent', 'noticeAddress', 'noticeDDay'])
+      .update(Notice)
+      .set({ deletedAt: today })
       .where('notice.crewId = :crewId', { crewId })
       .andWhere('notice.noticeId = :noticeId', { noticeId })
-      .getRawOne();
+      .execute();
 
-    const deletedNotice = await this.noticeRepository.softDelete(notice);
     return deletedNotice;
   }
 

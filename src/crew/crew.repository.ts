@@ -38,6 +38,7 @@ export class CrewRepository {
       crew.category = createCrewDto.category;
     }
     crew.crewAddress = createCrewDto.crewAddress;
+    crew.crewPlaceName = createCrewDto.crewPlaceName;
     crew.crewType = createCrewDto.crewType;
     crew.crewDDay = createCrewDto.crewDDay;
     crew.crewMemberInfo = createCrewDto.crewMemberInfo;
@@ -68,6 +69,7 @@ export class CrewRepository {
         'users.profileImage AS captainProfileImage',
         'crew.category',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewType',
         'crew.crewDDay',
         'crew.crewMemberInfo',
@@ -103,6 +105,7 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewTitle',
         'crew.crewContent',
         'crew.crewMaxMember',
@@ -123,6 +126,7 @@ export class CrewRepository {
     const {
       category,
       crewAddress,
+      crewPlaceName,
       crewMemberInfo,
       crewTimeInfo,
       crewAgeInfo,
@@ -137,6 +141,7 @@ export class CrewRepository {
       {
         category,
         crewAddress,
+        crewPlaceName,
         crewMemberInfo,
         crewTimeInfo,
         crewAgeInfo,
@@ -171,6 +176,7 @@ export class CrewRepository {
         'crew.category AS category',
         'crew.crewType AS crewType',
         'crew.crewAddress AS crewAddress',
+        'crew.crewPlaceName AS crewPlaceName',
         'crew.crewDDay AS crewDDay',
         'crew.crewTitle AS crewTitle',
         'crew.crewContent AS crewContent',
@@ -196,6 +202,7 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewTitle',
         'crew.crewContent',
         'crew.crewMaxMember',
@@ -224,6 +231,7 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewDDay',
         'crew.crewTitle',
         'crew.crewContent',
@@ -250,6 +258,7 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewTitle',
         'crew.crewContent',
         'crew.crewDDay',
