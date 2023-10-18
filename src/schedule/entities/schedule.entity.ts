@@ -40,6 +40,9 @@ export class Schedule {
   @Column({ type: 'varchar' })
   scheduleAddress: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  schedulePlaceName: string;
+
   @Column({ type: 'double' })
   scheduleLatitude: number;
 

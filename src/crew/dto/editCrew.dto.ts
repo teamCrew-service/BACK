@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger/dist';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsOptional, IsNumber, IsString } from 'class-validator';
 
 export class EditCrewDto {
   //category
@@ -9,7 +9,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   category: string;
 
   //crewAddress
@@ -19,8 +19,18 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   crewAddress: string;
+
+  //crewPlaceName
+  @ApiProperty({
+    example: '고양체육관',
+    description: 'crewPlaceName',
+    required: true,
+  })
+  @IsString()
+  @IsOptional()
+  crewPlaceName: string;
 
   //crewMemberInfo
   @ApiProperty({
@@ -29,7 +39,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   crewMemberInfo: string;
 
   //crewTimeInfo
@@ -39,7 +49,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   crewTimeInfo: string;
 
   //crewAgeInfo
@@ -49,7 +59,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   crewAgeInfo: string;
 
   //crewSignUp
@@ -59,7 +69,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   crewSignup: boolean;
 
   //crewTitle
@@ -69,7 +79,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   crewTitle: string;
 
   //crewContent
@@ -79,7 +89,7 @@ export class EditCrewDto {
     required: true,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   crewContent: string;
 
   //crewMaxMember
@@ -89,6 +99,6 @@ export class EditCrewDto {
     required: true,
   })
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   crewMaxMember: number;
 }

@@ -74,6 +74,9 @@ export class Crew {
   @Column({ type: 'varchar' })
   crewAddress: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  crewPlaceName: string;
+
   @Column({ type: 'varchar' })
   crewType: string;
 

@@ -33,6 +33,9 @@ export class Notice {
   @Column({ type: 'varchar' })
   noticeAddress: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  noticePlaceName: string;
+
   @Column({ type: 'date' })
   noticeDDay: Date;
 

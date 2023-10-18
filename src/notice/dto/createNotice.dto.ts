@@ -34,6 +34,16 @@ export class CreateNoticeDto {
   @IsNotEmpty()
   noticeAddress: string;
 
+  //noticePlaceName
+  @ApiProperty({
+    example: '고양체육관',
+    description: 'noticePlaceName',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  noticePlaceName: string;
+
   // noticeDDay
   @ApiProperty({
     example: '2023-08-19T03:44:19.661Z',
