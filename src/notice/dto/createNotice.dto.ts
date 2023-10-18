@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateNoticeDto {
@@ -34,6 +34,16 @@ export class CreateNoticeDto {
   @IsNotEmpty()
   noticeAddress: string;
 
+  //noticePlaceName
+  @ApiProperty({
+    example: '고양체육관',
+    description: 'noticePlaceName',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  noticePlaceName: string;
+
   // noticeDDay
   @ApiProperty({
     example: '2023-08-19T03:44:19.661Z',
@@ -44,4 +54,24 @@ export class CreateNoticeDto {
   @Type(() => Date)
   @IsNotEmpty()
   noticeDDay: Date;
+
+  // noticeLatitude
+  @ApiProperty({
+    example: 23.13232,
+    description: 'noticeLatitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  noticeLatitude: number;
+
+  // noticeLongitude
+  @ApiProperty({
+    example: 106.13232,
+    description: 'noticeLongitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  noticeLongitude: number;
 }

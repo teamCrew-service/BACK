@@ -22,6 +22,7 @@ export class CrewService {
     return crewList;
   }
 
+  /* 모임 생성 */
   async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
     const crew = await this.crewRepository.createCrew(createCrewDto, userId);
     return crew;
@@ -88,6 +89,12 @@ export class CrewService {
     return crew;
   }
 
+  /* 대기중인 모임을 위한 조회 */
+  async findWaitingPermission(crewId: number): Promise<any> {
+    const crew = await this.crewRepository.findWaitingPermission(crewId);
+    return crew;
+  }
+
   /* userId를 이용해 내가 생성한 모임 조회하기 */
   async findMyCrew(userId: number): Promise<any> {
     const myCrew = await this.crewRepository.findMyCrew(userId);
@@ -97,6 +104,32 @@ export class CrewService {
   /* crewId로 Detail하게 조회하기 */
   async findCrewDetailByCrewId(crewId: number): Promise<any> {
     const crew = await this.crewRepository.findCrewDetailByCrewId(crewId);
+    return crew;
+  }
+
+  /* myCrew를 하나만 조회하기 */
+  async findOneCrew(crewId: number, userId: number): Promise<any> {
+    const crew = await this.crewRepository.findOneCrew(crewId, userId);
+    return crew;
+  }
+
+  /* 모임장 위임하기 */
+  async delegateCrew(
+    delegator: number,
+    crewId: number,
+    userId: number,
+  ): Promise<any> {
+    const delegateCrew = await this.crewRepository.delegateCrew(
+      delegator,
+      crewId,
+      userId,
+    );
+    return delegateCrew;
+  }
+
+  /* Thumbnail 수정하기 */
+  async editThumbnail(crewId: number, thumbnail: string): Promise<any> {
+    const crew = await this.crewRepository.editThumbnail(crewId, thumbnail);
     return crew;
   }
 }

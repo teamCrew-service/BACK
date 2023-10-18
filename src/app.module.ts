@@ -27,9 +27,6 @@ import { ParticipantModule } from './participant/participant.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ImageModule } from './image/image.module';
 import { ReportModule } from './report/report.module';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ChatModule } from './chat/chat.module';
-// import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -64,17 +61,6 @@ import { ChatModule } from './chat/chat.module';
     ParticipantModule,
     ImageModule,
     ReportModule,
-    // MongooseModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     uri: configService.get<string>('MONGODB_URL'),
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    //   }),
-    // }),
-    MongooseModule.forRoot(process.env.MONGODB_URL),
-    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
@@ -91,6 +77,7 @@ export class AppModule implements NestModule {
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
+      { path: 'crew/:crewId/editThumbnail', method: RequestMethod.PUT },
       { path: 'schedule/:crewId/createSchedule', method: RequestMethod.POST },
       { path: 'schedule/edit/:crewId/:scheduleId', method: RequestMethod.PUT },
       {
@@ -111,6 +98,8 @@ export class AppModule implements NestModule {
       },
       { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
       { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
+      { path: 'crew/delegate/:crewId', method: RequestMethod.POST },
+      { path: 'crew/leaveCrew/:crewId', method: RequestMethod.POST },
       { path: 'signup/:crewId', method: RequestMethod.POST },
       { path: 'signupform/:signupFormId', method: RequestMethod.GET },
       {
@@ -140,7 +129,8 @@ export class AppModule implements NestModule {
       { path: 'report/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.DELETE },
-      { path: 'deleteAccount', method: RequestMethod.DELETE },
+      { path: 'unsubscribe', method: RequestMethod.POST },
+      { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
     );
     consumer
       .apply(LoginMiddleware)

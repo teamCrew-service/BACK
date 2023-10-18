@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
 export class EditVoteFormDto {
   //voteTitle
@@ -33,6 +33,26 @@ export class EditVoteFormDto {
   @Type(() => Date)
   @IsOptional()
   voteFormEndDate: Date;
+
+  //multipleVotes
+  @ApiProperty({
+    example: true,
+    description: 'multipleVotes',
+    required: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  multipleVotes: boolean;
+
+  //anonymousVote
+  @ApiProperty({
+    example: true,
+    description: 'anonymousVote',
+    required: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  anonymousVote: boolean;
 
   //voteOption1
   @ApiProperty({

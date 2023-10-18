@@ -9,6 +9,8 @@ import {
   Body,
   HttpStatus,
   Delete,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
@@ -17,7 +19,10 @@ import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
 import { UsersService } from './users.service';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
+  ApiProperty,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
@@ -30,6 +35,42 @@ import { LikeService } from 'src/like/like.service';
 import { MemberService } from 'src/member/member.service';
 import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
 import { SignupService } from 'src/signup/signup.service';
+import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
+import { ScheduleService } from 'src/schedule/schedule.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/crew/multerConfig';
+import { IsOptional } from 'class-validator';
+export class UserFirstUploadDto {
+  @ApiProperty()
+  topicAndInfoDto: TopicAndInfoDto;
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+    required: false,
+  })
+  @IsOptional()
+  files?: any[];
+}
+
+export class UserEditUploadDto {
+  @ApiProperty()
+  editTopicAndInfoDto: EditTopicAndInfoDto;
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'string',
+      format: 'binary',
+    },
+    description: 'The files to upload',
+    required: false,
+  })
+  @IsOptional()
+  files?: any[];
+}
 
 @Controller()
 @ApiTags('User API')
@@ -41,6 +82,8 @@ export class UsersController {
     private readonly likeService: LikeService,
     private readonly memberService: MemberService,
     private readonly signupService: SignupService,
+    private readonly unsubscribeService: UnsubscribeService,
+    private readonly scheduleService: ScheduleService,
   ) {}
 
   /* 카카오 로그인 서비스*/
@@ -74,10 +117,17 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
+      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+        userId,
+      );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
+        // if (unsubscribe) {
+        //   const query = '?token=' + token;
+        //   res.redirect()
+        // }
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
@@ -118,10 +168,17 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
+      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+        userId,
+      );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
+        // if (unsubscribe) {
+        //   const query = '?token=' + token;
+        //   res.redirect()
+        // }
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
@@ -161,10 +218,17 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
+      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+        userId,
+      );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
+        // if (unsubscribe) {
+        //   const query = '?token=' + token;
+        //   res.redirect()
+        // }
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
@@ -199,14 +263,26 @@ export class UsersController {
     status: 201,
     description: '추가 정보 입력 완료',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: UserFirstUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfig('profile')))
   @ApiBearerAuth('accessToken')
   async addUserInfo(
-    @Body() topicAndInfoDto: TopicAndInfoDto,
+    @Body('topicAndInfoDto') topicAndInfoDto: any,
+    @UploadedFiles() files,
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { addUserInfoDto, topicDto } = topicAndInfoDto;
+      let { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
       const { userId } = res.locals.user;
+
+      if (files) {
+        const profileImage = files[0].location;
+        addUserInfoDto.profileImage = profileImage;
+      }
       await this.usersService.userInfo(addUserInfoDto, userId);
       await this.usersService.addTopic(topicDto, userId);
       return res
@@ -293,39 +369,7 @@ export class UsersController {
           { userId: 1, interestTopic: '친목' },
           { userId: 1, interestTopic: '여행' },
         ],
-        createdCrew: [
-          {
-            crewId: 1,
-            category: '여행',
-            crewType: '단기',
-            crewAddress: '김포공항',
-            crewTitle: '제주도로 같이 여행 떠나요~~',
-          },
-          {
-            crewId: 6,
-            category: '자기 개발',
-            crewType: '장기',
-            crewAddress: '백석역',
-            crewTitle: '영어 스터디 모임',
-          },
-        ],
         likedCrew: [
-          {
-            crewId: 1,
-            category: '여행',
-            crewType: '단기',
-            crewAddress: '김포공항',
-            crewTitle: '제주도로 같이 여행 떠나요~~',
-          },
-          {
-            crewId: 6,
-            category: '자기 개발',
-            crewType: '장기',
-            crewAddress: '백석역',
-            crewTitle: '영어 스터디 모임',
-          },
-        ],
-        joinedCrew: [
           {
             crewId: 1,
             category: '여행',
@@ -352,30 +396,31 @@ export class UsersController {
       const user = await this.usersService.findUserByPk(userId);
       // user 관심사
       const topic = await this.usersService.findTopicById(userId);
-      // user가 만든 모임
-      const createdCrew = await this.crewService.findCreatedCrew(userId);
       // user가 찜한 모임
       const likedCrew = await this.likeService.findLikedCrew(userId);
       const crewList = [];
       for (let i = 0; i < likedCrew.length; i++) {
-        const crewId = likedCrew[i].like_crewId;
+        const crewId = likedCrew[i].crew_crewId;
         const crew = await this.crewService.findCrewDetailByCrewId(crewId);
         crewList.push(crew);
       }
-      // user가 참여한 모임
-      const joinedCrew = await this.memberService.findJoinedCrew(userId);
-      const memberCrewList = [];
-      for (let i = 0; i < joinedCrew.length; i++) {
-        const crewId = joinedCrew[i].member_crewId;
-        const crew = await this.crewService.findCrewDetailByCrewId(crewId);
-        memberCrewList.push(crew);
+
+      for (let i = 0; i < crewList.length; i++) {
+        if (crewList[i].crew_crewDDay === null) {
+          const crewId = parseInt(crewList[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            crewList[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
       }
+
       return res.status(HttpStatus.OK).json({
         user,
         topic,
-        createdCrew,
         likedCrew: crewList,
-        joinedCrew: memberCrewList,
       });
     } catch (e) {
       console.error(e);
@@ -393,21 +438,35 @@ export class UsersController {
     status: 201,
     description: '유저 정보 수정 완료',
   })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'image upload',
+    type: UserEditUploadDto,
+  })
+  @UseInterceptors(FilesInterceptor('files', 1, multerConfig('profile')))
   @ApiBearerAuth('accessToken')
   async editMypage(
-    @Body() editTopicAndInfoDto: EditTopicAndInfoDto,
+    @Body('editTopicAndInfoDto') editTopicAndInfoDto: any,
+    @UploadedFiles() files,
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { editUserInfoDto, editTopicDto } = editTopicAndInfoDto;
+      let { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
       const { userId } = res.locals.user;
+
       if (!editTopicAndInfoDto) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '수정할 내용이 없습니다.' });
       }
+      if (files) {
+        const profileImage = files[0].location;
+        editUserInfoDto.profileImage = profileImage;
+      }
       await this.usersService.userInfo(editUserInfoDto, userId);
-      await this.usersService.editTopic(editTopicDto, userId);
+      if (editTopicDto.interestTopic) {
+        await this.usersService.editTopic(editTopicDto, userId);
+      }
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
     } catch (e) {
       console.error(e);
@@ -523,6 +582,18 @@ export class UsersController {
           .json({ message: '참여한 모임이 아직 없습니다.' });
       }
 
+      for (let i = 0; i < joinedCrew.length; i++) {
+        if (joinedCrew[i].crew_crewDDay === null) {
+          const crewId = parseInt(joinedCrew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            joinedCrew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
+
       return res.status(HttpStatus.OK).json({ joinedCrew });
     } catch (e) {
       console.error(e);
@@ -580,6 +651,19 @@ export class UsersController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '생성한 crew가 아직 없습니다.' });
       }
+
+      for (let i = 0; i < myCrew.length; i++) {
+        if (myCrew[i].crew_crewDDay === null) {
+          const crewId = parseInt(myCrew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            myCrew[i].crew_crewDDay = schedule.scheduleDDay;
+          }
+        }
+      }
+
       return res.status(HttpStatus.OK).json(myCrew);
     } catch (e) {
       console.error(e);
@@ -629,10 +713,21 @@ export class UsersController {
         const waitingCrew = [];
         for (let i = 0; i < allSignup.length; i++) {
           const crewId = parseInt(allSignup[i].crewId);
-          console.log(crewId);
-          const crew = await this.crewService.findByCrewId(crewId);
+          const crew = await this.crewService.findWaitingPermission(crewId);
           waitingCrew.push(crew);
         }
+
+        for (let i = 0; i < waitingCrew.length; i++) {
+          if (waitingCrew[i].crew_crewDDay === null) {
+            const crewId = parseInt(waitingCrew[i].crew_crewId);
+            const schedule =
+              await this.scheduleService.findScheduleCloseToToday(crewId);
+            if (schedule) {
+              waitingCrew[i].crew_crewDDay = schedule.scheduleDDay;
+            }
+          }
+        }
+
         return res.status(HttpStatus.OK).json(waitingCrew);
       }
     } catch (e) {
@@ -641,31 +736,60 @@ export class UsersController {
     }
   }
 
-  /* 탈퇴하기 */
-  @Delete('deleteAccount')
+  /* 탈퇴 대기 등록 */
+  @Post('unsubscribe')
   @ApiOperation({
-    summary: '탈퇴하기 API',
-    description: '계정 탈퇴를 위한 API',
+    summary: '탈퇴 대기하기 API',
+    description: '계정 탈퇴를 위한 대기 등록 API',
   })
   @ApiResponse({
     status: 200,
-    description: '탈퇴 성공',
+    description: '탈퇴 대기 성공',
   })
   @ApiBearerAuth('accesssToken')
-  async deleteAccount(@Res() res: any): Promise<any> {
+  async unsubscribe(@Res() res: any): Promise<any> {
     try {
       const { userId } = res.locals.user;
-      const deleteAccount = await this.usersService.deleteAccount(userId);
-      if (!deleteAccount) {
+      const crewList = await this.crewService.findMyCrew(userId);
+      if (crewList > 0) {
         return res
           .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '탈퇴 실패' });
+          .json({ message: '모임장 위임을 하지 않은 crew가 있습니다.' });
       }
-      res.clearCookie('authorization');
-      return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
+      const toBeDeletedAccount =
+        await this.unsubscribeService.findOneUnsubscribe(userId);
+      if (!toBeDeletedAccount) {
+        await this.unsubscribeService.createUnsubscribe(userId);
+        return res.status(HttpStatus.OK).json({ message: '탈퇴 대기 성공' });
+      }
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/deleteAccount');
+    }
+  }
+
+  /* 탈퇴 대기 취소 */
+  @Delete('deleteUnsubscribe')
+  @ApiOperation({
+    summary: '탈퇴 대기 취소하기 API',
+    description: '계정 탈퇴를 위한 대기 취소 API',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '탈퇴 취소 성공',
+  })
+  @ApiBearerAuth('accesssToken')
+  async deleteUnsubscribe(@Res() res: any): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      const toBeDeletedAccount =
+        await this.unsubscribeService.findOneUnsubscribe(userId);
+      if (toBeDeletedAccount) {
+        await this.unsubscribeService.deleteUnsubscribe(userId);
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersController/deleteUnsubscribe');
     }
   }
 }

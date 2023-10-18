@@ -8,12 +8,14 @@ import { SignupRepository } from './signup.repository';
 import { Signup } from './entities/signup.entity';
 import { MemberModule } from 'src/member/member.module';
 import { CrewModule } from 'src/crew/crew.module';
+import { LeavecrewModule } from 'src/leavecrew/leavecrew.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Signupform, Signup]),
     forwardRef(() => MemberModule),
     forwardRef(() => CrewModule),
+    forwardRef(() => LeavecrewModule),
   ],
   controllers: [SignupController],
   providers: [SignupService, SignupFormRepository, SignupRepository],

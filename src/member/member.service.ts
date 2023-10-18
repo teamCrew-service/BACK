@@ -22,4 +22,21 @@ export class MemberService {
     const joinedCrew = await this.memberRepository.findJoinedCrew(userId);
     return joinedCrew;
   }
+
+  /* 모임장 위임에 따라 member 테이블에서 모임장은 member로 위임 받은 사람은 member 테이블에서 삭제 */
+  async delegateMember(
+    delegator: number,
+    crewId: number,
+    userId: number,
+  ): Promise<any> {
+    await this.memberRepository.addMember(crewId, userId);
+    await this.memberRepository.exitCrew(crewId, delegator);
+    return 'member 테이블 위임 완료';
+  }
+
+  /* crew 탈퇴하기 */
+  async exitCrew(crewId: number, userId: number): Promise<any> {
+    const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
+    return exitCrew;
+  }
 }

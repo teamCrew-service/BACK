@@ -23,6 +23,8 @@ export class VoteFormRepository {
     voteForm.crewId = crewId;
     voteForm.voteTitle = createVoteFormDto.voteFormTitle;
     voteForm.voteContent = createVoteFormDto.voteFormContent;
+    voteForm.multipleVotes = createVoteFormDto.multipleVotes;
+    voteForm.anonymousVote = createVoteFormDto.anonymousVote;
     voteForm.voteEndDate = createVoteFormDto.voteFormEndDate;
     voteForm.voteOption1 = createVoteFormDto.voteFormOption1;
     voteForm.voteOption2 = createVoteFormDto.voteFormOption2;
@@ -61,14 +63,32 @@ export class VoteFormRepository {
       .select([
         'users.profileImage',
         'users.nickname',
+        'voteform.voteFormId',
         'voteform.voteFormTitle',
         'voteform.voteFormContent',
+        'voteform.multipleVotes',
+        'voteform.anonymousVote',
         'voteform.voteFormEndDate',
         'voteform.voteFormOption1',
         'voteform.voteFormOption2',
         'voteform.voteFormOption3',
         'voteform.voteFormOption4',
+        'voteform.voteFormOption5',
       ])
+      .getRawOne();
+    return voteForm;
+  }
+
+  /* 투표 공지가 익명 투표인지 확인 */
+  async findVoteFormForAnonymous(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<any> {
+    const voteForm = await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .select(['voteFormId', 'anonymousVote'])
+      .where('voteform.crewId = :crewId', { crewId })
+      .andWhere('votefor.voteFormId = :voteFormId', { voteFormId })
       .getRawOne();
     return voteForm;
   }
@@ -79,78 +99,75 @@ export class VoteFormRepository {
     voteFormId: number,
     editVoteFormDto: EditVoteFormDto,
   ): Promise<any> {
-    const voteForm = await this.voteFormRepository
-      .createQueryBuilder('voteform')
-      .select([
-        'voteFormTitle',
-        'voteFormContent',
-        'voteFormEndDate',
-        'voteFormOption1',
-        'voteFormOption2',
-        'voteFormOption3',
-        'voteFormOption4',
-      ])
-      .where('voteform.crewId = :crewId', { crewId })
-      .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
-      .getRawOne();
+    const {
+      voteFormTitle,
+      voteFormContent,
+      voteFormEndDate,
+      multipleVotes,
+      anonymousVote,
+      voteFormOption1,
+      voteFormOption2,
+      voteFormOption3,
+      voteFormOption4,
+      voteFormOption5,
+    } = editVoteFormDto;
 
-    if (editVoteFormDto.voteFormTitle !== undefined) {
-      voteForm.voteTitle = editVoteFormDto.voteFormTitle;
-    }
-    if (editVoteFormDto.voteFormContent !== undefined) {
-      voteForm.voteContent = editVoteFormDto.voteFormContent;
-    }
-    if (editVoteFormDto.voteFormEndDate !== undefined) {
-      voteForm.voteEndDate = editVoteFormDto.voteFormEndDate;
-    }
-    if (editVoteFormDto.voteFormOption1 !== undefined) {
-      voteForm.voteOption1 = editVoteFormDto.voteFormOption1;
-    }
-    if (editVoteFormDto.voteFormOption2 !== undefined) {
-      voteForm.voteOption2 = editVoteFormDto.voteFormOption2;
-    }
-    if (editVoteFormDto.voteFormOption3 !== undefined) {
-      voteForm.voteOption3 = editVoteFormDto.voteFormOption3;
-    }
-    if (editVoteFormDto.voteFormOption4 !== undefined) {
-      voteForm.voteOption4 = editVoteFormDto.voteFormOption4;
-    }
-
-    const editedVoteForm = await this.voteFormRepository.save(voteForm);
+    const editedVoteForm = await this.voteFormRepository.update(
+      { crewId, voteFormId },
+      {
+        voteTitle: voteFormTitle,
+        voteContent: voteFormContent,
+        voteEndDate: voteFormEndDate,
+        multipleVotes: multipleVotes,
+        anonymousVote: anonymousVote,
+        voteOption1: voteFormOption1,
+        voteOption2: voteFormOption2,
+        voteOption3: voteFormOption3,
+        voteOption4: voteFormOption4,
+        voteOption5: voteFormOption5,
+      },
+    );
 
     return editedVoteForm;
   }
 
   /* 투표 공지 삭제 */
   async deleteVoteForm(crewId: number, voteFormId: number): Promise<any> {
-    const voteForm = await this.voteFormRepository
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteVoteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
-      .select([
-        'voteFormTitle',
-        'voteFormContent',
-        'voteFormEndDate',
-        'voteFormOption1',
-        'voteFormOption2',
-        'voteFormOption3',
-        'voteFormOption4',
-      ])
+      .update(VoteForm)
+      .set({ deletedAt: today })
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
-      .getRawOne();
-
-    const deleteVoteForm = await this.voteFormRepository.softDelete(voteForm);
+      .execute();
     return deleteVoteForm;
   }
 
   /* 오늘 날짜 기준보다 날짜가 지난 투표를 찾아 IsDone을 true로 전환 */
   async updateVoteIsDone(): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
     const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
     await this.voteFormRepository
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ voteIsDone: true })
-      .where('voteform.voteEndDate < :currentDate', { currentDate })
+      .where('voteform.voteEndDate < :today', { today })
       .andWhere('voteform.voteIsDone = :voteIsDone', { voteIsDone: false })
+      .execute();
+  }
+
+  /* 위임에 따라 투표 위임하기 */
+  async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
+    await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .update(VoteForm)
+      .set({ userId: delegator })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('deletedAt IS NULL')
       .execute();
   }
 }

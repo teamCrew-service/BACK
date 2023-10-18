@@ -31,8 +31,14 @@ export class CrewRepository {
   async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
     const crew = new Crew();
     crew.userId = userId;
-    crew.category = createCrewDto.category;
+    if (createCrewDto.category.includes('%2F') === true) {
+      const category = createCrewDto.category.replace('%2F', '/');
+      crew.category = category;
+    } else {
+      crew.category = createCrewDto.category;
+    }
     crew.crewAddress = createCrewDto.crewAddress;
+    crew.crewPlaceName = createCrewDto.crewPlaceName;
     crew.crewType = createCrewDto.crewType;
     crew.crewDDay = createCrewDto.crewDDay;
     crew.crewMemberInfo = createCrewDto.crewMemberInfo;
@@ -56,11 +62,14 @@ export class CrewRepository {
       .select([
         'crew.crewId',
         'crew.userId AS captainId',
+        'users.age AS captainAge',
         'users.location AS captainLocation',
+        'users.myMessage AS captainMessage',
         'users.nickname AS captainNickname',
         'users.profileImage AS captainProfileImage',
         'crew.category',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewType',
         'crew.crewDDay',
         'crew.crewMemberInfo',
@@ -75,10 +84,13 @@ export class CrewRepository {
         'crew.longtitude',
         'crew.createdAt',
         'crew.deletedAt',
+        'signupform.signupFormId AS signupFormId',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
       .leftJoin('users', 'users', 'users.userId = crew.userId')
-      .where('crew.crewId = :id', { id: crewId })
+      .leftJoin('topic', 'topic', 'topic.userId = crew.userId')
+      .leftJoin('signupform', 'signupform', 'signupform.crewId = crew.crewId')
+      .where('crew.crewId = :crewId', { crewId })
       .getRawOne();
 
     return crew;
@@ -93,6 +105,7 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewTitle',
         'crew.crewContent',
         'crew.crewMaxMember',
@@ -113,6 +126,7 @@ export class CrewRepository {
     const {
       category,
       crewAddress,
+      crewPlaceName,
       crewMemberInfo,
       crewTimeInfo,
       crewAgeInfo,
@@ -127,6 +141,7 @@ export class CrewRepository {
       {
         category,
         crewAddress,
+        crewPlaceName,
         crewMemberInfo,
         crewTimeInfo,
         crewAgeInfo,
@@ -161,11 +176,38 @@ export class CrewRepository {
         'crew.category AS category',
         'crew.crewType AS crewType',
         'crew.crewAddress AS crewAddress',
+        'crew.crewPlaceName AS crewPlaceName',
+        'crew.crewDDay AS crewDDay',
         'crew.crewTitle AS crewTitle',
         'crew.crewContent AS crewContent',
         'crew.crewMaxMember AS crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail AS thumbnail',
+      ])
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.deletedAt IS NULL')
+      .orderBy('crew.createdAt', 'DESC')
+      .getRawOne();
+    return crew;
+  }
+
+  /* 대기중인 모임을 위한 조회 */
+  async findWaitingPermission(crewId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .leftJoin('member', 'member', 'member.crewId = crew.crewId')
+      .select([
+        'crew.crewId',
+        'crew.userId',
+        'crew.category',
+        'crew.crewType',
+        'crew.crewAddress',
+        'crew.crewPlaceName',
+        'crew.crewTitle',
+        'crew.crewContent',
+        'crew.crewMaxMember',
+        'COUNT(member.crewId) AS crewAttendedMember',
+        'crew.thumbnail',
       ])
       .where('crew.crewId = :crewId', { crewId })
       .andWhere('crew.deletedAt IS NULL')
@@ -189,6 +231,8 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
+        'crew.crewDDay',
         'crew.crewTitle',
         'crew.crewContent',
         'crew.crewMaxMember',
@@ -214,8 +258,10 @@ export class CrewRepository {
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
+        'crew.crewPlaceName',
         'crew.crewTitle',
         'crew.crewContent',
+        'crew.crewDDay',
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',
@@ -226,6 +272,43 @@ export class CrewRepository {
       .groupBy('crew.crewId')
       .getRawOne();
 
+    return crew;
+  }
+
+  /* myCrew를 하나만 조회하기 */
+  async findOneCrew(crewId: number, userId: number): Promise<any> {
+    const crew = await this.crewRepository
+      .createQueryBuilder('crew')
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.userId = :userId', { userId })
+      .select(['crewId', 'userId'])
+      .getRawOne();
+
+    return crew;
+  }
+
+  /* 모임장 위임하기 */
+  async delegateCrew(
+    delegator: number,
+    crewId: number,
+    userId: number,
+  ): Promise<any> {
+    const delegateCrew = await this.crewRepository
+      .createQueryBuilder()
+      .update('crew')
+      .set({ userId: delegator })
+      .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.userId = :userId', { userId })
+      .execute();
+    return delegateCrew;
+  }
+
+  /* Thumbnail 수정하기 */
+  async editThumbnail(crewId: number, thumbnail: string): Promise<any> {
+    const crew = await this.crewRepository.update(
+      { crewId },
+      { thumbnail: thumbnail },
+    );
     return crew;
   }
 }

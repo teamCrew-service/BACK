@@ -34,6 +34,16 @@ export class EditNoticeDto {
   @IsOptional()
   noticeAddress: string;
 
+  //noticePlaceName
+  @ApiProperty({
+    example: '고양체육관',
+    description: 'noticePlaceName',
+    required: true,
+  })
+  @IsString()
+  @IsOptional()
+  noticePlaceName: string;
+
   // noticeDDay
   @ApiProperty({
     example: '2023-08-19T03:44:19.661Z',
@@ -44,4 +54,24 @@ export class EditNoticeDto {
   @Type(() => Date)
   @IsOptional()
   noticeDDay: Date;
+
+  // noticeLatitude
+  @ApiProperty({
+    example: 23.13232,
+    description: 'noticeLatitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  noticeLatitude: number;
+
+  // noticeLongitude
+  @ApiProperty({
+    example: 106.13232,
+    description: 'noticeLongitude',
+    required: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  noticeLongitude: number;
 }

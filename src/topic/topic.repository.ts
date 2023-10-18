@@ -4,6 +4,7 @@ import { Topic } from './entities/topic.entity';
 import { Repository } from 'typeorm';
 import { TopicDto } from './dto/topic.dto';
 import { EditTopicDto } from './dto/editTopic.dto';
+import { type } from 'os';
 
 @Injectable()
 export class TopicRepository {
@@ -83,5 +84,16 @@ export class TopicRepository {
       console.error(e);
       throw new Error('TopicRepository/editTopic');
     }
+  }
+
+  /* 탈퇴에 따라 topic 삭제 처리 */
+  async deleteTopic(userId: number): Promise<any> {
+    const deleteTopic = await this.topicRepository
+      .createQueryBuilder('topic')
+      .delete()
+      .from(Topic)
+      .where('userId = :userId', { userId })
+      .execute();
+    return deleteTopic;
   }
 }

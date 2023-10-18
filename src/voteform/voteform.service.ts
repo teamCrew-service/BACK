@@ -42,6 +42,18 @@ export class VoteFormService {
     return voteForm;
   }
 
+  /* 투표 공지가 익명 투표인지 확인 */
+  async findVoteFormForAnonymous(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<any> {
+    const voteForm = await this.voteFormRespository.findVoteFormForAnonymous(
+      crewId,
+      voteFormId,
+    );
+    return voteForm;
+  }
+
   /* 투표 공지 수정 */
   async editVoteForm(
     crewId: number,
@@ -63,5 +75,11 @@ export class VoteFormService {
       voteFormId,
     );
     return editedVoteForm;
+  }
+
+  /* 위임에 따라 투표 위임하기 */
+  async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
+    await this.voteFormRespository.delegateVoteForm(delegator, crewId);
+    return '투표 공지 위임 완료';
   }
 }

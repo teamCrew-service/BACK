@@ -42,12 +42,13 @@ export class MemberRepository {
       .createQueryBuilder('member')
       .leftJoin('crew', 'crew', 'crew.crewId = member.crewId')
       .select([
-        'member.memberId',
-        'member.crewId',
+        'crew.crewId',
         'crew.category',
         'crew.crewType',
         'crew.crewAddress',
         'crew.crewTitle',
+        'crew.crewDDay',
+        'crew.crewContent',
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
         'crew.thumbnail',
@@ -66,8 +67,8 @@ export class MemberRepository {
       .createQueryBuilder('member')
       .delete()
       .from(Member)
-      .where('member.crewId = :crewId', { crewId })
-      .andWhere('member.userId = :userId', { userId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('userId = :userId', { userId })
       .execute();
 
     return exitCrew;

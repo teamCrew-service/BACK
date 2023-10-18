@@ -57,9 +57,16 @@ export class NoticeController {
           .json({ message: '공지를 등록할 권한이 없습니다.' });
       }
 
-      await this.noticeService.createNotice(userId, crewId, createNoticeDto);
+      const notice = await this.noticeService.createNotice(
+        userId,
+        crewId,
+        createNoticeDto,
+      );
+      const noticeId = notice.noticeId;
 
-      return res.status(HttpStatus.OK).json({ message: '공지 등록 완료' });
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: '공지 등록 완료', noticeId });
     } catch (e) {
       console.error(e);
       throw new Error('noticeController/createNotice');
@@ -82,6 +89,7 @@ export class NoticeController {
           noticeContent:
             '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
           noticeAddress: '일산 호수공원',
+          noticePlaceName: '고양체육관',
           noticeDDay: '2023-08-19T03:44:19.661Z',
         },
         voteForm: {
@@ -126,6 +134,7 @@ export class NoticeController {
         noticeContent:
           '일산 호수공원 저녁 8시에 런닝 모임 있습니다~~많이 오세요!! 회비는 1만원 입니다.',
         noticeAddress: '일산 호수공원',
+        noticePlaceName: '고양체육관',
         noticeDDay: '2023-08-19T03:44:19.661Z',
       },
     },
@@ -191,7 +200,7 @@ export class NoticeController {
         editNoticeDto,
       );
 
-      if (editedNotice.length < 1) {
+      if (!editedNotice) {
         return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .json({ message: '공지 수정을 실패했습니다.' });

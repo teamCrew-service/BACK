@@ -21,6 +21,7 @@ import { Vote } from 'src/vote/entities/vote.entity';
 import { Participant } from 'src/participant/entities/participant.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Report } from 'src/report/entities/report.entity';
+import { Leavecrew } from 'src/leavecrew/entities/leavecrew.entity';
 
 @Entity('crew')
 export class Crew {
@@ -64,16 +65,22 @@ export class Crew {
   @OneToMany(() => Report, (report) => report.crewId)
   report: Report[];
 
+  @OneToMany(() => Leavecrew, (leavecrew) => leavecrew.crewId)
+  leavecrew: Leavecrew[];
+
   @Column({ type: 'varchar' })
   category: string;
 
   @Column({ type: 'varchar' })
   crewAddress: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  crewPlaceName: string;
+
   @Column({ type: 'varchar' })
   crewType: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   crewDDay: Date;
 
   @Column({ type: 'varchar' })

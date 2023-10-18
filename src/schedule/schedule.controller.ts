@@ -99,13 +99,17 @@ export class ScheduleController {
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '일정 등록 권한이 없습니다.' });
       }
-      const result = await this.scheduleService.editSchedule(
-        userId,
+      const updatedSchedule = await this.scheduleService.editSchedule(
         crewId,
         scheduleId,
         editscheduleDto,
       );
-      return res.json(result);
+      if (!updatedSchedule) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '일정 수정 실패' });
+      }
+      return res.status(HttpStatus.OK).json({ message: '일정 수정 성공' });
     } catch (e) {
       console.error(e);
       throw new Error('ScheduleController/editschedule');
@@ -129,7 +133,7 @@ export class ScheduleController {
           schedule_scheduleDDay: '2023-08-19T03:44:19.661Z',
           schedule_scheduleContent: '오늘 퇴근 후 40분 걷기 합니다',
           schedule_scheduleAddress: '일산 호수공원',
-
+          schedule_schedulePlaceName: '고양체육관',
           crew_crewMaxMember: 8,
           scheduleAttendedMember: '6',
           captainProfileImage: 'url',
