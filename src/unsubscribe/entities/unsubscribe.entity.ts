@@ -16,6 +16,6 @@ export class Unsubscribe {
   @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   toBeDeletedDay: Date;
 }

@@ -38,7 +38,7 @@ export class VoteForm {
   @Column({ type: 'boolean' })
   anonymousVote: Boolean;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   voteEndDate: Date;
 
   @Column({ type: 'boolean', default: false })
