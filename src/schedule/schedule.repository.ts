@@ -80,6 +80,7 @@ export class ScheduleRepository {
     schedule.scheduleContent = createScheduleDto.scheduleContent;
     schedule.scheduleDDay = createScheduleDto.scheduleDDay;
     schedule.scheduleAddress = createScheduleDto.scheduleAddress;
+    schedule.schedulePlaceName = createScheduleDto.schedulePlaceName;
     schedule.scheduleLatitude = createScheduleDto.scheduleLatitude;
     schedule.scheduleLongitude = createScheduleDto.scheduleLongitude;
 
@@ -98,6 +99,7 @@ export class ScheduleRepository {
     const {
       scheduleTitle,
       scheduleAddress,
+      schedulePlaceName,
       scheduleDDay,
       scheduleContent,
       scheduleLatitude,
@@ -109,6 +111,7 @@ export class ScheduleRepository {
       {
         scheduleTitle,
         scheduleAddress,
+        schedulePlaceName,
         scheduleDDay,
         scheduleContent,
         scheduleLatitude,
@@ -138,6 +141,7 @@ export class ScheduleRepository {
         'schedule.scheduleDDay',
         'schedule.scheduleContent',
         'schedule.scheduleAddress',
+        'schedule.schedulePlaceName',
         'schedule.scheduleLatitude',
         'schedule.scheduleLongitude',
         'crew.crewMaxMember',
@@ -180,6 +184,7 @@ export class ScheduleRepository {
         'schedule.scheduleDDay AS scheduleDDay',
         'schedule.scheduleIsDone AS scheduleIsDone',
         'schedule.scheduleAddress AS scheduleAddress',
+        'schedule.schedulePlaceName AS schedulePlaceName',
         'crew.crewMaxMember AS scheduleMaxMember',
         'COUNT(participant.scheduleId) AS scheduleAttendedMember',
         'schedule.scheduleLatitude AS scheduleLatitude',
