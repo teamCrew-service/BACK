@@ -34,7 +34,7 @@ export class Schedule {
   @Column({ type: 'mediumtext' })
   scheduleContent: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   scheduleDDay: Date;
 
   @Column({ type: 'varchar' })

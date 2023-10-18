@@ -80,7 +80,7 @@ export class Crew {
   @Column({ type: 'varchar' })
   crewType: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   crewDDay: Date;
 
   @Column({ type: 'varchar' })

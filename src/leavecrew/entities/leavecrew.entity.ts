@@ -21,6 +21,6 @@ export class Leavecrew {
   @JoinColumn({ name: 'crewId' })
   crewId: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   leaveDay: Date;
 }

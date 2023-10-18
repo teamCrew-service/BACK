@@ -36,7 +36,7 @@ export class Notice {
   @Column({ type: 'varchar', nullable: true })
   noticePlaceName: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'datetime' })
   noticeDDay: Date;
 
   @Column({ type: 'boolean', default: false })
