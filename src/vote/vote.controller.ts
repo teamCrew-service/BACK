@@ -135,16 +135,29 @@ export class VoteController {
     status: 200,
     description: 'crewId에 해당하는 투표를 조회.',
     schema: {
-      example: {
-        schedule: {
-          userId: 1,
-          users: {
-            nickname: '돌핀맨',
-            prfileImage: 'URL',
-          },
-          crewId: 1,
-          voteFormId: 2,
-          vote: '2시',
+      examples: {
+        example1: {
+          vote: [
+            {
+              voteId: 1,
+              crewId: 22,
+              voteFormId: 4,
+              vote: '2시',
+            },
+          ],
+        },
+        example2: {
+          vote: [
+            {
+              vote_voteId: 1,
+              vote_userId: 3,
+              users_nickname: '돌핀맨',
+              users_profileImage: 'url',
+              vote_crewId: 22,
+              vote_voteFormId: 4,
+              vote_vote: '2시',
+            },
+          ],
         },
       },
     },

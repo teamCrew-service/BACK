@@ -48,13 +48,13 @@ export class VoteRepository {
       .where('vote.crewId = :crewId', { crewId })
       .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
       .select([
-        'vote.voteId',
-        'vote.userId',
-        'users.nickname',
-        'users.profileImage',
-        'vote.crewId',
-        'vote.voteFormId',
-        'vote.vote',
+        'vote.voteId AS voteId',
+        'vote.userId AS userId',
+        'users.nickname AS nickname',
+        'users.profileImage AS profileImage',
+        'vote.crewId AS crewId',
+        'vote.voteFormId AS voteFormId',
+        'vote.vote AS vote',
       ])
       .groupBy('vote.voteId')
       .getRawMany();
