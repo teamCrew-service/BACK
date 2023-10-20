@@ -49,7 +49,7 @@ export class VoteFormRepository {
       ])
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.deletedAt IS NULL')
-      .orderBy('voteform.voteEndDate', 'ASC')
+      .orderBy('voteform.voteFormEndDate', 'ASC')
       .getRawMany();
     return voteForm;
   }
@@ -153,8 +153,8 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ voteFormIsDone: true })
-      .where('voteEndDate < :today', { today })
-      .andWhere('voteIsDone = :voteIsDone', { voteIsDone: false })
+      .where('voteFormEndDate < :today', { today })
+      .andWhere('voteFormIsDone = :voteFormIsDone', { voteFormIsDone: false })
       .execute();
   }
 
