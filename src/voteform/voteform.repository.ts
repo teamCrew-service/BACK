@@ -30,6 +30,7 @@ export class VoteFormRepository {
     voteForm.voteOption2 = createVoteFormDto.voteFormOption2;
     voteForm.voteOption3 = createVoteFormDto.voteFormOption3;
     voteForm.voteOption4 = createVoteFormDto.voteFormOption4;
+    voteForm.voteOption5 = createVoteFormDto.voteFormOption5;
     await this.voteFormRepository.save(voteForm);
     return voteForm;
   }

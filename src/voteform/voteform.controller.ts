@@ -61,14 +61,15 @@ export class VoteformController {
           .json({ message: '투표 공지를 등록할 권한이 없습니다.' });
       }
 
-      await this.voteFormService.createVoteForm(
+      const voteForm = await this.voteFormService.createVoteForm(
         userId,
         crewId,
         createVoteFormDto,
       );
+      const voteFormId = voteForm.voteFormId;
       return res
         .status(HttpStatus.OK)
-        .json({ message: '투표 공지를 등록했습니다.' });
+        .json({ message: '투표 공지를 등록했습니다.', voteFormId });
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormController/createVoteForm');
@@ -117,6 +118,17 @@ export class VoteformController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
+      // 모임장일 경우
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (crew.userId === userId) {
+        const voteForm = await this.voteFormService.findVoteFormDetail(
+          crewId,
+          voteFormId,
+        );
+        return res.status(HttpStatus.OK).json({ voteForm });
+      }
+
+      // member일 경우
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
         if (userId === member[i]) {
