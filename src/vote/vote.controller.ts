@@ -69,10 +69,7 @@ export class VoteController {
       );
 
       // 다중 투표
-      if (
-        voteForm.voteform_multipleVotes === true ||
-        voteForm.voteform_multipleVotes === 1
-      ) {
+      if (voteForm.multipleVotes === true || voteForm.multipleVotes === 1) {
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
             await this.voteService.voting(
@@ -91,8 +88,7 @@ export class VoteController {
 
       // 단일 투표 검사
       if (
-        (voteForm.voteform_multipleVotes === false ||
-          voteForm.voteform_multipleVotes === 0) &&
+        (voteForm.multipleVotes === false || voteForm.multipleVotes === 0) &&
         votingDto.vote.includes(',')
       ) {
         return res
