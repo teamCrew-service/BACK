@@ -60,21 +60,21 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .leftJoin('voteform.userId', 'users')
       .where('voteform.crewId = :crewId', { crewId })
-      .andWhere('votefor.voteFormId = :voteFormId', { voteFormId })
+      .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
       .select([
         'users.profileImage',
         'users.nickname',
         'voteform.voteFormId',
-        'voteform.voteFormTitle',
-        'voteform.voteFormContent',
+        'voteform.voteTitle',
+        'voteform.voteContent',
         'voteform.multipleVotes',
         'voteform.anonymousVote',
-        'voteform.voteFormEndDate',
-        'voteform.voteFormOption1',
-        'voteform.voteFormOption2',
-        'voteform.voteFormOption3',
-        'voteform.voteFormOption4',
-        'voteform.voteFormOption5',
+        'voteform.voteEndDate',
+        'voteform.voteOption1',
+        'voteform.voteOption2',
+        'voteform.voteOption3',
+        'voteform.voteOption4',
+        'voteform.voteOption5',
       ])
       .getRawOne();
     return voteForm;
