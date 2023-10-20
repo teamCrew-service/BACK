@@ -58,23 +58,20 @@ export class VoteFormRepository {
   async findVoteFormDetail(crewId: number, voteFormId: number): Promise<any> {
     const voteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
-      .leftJoin('voteform.userId', 'users')
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
       .select([
-        'users.profileImage',
-        'users.nickname',
-        'voteform.voteFormId',
-        'voteform.voteTitle',
-        'voteform.voteContent',
-        'voteform.multipleVotes',
-        'voteform.anonymousVote',
-        'voteform.voteEndDate',
-        'voteform.voteOption1',
-        'voteform.voteOption2',
-        'voteform.voteOption3',
-        'voteform.voteOption4',
-        'voteform.voteOption5',
+        'voteFormId',
+        'voteTitle',
+        'voteContent',
+        'multipleVotes',
+        'anonymousVote',
+        'voteEndDate',
+        'voteOption1',
+        'voteOption2',
+        'voteOption3',
+        'voteOption4',
+        'voteOption5',
       ])
       .getRawOne();
     return voteForm;
@@ -88,8 +85,8 @@ export class VoteFormRepository {
     const voteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
       .select(['voteFormId', 'anonymousVote'])
-      .where('voteform.crewId = :crewId', { crewId })
-      .andWhere('votefor.voteFormId = :voteFormId', { voteFormId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('voteFormId = :voteFormId', { voteFormId })
       .getRawOne();
     return voteForm;
   }
@@ -141,8 +138,8 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ deletedAt: today })
-      .where('voteform.crewId = :crewId', { crewId })
-      .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('voteFormId = :voteFormId', { voteFormId })
       .execute();
     return deleteVoteForm;
   }
@@ -156,8 +153,8 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ voteIsDone: true })
-      .where('voteform.voteEndDate < :today', { today })
-      .andWhere('voteform.voteIsDone = :voteIsDone', { voteIsDone: false })
+      .where('voteEndDate < :today', { today })
+      .andWhere('voteIsDone = :voteIsDone', { voteIsDone: false })
       .execute();
   }
 
