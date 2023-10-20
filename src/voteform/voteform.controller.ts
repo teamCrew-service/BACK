@@ -97,7 +97,7 @@ export class VoteformController {
     description: 'crewId에 해당하는 공지를 모두 조회.',
     schema: {
       example: {
-        schedule: {
+        voteForm: {
           voteTitle: '일산 호수공원 런닝!!',
           voteFormContent: '이번주 목요일에 런닝 시간대 투표하겠습니다.',
           voteFormEndDate: '2023-08-22T03:44:19.661Z',
