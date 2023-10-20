@@ -98,7 +98,7 @@ export class VoteformController {
     schema: {
       example: {
         voteForm: {
-          voteTitle: '일산 호수공원 런닝!!',
+          voteFormTitle: '일산 호수공원 런닝!!',
           voteFormContent: '이번주 목요일에 런닝 시간대 투표하겠습니다.',
           voteFormEndDate: '2023-08-22T03:44:19.661Z',
           voteFormOption1: '2시',
