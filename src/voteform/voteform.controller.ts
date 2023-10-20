@@ -125,7 +125,7 @@ export class VoteformController {
           crewId,
           voteFormId,
         );
-        return res.status(HttpStatus.OK).json({ voteForm });
+        return res.status(HttpStatus.OK).json(voteForm);
       }
 
       // member일 경우
@@ -136,7 +136,7 @@ export class VoteformController {
             crewId,
             voteFormId,
           );
-          return res.status(HttpStatus.OK).json({ voteForm });
+          return res.status(HttpStatus.OK).json(voteForm);
         }
       }
       return res
