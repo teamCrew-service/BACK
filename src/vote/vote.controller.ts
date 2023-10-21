@@ -184,6 +184,13 @@ export class VoteController {
 
       // 익명 투표
       if (voteForm.anonymousVote === true || voteForm.anonymousVote === 1) {
+        if (crew.userId === userId) {
+          const vote = await this.voteService.findAllAnonymousVote(
+            crewId,
+            voteFormId,
+          );
+          return res.status(HttpStatus.OK).json(vote);
+        }
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllAnonymousVote(
@@ -200,6 +207,10 @@ export class VoteController {
 
       // 공개 투표
       if (voteForm.anonymousVote === false || voteForm.anonymousVote === 0) {
+        if (crew.userId === userId) {
+          const vote = await this.voteService.findAllVote(crewId, voteFormId);
+          return res.status(HttpStatus.OK).json(vote);
+        }
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllVote(crewId, voteFormId);
