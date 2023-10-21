@@ -36,16 +36,18 @@ export class VoteFormRepository {
   }
 
   /* 투표 공지 전체 목록 조회 */
-  async findAllVoteForm(crewId: number): Promise<any> {
+  async findAllVoteForm(crewId: number, userId: number): Promise<any> {
     const voteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
+      .leftJoin('vote', 'vote', 'vote.voteFormId = voteform.voteFormId')
       .select([
-        'voteFormId',
-        'crewId',
-        'voteFormTitle',
-        'voteFormContent',
-        'voteFormEndDate',
-        'voteFormIsDone',
+        'voteform.voteFormId AS voteFormId',
+        'voteform.crewId AS crewId',
+        'voteform.voteFormTitle AS voteFormTitle',
+        'voteform.voteFormContent AS voteFormContent',
+        'voteform.voteFormEndDate AS voteFormEndDate',
+        'voteform.voteFormIsDone AS voteFormIsDone',
+        `CASE WHEN EXISTS (SELECT 1 FROM vote WHERE vote.voteFormId = voteform.voteFormId AND vote.userId = ${userId}) THEN true ELSE false END AS alreadyVote`,
       ])
       .where('voteform.crewId = :crewId', { crewId })
       .andWhere('voteform.deletedAt IS NULL')
