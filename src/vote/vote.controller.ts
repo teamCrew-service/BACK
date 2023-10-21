@@ -129,31 +129,32 @@ export class VoteController {
   })
   @ApiResponse({
     status: 200,
-    description: 'crewId에 해당하는 투표를 조회.',
-    schema: {
-      examples: {
-        example1: {
-          vote: [
-            {
-              voteId: 1,
-              crewId: 22,
-              voteFormId: 4,
-              vote: '2시',
-            },
-          ],
-        },
-        example2: {
-          vote: [
-            {
-              vote_voteId: 1,
-              vote_userId: 3,
-              users_nickname: '돌핀맨',
-              users_profileImage: 'url',
-              vote_crewId: 22,
-              vote_voteFormId: 4,
-              vote_vote: '2시',
-            },
-          ],
+    description: '익명 투표',
+    content: {
+      'application/json': {
+        examples: {
+          '익명 투표': {
+            value: [
+              {
+                voteId: 1,
+                crewId: 22,
+                voteFormId: 4,
+                vote: '2시',
+              },
+            ],
+          },
+          '공개 투표': {
+            value: [
+              {
+                voteId: 1,
+                crewId: 22,
+                voteFormId: 5,
+                vote: '4시',
+                userId: 3,
+                nickname: '돌핀맨',
+              },
+            ],
+          },
         },
       },
     },
