@@ -390,6 +390,7 @@ export class CrewController {
       },
     },
   })
+  @ApiBearerAuth('accessToken')
   async findCrewDetail(
     @Param('crewId') crewId: number,
     @Res() res: any,
