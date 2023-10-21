@@ -67,6 +67,16 @@ export class VoteController {
         crewId,
         voteFormId,
       );
+      const vote = await this.voteService.findAllVote(crewId, voteFormId);
+
+      // 투표했는지 확인하기
+      for (let i = 0; i < vote.length; i++) {
+        if (vote[i].userId === userId) {
+          return res
+            .status(HttpStatus.NOT_ACCEPTABLE)
+            .json({ message: '이미 투표를 완료했습니다.' });
+        }
+      }
 
       // 다중 투표
       if (voteForm.multipleVotes === true || voteForm.multipleVotes === 1) {
@@ -189,7 +199,7 @@ export class VoteController {
             crewId,
             voteFormId,
           );
-          return res.status(HttpStatus.OK).json(vote);
+          return res.status(HttpStatus.OK).json({ voteForm, vote });
         }
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
@@ -197,7 +207,7 @@ export class VoteController {
               crewId,
               voteFormId,
             );
-            return res.status(HttpStatus.OK).json(vote);
+            return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
         }
         return res

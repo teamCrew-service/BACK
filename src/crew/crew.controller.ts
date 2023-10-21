@@ -438,7 +438,10 @@ export class CrewController {
 
       // crew 공지
       const regularNotice = await this.noticeService.findAllNotice(crewId);
-      const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+      const voteForm = await this.voteFormService.findAllVoteForm(
+        crewId,
+        userId,
+      );
 
       const allNotice = { regularNotice, voteForm };
 

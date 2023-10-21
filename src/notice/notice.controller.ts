@@ -108,8 +108,12 @@ export class NoticeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      const { userId } = res.locals.user;
       const notice = await this.noticeService.findAllNotice(crewId);
-      const voteForm = await this.voteFormService.findAllVoteForm(crewId);
+      const voteForm = await this.voteFormService.findAllVoteForm(
+        crewId,
+        userId,
+      );
 
       const allNotice = { notice, voteForm };
       return res.status(HttpStatus.OK).json(allNotice);

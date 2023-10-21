@@ -28,8 +28,11 @@ export class VoteFormService {
   }
 
   /* 투표 공지 전체 목록 조회 */
-  async findAllVoteForm(crewId: number): Promise<any> {
-    const voteForm = await this.voteFormRespository.findAllVoteForm(crewId);
+  async findAllVoteForm(crewId: number, userId: number): Promise<any> {
+    const voteForm = await this.voteFormRespository.findAllVoteForm(
+      crewId,
+      userId,
+    );
     return voteForm;
   }
 
