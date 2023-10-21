@@ -12,6 +12,9 @@ export class Message extends Document {
 
   @Prop({ type: Types.ObjectId, ref: 'Room' })
   room: Room;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 export type MessageDocument = Message & Document;
 export const MessageSchema = SchemaFactory.createForClass(Message);

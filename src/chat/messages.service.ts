@@ -22,10 +22,14 @@ export class MessagesService {
       room: roomId,
     });
     console.log('Message object created:', message);
-    // return await message.save();
-    console.log('Attempting to save message to the database'); // 로그 추가
-    const savedMessage = await message.save();
-    console.log('Message saved successfully:', savedMessage); // 로그 추가
-    return savedMessage;
+
+    try {
+      const savedMessage = await message.save();
+      console.log('Message saved successfully:', savedMessage);
+      return savedMessage;
+    } catch (error) {
+      console.error('Error while saving the message:', error);
+      throw error;
+    }
   }
 }

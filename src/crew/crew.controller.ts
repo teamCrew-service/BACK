@@ -40,6 +40,7 @@ import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
 import { IsOptional } from 'class-validator';
 import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
+import { RoomsService } from 'src/chat/rooms.service';
 
 export class CrewFilesUploadDto {
   @ApiProperty()
@@ -82,6 +83,7 @@ export class CrewController {
     private readonly likeService: LikeService,
     private readonly imageService: ImageService,
     private readonly leavecrewService: LeavecrewService,
+    private readonly roomsService: RoomsService,
   ) {}
 
   /* 모임 생성 */
@@ -119,6 +121,8 @@ export class CrewController {
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
+    await this.roomsService.findOrCreateByCrewId(newCrew.crewId);
+
     if (newCrew.crewSignup === true || newCrew.crewSignup === 1) {
       await this.signupService.createSignupForm(
         newCrew.crewId,

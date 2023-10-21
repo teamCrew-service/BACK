@@ -7,12 +7,12 @@ import { Room } from './schemas/room.schema';
 export class RoomsService {
   constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
 
-  async create(name: string): Promise<Room> {
-    const newRoom = new this.roomModel({ roomName: name });
-    return await newRoom.save();
-  }
-
-  async findOne(roomId: string): Promise<Room> {
-    return await this.roomModel.findById(roomId).exec();
+  async findOrCreateByCrewId(crewId: number): Promise<Room> {
+    let room = await this.roomModel.findOne({ roomId: crewId }).exec();
+    if (!room) {
+      room = new this.roomModel({ roomId: crewId, roomName: `Room-${crewId}` });
+      await room.save();
+    }
+    return room;
   }
 }
