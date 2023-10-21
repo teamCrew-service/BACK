@@ -70,8 +70,12 @@ export class VoteController {
 
       // 다중 투표
       if (voteForm.multipleVotes === true || voteForm.multipleVotes === 1) {
+        if (crew.userId === userId) {
+          await this.voteService.voting(userId, crewId, voteFormId, votingDto);
+          return res.status(HttpStatus.OK).json({ message: '투표 완료' });
+        }
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId || crew.userId === userId) {
+          if (member[i].member_userId === userId) {
             await this.voteService.voting(
               userId,
               crewId,
