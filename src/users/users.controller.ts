@@ -520,12 +520,7 @@ export class UsersController {
       const { userId } = res.locals.user;
       const likedCrew = await this.likeService.findLikedCrew(userId);
 
-      if (likedCrew.length < 1) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '찜한 crew가 없습니다.' });
-      }
-      return res.status(HttpStatus.OK).json({ likedCrew });
+      return res.status(HttpStatus.OK).json(likedCrew);
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/findLikedCrew');
@@ -576,11 +571,6 @@ export class UsersController {
       const { userId } = res.locals.user;
       // user가 참여한 모임
       const joinedCrew = await this.memberService.findJoinedCrew(userId);
-      if (joinedCrew.length < 1) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '참여한 모임이 아직 없습니다.' });
-      }
 
       for (let i = 0; i < joinedCrew.length; i++) {
         if (joinedCrew[i].crew_crewDDay === null) {
@@ -594,7 +584,7 @@ export class UsersController {
         }
       }
 
-      return res.status(HttpStatus.OK).json({ joinedCrew });
+      return res.status(HttpStatus.OK).json(joinedCrew);
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/findJoinedCrew');
@@ -646,11 +636,6 @@ export class UsersController {
     try {
       const { userId } = res.locals.user;
       const myCrew = await this.crewService.findMyCrew(userId);
-      if (myCrew.length < 1) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '생성한 crew가 아직 없습니다.' });
-      }
 
       for (let i = 0; i < myCrew.length; i++) {
         if (myCrew[i].crew_crewDDay === null) {
@@ -684,16 +669,16 @@ export class UsersController {
       example: {
         waitingCrew: [
           {
-            crewId: '35',
-            userId: '3',
-            category: '운동',
-            crewType: '번개',
-            crewAddress: '홍대입구역 1번 출구',
-            crewTitle: '오늘은 꼭 뛰어야 한다!!',
-            crewContent: '오늘 꼭 뛰고 싶은 사람들 모이세요',
-            crewMaxMember: '8',
-            crewAttendedMember: '0',
-            thumbnail:
+            crew_crewId: '35',
+            crew_userId: '3',
+            crew_category: '운동',
+            crew_crewType: '번개',
+            crew_crewAddress: '홍대입구역 1번 출구',
+            crew_crewTitle: '오늘은 꼭 뛰어야 한다!!',
+            crew_crewContent: '오늘 꼭 뛰고 싶은 사람들 모이세요',
+            crew_crewMaxMember: '8',
+            crew_crewAttendedMember: '0',
+            crew_thumbnail:
               'https://team-crew-bucket.s3.ap-northeast-2.amazonaws.com/%EC%98%A4%EB%8A%98%EC%9D%80%20%EA%BC%AD%20%EB%9B%B0%EC%96%B4%EC%95%BC%20%ED%95%9C%EB%8B%A4%21%21-1696316103572',
           },
         ],
@@ -705,31 +690,27 @@ export class UsersController {
     try {
       const { userId } = res.locals.user;
       const allSignup = await this.signupService.findMyAllSignup(userId);
-      if (allSignup.length < 1) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '아직 가입신청한 모임이 없습니다.' });
-      } else {
-        const waitingCrew = [];
-        for (let i = 0; i < allSignup.length; i++) {
-          const crewId = parseInt(allSignup[i].crewId);
-          const crew = await this.crewService.findWaitingPermission(crewId);
-          waitingCrew.push(crew);
-        }
 
-        for (let i = 0; i < waitingCrew.length; i++) {
-          if (waitingCrew[i].crew_crewDDay === null) {
-            const crewId = parseInt(waitingCrew[i].crew_crewId);
-            const schedule =
-              await this.scheduleService.findScheduleCloseToToday(crewId);
-            if (schedule) {
-              waitingCrew[i].crew_crewDDay = schedule.scheduleDDay;
-            }
+      const waitingCrew = [];
+      for (let i = 0; i < allSignup.length; i++) {
+        const crewId = parseInt(allSignup[i].crewId);
+        const crew = await this.crewService.findWaitingPermission(crewId);
+        waitingCrew.push(crew);
+      }
+
+      for (let i = 0; i < waitingCrew.length; i++) {
+        if (waitingCrew[i].crew_crewDDay === null) {
+          const crewId = parseInt(waitingCrew[i].crew_crewId);
+          const schedule = await this.scheduleService.findScheduleCloseToToday(
+            crewId,
+          );
+          if (schedule) {
+            waitingCrew[i].crew_crewDDay = schedule.scheduleDDay;
           }
         }
-
-        return res.status(HttpStatus.OK).json(waitingCrew);
       }
+
+      return res.status(HttpStatus.OK).json(waitingCrew);
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/waitingCrew');
