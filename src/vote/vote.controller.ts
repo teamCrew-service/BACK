@@ -219,12 +219,12 @@ export class VoteController {
       if (voteForm.anonymousVote === false || voteForm.anonymousVote === 0) {
         if (crew.userId === userId) {
           const vote = await this.voteService.findAllVote(crewId, voteFormId);
-          return res.status(HttpStatus.OK).json(vote);
+          return res.status(HttpStatus.OK).json({ voteForm, vote });
         }
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllVote(crewId, voteFormId);
-            return res.status(HttpStatus.OK).json(vote);
+            return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
         }
         return res
