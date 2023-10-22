@@ -63,6 +63,7 @@ export class SignupRepository {
         'users.age AS age',
         'users.location AS location',
         'users.myMessage AS myMessage',
+        'users.profileImage AS profileImage',
         'signup.signupId AS signupId',
         'signup.crewId AS crewId',
         'signup.userId AS userId',
