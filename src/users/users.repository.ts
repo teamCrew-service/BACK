@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { EditUserInfoDto } from './dto/editUserInfo-user.dto';
+import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -43,13 +44,10 @@ export class UsersRepository {
   }
 
   // 최초 유저 정보 입력
-  async userInfo(
-    editUserInfoDto: EditUserInfoDto,
-    userId: number,
-  ): Promise<any> {
+  async userInfo(addUserInfoDto: AddUserInfoDto, userId: number): Promise<any> {
     try {
       const { nickname, profileImage, age, gender, myMessage, location } =
-        editUserInfoDto;
+        addUserInfoDto;
       const user = await this.usersRepository.update(
         { userId },
         { nickname, profileImage, age, gender, myMessage, location },
@@ -58,6 +56,25 @@ export class UsersRepository {
     } catch (e) {
       console.error(e);
       throw new Error('UsersRepository / addUserInfo');
+    }
+  }
+
+  // 유저 정보 edit
+  async editUserInfo(
+    editUserInfoDto: EditUserInfoDto,
+    userId: number,
+  ): Promise<any> {
+    try {
+      const { nickname, profileImage, age, gender, myMessage, location } =
+        editUserInfoDto;
+      const editUser = await this.usersRepository.update(
+        { userId },
+        { nickname, profileImage, age, gender, myMessage, location },
+      );
+      return editUser;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository / editUserInfo');
     }
   }
 
