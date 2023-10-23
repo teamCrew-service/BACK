@@ -22,13 +22,23 @@ export class TopicRepository {
         for (const interestTopic of topics) {
           const topic = new Topic();
           topic.userId = userId;
-          topic.interestTopic = interestTopic;
+          if (interestTopic.includes('%2F') === true) {
+            const item = interestTopic.replace('%2F', '/');
+            topic.interestTopic = item;
+          } else {
+            topic.interestTopic = interestTopic;
+          }
           await this.topicRepository.save(topic);
         }
       } else {
         const topic = new Topic();
         topic.userId = userId;
-        topic.interestTopic = interestTopic;
+        if (interestTopic.includes('%2F') === true) {
+          const item = interestTopic.replace('%2F', '/');
+          topic.interestTopic = item;
+        } else {
+          topic.interestTopic = interestTopic;
+        }
         await this.topicRepository.save(topic);
       }
 
