@@ -278,8 +278,8 @@ export class UsersController {
     try {
       let { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
       const { userId } = res.locals.user;
-
-      if (files) {
+      //files가 비어있으면 실행안함
+      if (files.length > 0) {
         const profileImage = files[0].location;
         addUserInfoDto.profileImage = profileImage;
       }
@@ -459,7 +459,8 @@ export class UsersController {
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '수정할 내용이 없습니다.' });
       }
-      if (files) {
+      //files가 비어있으면 실행안함
+      if (files.length > 0) {
         const profileImage = files[0].location;
         editUserInfoDto.profileImage = profileImage;
       }
