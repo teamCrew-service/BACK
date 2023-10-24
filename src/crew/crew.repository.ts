@@ -91,6 +91,7 @@ export class CrewRepository {
       .leftJoin('topic', 'topic', 'topic.userId = crew.userId')
       .leftJoin('signupform', 'signupform', 'signupform.crewId = crew.crewId')
       .where('crew.crewId = :crewId', { crewId })
+      .andWhere('crew.deletedAt IS NULL')
       .getRawOne();
 
     return crew;
@@ -158,9 +159,12 @@ export class CrewRepository {
 
   /* 모임 글 삭제 */
   async deleteCrew(crewId: number): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
     const deleteCrew = await this.crewRepository.update(
       { crewId },
-      { deletedAt: new Date() },
+      { deletedAt: today },
     );
     return deleteCrew;
   }
