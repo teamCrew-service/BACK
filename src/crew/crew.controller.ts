@@ -400,7 +400,7 @@ export class CrewController {
       const userId = user !== null ? user.userId : 0;
       const crew = await this.crewService.findCrewDetail(crewId);
 
-      if (!crew) {
+      if (crew.crew_crewId === null) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
@@ -629,10 +629,11 @@ export class CrewController {
       return res
         .status(HttpStatus.BAD_REQUEST)
         .json({ message: '모임 삭제를 실패했습니다.' });
+    } else {
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: '모임 삭제를 성공했습니다.' });
     }
-    return res
-      .status(HttpStatus.OK)
-      .json({ message: '모임 삭제를 성공했습니다.' });
   }
 
   /* 모임장 위임하기 */
