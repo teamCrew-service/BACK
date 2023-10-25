@@ -61,7 +61,7 @@ export class LikeRepository {
     const likedCrew = await this.likeRepository
       .createQueryBuilder('like')
       .select(['likeId', 'crewId'])
-      .where('crewId = :crewId', { crewId })
+      .where('like.crewId = :crewId', { crewId })
       .getRawMany();
     return likedCrew;
   }
@@ -71,8 +71,8 @@ export class LikeRepository {
     const like = await this.likeRepository
       .createQueryBuilder('like')
       .select(['likeId', 'crewId', 'userId'])
-      .where('crewId = :crewId', { crewId })
-      .andWhere('userId = :userId', { userId })
+      .where('like.crewId = :crewId', { crewId })
+      .andWhere('like.userId = :userId', { userId })
       .getRawOne();
 
     return like;
@@ -84,7 +84,7 @@ export class LikeRepository {
       .createQueryBuilder('like')
       .delete()
       .from(Like)
-      .where('crewId = :crewId', { crewId })
+      .where('like.crewId = :crewId', { crewId })
       .execute();
 
     return deleteLike;

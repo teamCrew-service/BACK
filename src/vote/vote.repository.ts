@@ -66,7 +66,7 @@ export class VoteRepository {
     const vote = await this.voteRepository
       .createQueryBuilder('vote')
       .where('crewId = :crewId', { crewId })
-      .andWhere('voteFormId = :voteFormId', { voteFormId })
+      .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
       .select(['voteId', 'crewId', 'voteFormId', 'vote'])
       .groupBy('voteId')
       .getRawMany();
@@ -123,7 +123,7 @@ export class VoteRepository {
       .createQueryBuilder('vote')
       .delete()
       .from(Vote)
-      .where('crewId = :crewId', { crewId })
+      .where('vote.crewId = :crewId', { crewId })
       .execute();
     return deleteVote;
   }

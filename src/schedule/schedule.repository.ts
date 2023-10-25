@@ -213,8 +213,8 @@ export class ScheduleRepository {
       .createQueryBuilder('schedule')
       .update(Schedule)
       .set({ scheduleIsDone: true })
-      .where('scheduleDDay < :today', { today })
-      .andWhere('scheduleIsDone = :scheduleIsDone', {
+      .where('schedule.scheduleDDay < :today', { today })
+      .andWhere('schedule.scheduleIsDone = :scheduleIsDone', {
         scheduleIsDone: false,
       })
       .execute();
@@ -226,8 +226,8 @@ export class ScheduleRepository {
       .createQueryBuilder('schedule')
       .update(Schedule)
       .set({ userId: delegator })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
+      .where('schedule.crewId = :crewId', { crewId })
+      .andWhere('schedule.deletedAt IS NULL')
       .execute();
   }
 
@@ -239,9 +239,9 @@ export class ScheduleRepository {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
       .select(['crewId', 'scheduleDDay'])
-      .where('crewId = :crewId', { crewId })
-      .andWhere('scheduleDDay > :today', { today })
-      .orderBy('scheduleDDay', 'ASC')
+      .where('schedule.crewId = :crewId', { crewId })
+      .andWhere('schedule.scheduleDDay > :today', { today })
+      .orderBy('schedule.scheduleDDay', 'ASC')
       .getRawMany();
 
     return schedule[0];
@@ -256,7 +256,7 @@ export class ScheduleRepository {
       .createQueryBuilder('schedule')
       .update(Schedule)
       .set({ deletedAt: today })
-      .where('crewId = :crewId', { crewId })
+      .where('schedule.crewId = :crewId', { crewId })
       .execute();
     return deleteSchedule;
   }

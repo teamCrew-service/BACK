@@ -28,7 +28,7 @@ export class SignupFormRepository {
     const signupForm = await this.signupFormRepository
       .createQueryBuilder('signupform')
       .select(['signupFormId', 'question1', 'question2', 'createdAt', 'crewId'])
-      .where('signupFormId = :signupFormId', { signupFormId })
+      .where('signupform.signupFormId = :signupFormId', { signupFormId })
       .getRawOne();
 
     return signupForm;
@@ -40,7 +40,7 @@ export class SignupFormRepository {
       .createQueryBuilder('signupform')
       .delete()
       .from(Signupform)
-      .where('crewId = :crewId', { crewId })
+      .where('signupform.crewId = :crewId', { crewId })
       .execute();
 
     return deleteSignupForm;

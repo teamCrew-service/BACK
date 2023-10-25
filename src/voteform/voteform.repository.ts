@@ -88,8 +88,8 @@ export class VoteFormRepository {
     const voteForm = await this.voteFormRepository
       .createQueryBuilder('voteform')
       .select(['voteFormId', 'anonymousVote'])
-      .where('crewId = :crewId', { crewId })
-      .andWhere('voteFormId = :voteFormId', { voteFormId })
+      .where('voteform.crewId = :crewId', { crewId })
+      .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
       .getRawOne();
     return voteForm;
   }
@@ -141,8 +141,8 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ deletedAt: today })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('voteFormId = :voteFormId', { voteFormId })
+      .where('voteform.crewId = :crewId', { crewId })
+      .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
       .execute();
     return deleteVoteForm;
   }
@@ -156,8 +156,10 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ voteFormIsDone: true })
-      .where('voteFormEndDate < :today', { today })
-      .andWhere('voteFormIsDone = :voteFormIsDone', { voteFormIsDone: false })
+      .where('voteform.voteFormEndDate < :today', { today })
+      .andWhere('voteform.voteFormIsDone = :voteFormIsDone', {
+        voteFormIsDone: false,
+      })
       .execute();
   }
 
@@ -167,8 +169,8 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ userId: delegator })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
+      .where('voteform.crewId = :crewId', { crewId })
+      .andWhere('voteform.deletedAt IS NULL')
       .execute();
   }
 
@@ -181,7 +183,7 @@ export class VoteFormRepository {
       .createQueryBuilder('voteform')
       .update(VoteForm)
       .set({ deletedAt: today })
-      .where('crewId = :crewId', { crewId })
+      .where('voteform.crewId = :crewId', { crewId })
       .execute();
     return deleteVoteForm;
   }
