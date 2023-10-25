@@ -19,7 +19,7 @@ export class LeavecrewRepository {
       .createQueryBuilder('leavecrew')
       .delete()
       .from(Leavecrew)
-      .where('leaveDay = :today', { today })
+      .where('leavecrew.leaveDay = :today', { today })
       .execute();
     return toBeLeaveCrew;
   }
@@ -47,8 +47,8 @@ export class LeavecrewRepository {
     const leaveUser = await this.leavecrewRepository
       .createQueryBuilder('leavecrew')
       .select(['crewId', 'leaveDay'])
-      .where('userId = :userId', { userId })
-      .andWhere('crewId = :crewId', { crewId })
+      .where('leavecrew.userId = :userId', { userId })
+      .andWhere('leavecrew.crewId = :crewId', { crewId })
       .getRawOne();
 
     return leaveUser;

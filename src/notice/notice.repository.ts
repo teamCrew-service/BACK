@@ -49,9 +49,9 @@ export class NoticeRepository {
         'noticeIsDone',
         'createdAt',
       ])
-      .where('crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
-      .orderBy('noticeDDay', 'ASC')
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.deletedAt IS NULL')
+      .orderBy('notice.noticeDDay', 'ASC')
       .getRawMany();
     return notice;
   }
@@ -70,8 +70,8 @@ export class NoticeRepository {
         'noticeLatitude',
         'noticeLongitude',
       ])
-      .where('crewId = :crewId', { crewId })
-      .andWhere('noticeId = :noticeId', { noticeId })
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.noticeId = :noticeId', { noticeId })
       .getRawOne();
     return notice;
   }
@@ -117,8 +117,8 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ deletedAt: today })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('noticeId = :noticeId', { noticeId })
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.noticeId = :noticeId', { noticeId })
       .execute();
 
     return deletedNotice;
@@ -133,8 +133,8 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ noticeIsDone: true })
-      .where('noticeDDay < :today', { today })
-      .andWhere('noticeIsDone = :noticeIsDone', { noticeIsDone: false })
+      .where('notice.noticeDDay < :today', { today })
+      .andWhere('notice.noticeIsDone = :noticeIsDone', { noticeIsDone: false })
       .execute();
   }
 
@@ -144,8 +144,8 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ userId: delegator })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.deletedAt IS NULL')
       .execute();
   }
 
@@ -158,7 +158,7 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ deletedAt: today })
-      .where('crewId = :crewId', { crewId })
+      .where('notice.crewId = :crewId', { crewId })
       .execute();
 
     return deleteNotice;

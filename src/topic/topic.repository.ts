@@ -54,7 +54,7 @@ export class TopicRepository {
     const topic = await this.topicRepository
       .createQueryBuilder('topic')
       .select(['userId', 'interestTopic'])
-      .where('userId = :userId', { userId })
+      .where('topic.userId = :userId', { userId })
       .getRawMany();
     return topic;
   }
@@ -69,7 +69,7 @@ export class TopicRepository {
         .createQueryBuilder()
         .delete()
         .from(Topic)
-        .where('userId = :userId', { userId })
+        .where('topic.userId = :userId', { userId })
         .execute();
 
       // 새로운 topic 넣어주기
@@ -102,7 +102,7 @@ export class TopicRepository {
       .createQueryBuilder('topic')
       .delete()
       .from(Topic)
-      .where('userId = :userId', { userId })
+      .where('topic.userId = :userId', { userId })
       .execute();
     return deleteTopic;
   }

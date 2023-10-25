@@ -32,8 +32,8 @@ export class SignupRepository {
     const signup = this.signupRepository
       .createQueryBuilder('signup')
       .select(['userId'])
-      .where('userId = :userId', { userId })
-      .andWhere('crewId = :crewId', { crewId })
+      .where('signup.userId = :userId', { userId })
+      .andWhere('signup.crewId = :crewId', { crewId })
       .getRawOne();
     return signup;
   }
@@ -95,7 +95,7 @@ export class SignupRepository {
         'permission',
         'signupFormId',
       ])
-      .where('signup.signupId = :id', { id: signupId })
+      .where('signup.signupId = :signupId', { signupId })
       .getRawOne();
     signup.permission = confirmSingupDto.permission;
     const confirmedSignup = await this.signupRepository.save(signup);
@@ -108,7 +108,7 @@ export class SignupRepository {
       .createQueryBuilder('signup')
       .delete()
       .from(Signup)
-      .where('crewId = :crewId', { crewId })
+      .where('signup.crewId = :crewId', { crewId })
       .execute();
 
     return deleteSignup;

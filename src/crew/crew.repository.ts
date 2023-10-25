@@ -284,7 +284,7 @@ export class CrewRepository {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
       .where('crewId = :crewId', { crewId })
-      .andWhere('userId = :userId', { userId })
+      .andWhere('crew.userId = :userId', { userId })
       .select(['crewId', 'userId'])
       .getRawOne();
 
