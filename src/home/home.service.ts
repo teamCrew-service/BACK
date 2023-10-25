@@ -28,8 +28,11 @@ export class HomeService {
   }
 
   // 내 주변 모임 찾기(카테고리별)
-  async findCrewByCategoryAndMap(category: string): Promise<any> {
-    return this.homeRepository.findCrewByCategoryAndMap(category);
+  async findCrewByCategoryAndMap(
+    category: string,
+    userId: number,
+  ): Promise<any> {
+    return this.homeRepository.findCrewByCategoryAndMap(category, userId);
   }
 
   // 카테고리별 모임 찾기
