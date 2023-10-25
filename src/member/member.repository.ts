@@ -73,4 +73,16 @@ export class MemberRepository {
 
     return exitCrew;
   }
+
+  /* member 삭제 */
+  async deleteMember(crewId: number): Promise<any> {
+    const deleteMember = await this.memberRepository
+      .createQueryBuilder('member')
+      .delete()
+      .from(Member)
+      .where('crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteMember;
+  }
 }

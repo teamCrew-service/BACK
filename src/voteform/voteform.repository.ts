@@ -171,4 +171,18 @@ export class VoteFormRepository {
       .andWhere('deletedAt IS NULL')
       .execute();
   }
+
+  /* crew 삭제에 따른 voteForm 삭제 */
+  async deleteVoteFormByCrew(crewId: number): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteVoteForm = await this.voteFormRepository
+      .createQueryBuilder('voteform')
+      .update(VoteForm)
+      .set({ deletedAt: today })
+      .where('crewId = :crewId', { crewId })
+      .execute();
+    return deleteVoteForm;
+  }
 }

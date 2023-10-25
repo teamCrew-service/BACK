@@ -40,6 +40,8 @@ import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
 import { IsOptional } from 'class-validator';
 import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
+import { ParticipantService } from 'src/participant/participant.service';
+import { VoteService } from 'src/vote/vote.service';
 
 export class CrewFilesUploadDto {
   @ApiProperty()
@@ -82,6 +84,8 @@ export class CrewController {
     private readonly likeService: LikeService,
     private readonly imageService: ImageService,
     private readonly leavecrewService: LeavecrewService,
+    private readonly participantService: ParticipantService,
+    private readonly voteService: VoteService,
   ) {}
 
   /* 모임 생성 */
@@ -573,6 +577,12 @@ export class CrewController {
   ): Promise<any> {
     const { userId } = res.locals.user;
     const crew = await this.crewService.findCrewForAuth(crewId);
+    if (!crew) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: '존재하지 않는 모임입니다.' });
+    }
+
     if (crew.userId !== userId) {
       return res
         .status(HttpStatus.UNAUTHORIZED)
@@ -582,6 +592,7 @@ export class CrewController {
       crewId,
       files[0].location,
     );
+
     if (!editThumbnail) {
       return res
         .status(HttpStatus.BAD_REQUEST)
@@ -617,22 +628,44 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Res() res: any,
   ): Promise<any> {
-    const { userId } = res.locals.user;
-    const crew = await this.crewService.findCrewForAuth(crewId);
-    if (crew.userId !== userId) {
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: '모임 삭제 권한이 없습니다.' });
-    }
-    const deleteCrew = await this.crewService.deleteCrew(crewId);
-    if (!deleteCrew) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '모임 삭제를 실패했습니다.' });
-    } else {
-      return res
-        .status(HttpStatus.OK)
-        .json({ message: '모임 삭제를 성공했습니다.' });
+    try {
+      const { userId } = res.locals.user;
+      const crew = await this.crewService.findCrewForAuth(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
+      if (crew.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '모임 삭제 권한이 없습니다.' });
+      }
+
+      // crew에 해당하는 모든 부분 삭제 처리
+      const deleteCrew = await Promise.all([
+        this.crewService.deleteCrew(crewId),
+        this.memberService.deleteMember(crewId),
+        this.likeService.deleteLike(crewId),
+        this.noticeService.deleteNoticeByCrew(crewId),
+        this.participantService.deleteParticipant(crewId),
+        this.scheduleService.deleteScheduleByCrew(crewId),
+        this.signupService.deleteSignupAndSignupForm(crewId),
+        this.voteFormService.deleteVoteFormByCrew(crewId),
+        this.voteService.deleteVoteByCrew(crewId),
+      ]);
+      if (!deleteCrew) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임 삭제를 실패했습니다.' });
+      } else {
+        return res
+          .status(HttpStatus.OK)
+          .json({ message: '모임 삭제를 성공했습니다.' });
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewController/deleteCrew');
     }
   }
 
@@ -669,11 +702,13 @@ export class CrewController {
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
         if (parseInt(member[i].member_userId) === delegator) {
-          await this.crewService.delegateCrew(delegator, crewId, userId);
-          await this.memberService.delegateMember(delegator, crewId, userId);
-          await this.noticeService.delegateNotice(delegator, crewId);
-          await this.scheduleService.delegateSchedule(delegator, crewId);
-          await this.voteFormService.delegateVoteForm(delegator, crewId);
+          await Promise.all([
+            this.crewService.delegateCrew(delegator, crewId, userId),
+            this.memberService.delegateMember(delegator, crewId, userId),
+            this.noticeService.delegateNotice(delegator, crewId),
+            this.scheduleService.delegateSchedule(delegator, crewId),
+            this.voteFormService.delegateVoteForm(delegator, crewId),
+          ]);
           return res.status(HttpStatus.OK).json({ message: '위임 완료' });
         }
       }

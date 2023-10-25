@@ -101,4 +101,16 @@ export class SignupRepository {
     const confirmedSignup = await this.signupRepository.save(signup);
     return confirmedSignup;
   }
+
+  /* crew 삭제에 따른 signup 삭제 */
+  async deleteSignup(crewId: number): Promise<any> {
+    const deleteSignup = await this.signupRepository
+      .createQueryBuilder('signup')
+      .delete()
+      .from(Signup)
+      .where('crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteSignup;
+  }
 }

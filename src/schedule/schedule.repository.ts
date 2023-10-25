@@ -246,4 +246,18 @@ export class ScheduleRepository {
 
     return schedule[0];
   }
+
+  /* crew 삭제에 따른 schedule 삭제 */
+  async deleteScheduleByCrew(crewId: number): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteSchedule = await this.scheduleRepository
+      .createQueryBuilder('schedule')
+      .update(Schedule)
+      .set({ deletedAt: today })
+      .where('crewId = :crewId', { crewId })
+      .execute();
+    return deleteSchedule;
+  }
 }

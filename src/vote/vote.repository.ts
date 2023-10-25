@@ -116,4 +116,15 @@ export class VoteRepository {
     }
     return { message: '수정한 투표를 성공적으로 저장했습니다.' };
   }
+
+  /* crew 삭제에 따라 투표 삭제하기 */
+  async deleteVoteByCrew(crewId: number): Promise<any> {
+    const deleteVote = await this.voteRepository
+      .createQueryBuilder('vote')
+      .delete()
+      .from(Vote)
+      .where('crewId = :crewId', { crewId })
+      .execute();
+    return deleteVote;
+  }
 }

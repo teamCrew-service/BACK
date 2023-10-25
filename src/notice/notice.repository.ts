@@ -148,4 +148,19 @@ export class NoticeRepository {
       .andWhere('deletedAt IS NULL')
       .execute();
   }
+
+  /* crew 삭제에 따른 notice 삭제 */
+  async deleteNoticeByCrew(crewId: number): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteNotice = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .update(Notice)
+      .set({ deletedAt: today })
+      .where('crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteNotice;
+  }
 }

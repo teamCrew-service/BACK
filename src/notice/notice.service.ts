@@ -71,4 +71,10 @@ export class NoticeService {
     await this.noticeRepository.delegateNotice(delegator, crewId);
     return '공지 위임 완료';
   }
+
+  /* crew 삭제에 따른 notice 삭제 */
+  async deleteNoticeByCrew(crewId: number): Promise<any> {
+    const deleteNotice = await this.noticeRepository.deleteNoticeByCrew(crewId);
+    return deleteNotice;
+  }
 }
