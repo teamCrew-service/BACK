@@ -44,7 +44,10 @@ export class HomeRepository {
   }
 
   // 내 주변 모임 찾기(카테고리별)
-  async findCrewByCategoryAndMap(category: string): Promise<any> {
+  async findCrewByCategoryAndMap(
+    category: string,
+    userId: number,
+  ): Promise<any> {
     const crew = await this.mapRepository
       .createQueryBuilder('crew')
       .select([
@@ -63,7 +66,12 @@ export class HomeRepository {
         'COUNT(like.userId) > 0 AS likeCheck',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
-      .leftJoin('like', 'like', 'like.crewId = crew.crewId')
+      .leftJoin(
+        'like',
+        'like',
+        'like.crewId = crew.crewId AND like.userId = :userId',
+        { userId },
+      )
       .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
       .andWhere('crew.deletedAt IS NULL')
@@ -87,9 +95,15 @@ export class HomeRepository {
         'crew.crewAddress',
         'crew.crewMaxMember',
         'COUNT(member.crewId) AS crewAttendedMember',
+        'COUNT(like.userId) > 0 AS likeCheck',
       ])
       .leftJoin('member', 'member', 'member.crewId = crew.crewId')
-      .leftJoin('like', 'like', 'like.crewId = crew.crewId')
+      .leftJoin(
+        'like',
+        'like',
+        'like.crewId = crew.crewId AND like.userId = :userId',
+        { userId },
+      )
       .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
       .andWhere('crew.userId != :userId', { userId })
