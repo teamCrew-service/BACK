@@ -55,6 +55,11 @@ export class VoteformController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
@@ -118,8 +123,13 @@ export class VoteformController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
-      // 모임장일 경우
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
+      // 모임장일 경우
       if (crew.userId === userId) {
         const voteForm = await this.voteFormService.findVoteFormDetail(
           crewId,
@@ -229,6 +239,11 @@ export class VoteformController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)

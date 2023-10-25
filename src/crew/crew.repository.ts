@@ -16,7 +16,7 @@ export class CrewRepository {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
       .select(['userId'])
-      .where('crew.crewId = :id', { id: crewId })
+      .where('crewId = :crewId', { crewId })
       .getRawOne();
     return crew;
   }
@@ -283,8 +283,8 @@ export class CrewRepository {
   async findOneCrew(crewId: number, userId: number): Promise<any> {
     const crew = await this.crewRepository
       .createQueryBuilder('crew')
-      .where('crew.crewId = :crewId', { crewId })
-      .andWhere('crew.userId = :userId', { userId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('userId = :userId', { userId })
       .select(['crewId', 'userId'])
       .getRawOne();
 

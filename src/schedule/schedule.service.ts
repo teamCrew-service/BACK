@@ -155,7 +155,7 @@ export class ScheduleService {
         scheduleId,
         crewId,
       );
-      return { schedule, message: '일정 상세 조회 성공' };
+      return schedule;
     } catch (error) {
       console.error('Error while finding schedule detail:', error);
       throw new HttpException(
