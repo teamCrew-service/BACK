@@ -73,6 +73,11 @@ export class SignupController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       if (crew.userId === userId) {
         return res
@@ -157,6 +162,11 @@ export class SignupController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       if (crew.userId === userId) {
         return res
           .status(HttpStatus.FORBIDDEN)
@@ -233,6 +243,11 @@ export class SignupController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       if (crew.userId === userId) {
         const signup = await this.signupService.findAllSubmitted(crewId);
         return res.status(HttpStatus.OK).json(signup);
@@ -293,6 +308,12 @@ export class SignupController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
         if (member[i].member_userId === userId) {

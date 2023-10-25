@@ -94,10 +94,15 @@ export class ScheduleController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '모임이 존재하지 않습니다.' });
+      }
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '일정 등록 권한이 없습니다.' });
+          .json({ message: '일정 수정 권한이 없습니다.' });
       }
       const updatedSchedule = await this.scheduleService.editSchedule(
         crewId,
@@ -157,6 +162,11 @@ export class ScheduleController {
         scheduleId,
         crewId,
       );
+      if (!schedule || schedule.schedule_scheduleId === null) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 일정입니다.' });
+      }
       const participant = await this.participantService.findAllParticipant(
         crewId,
         scheduleId,
@@ -196,15 +206,20 @@ export class ScheduleController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '모임이 존재하지 않습니다.' });
+      }
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '일정 등록 권한이 없습니다.' });
+          .json({ message: '일정 삭제 권한이 없습니다.' });
       }
-      const result = await this.scheduleService.deleteSchedule(
-        scheduleId,
-        crewId,
-      );
+      const result = await Promise.all([
+        this.scheduleService.deleteSchedule(scheduleId, crewId),
+        this.participantService.deleteParticipantBySchedule(scheduleId, crewId),
+      ]);
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
       console.error(error); // 로깅
@@ -236,6 +251,11 @@ export class ScheduleController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '모임이 존재하지 않습니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       const participant = await this.participantService.findAllParticipant(
         crewId,

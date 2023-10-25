@@ -65,10 +65,10 @@ export class VoteRepository {
   async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
     const vote = await this.voteRepository
       .createQueryBuilder('vote')
-      .where('vote.crewId = :crewId', { crewId })
-      .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('voteFormId = :voteFormId', { voteFormId })
       .select(['voteId', 'crewId', 'voteFormId', 'vote'])
-      .groupBy('vote.voteId')
+      .groupBy('voteId')
       .getRawMany();
     return vote;
   }

@@ -51,9 +51,9 @@ export class ParticipantRepository {
       .createQueryBuilder('participant')
       .delete()
       .from(Participant)
-      .where('participant.crewId = :crewId', { crewId })
-      .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
-      .andWhere('participant.userId = :userId', { userId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('scheduleId = :scheduleId', { scheduleId })
+      .andWhere('userId = :userId', { userId })
       .execute();
     return canceledParticipant;
   }
@@ -67,6 +67,21 @@ export class ParticipantRepository {
       .where('crewId = :crewId', { crewId })
       .execute();
 
+    return deleteParticipant;
+  }
+
+  /* schedule 삭제에 따라 participant delete */
+  async deleteParticipantBySchedule(
+    scheduleId: number,
+    crewId: number,
+  ): Promise<any> {
+    const deleteParticipant = await this.participantRepository
+      .createQueryBuilder('participant')
+      .delete()
+      .from(Participant)
+      .where('crewId = :crewId', { crewId })
+      .andWhere('scheduleId = :scheduleId', { scheduleId })
+      .execute();
     return deleteParticipant;
   }
 }

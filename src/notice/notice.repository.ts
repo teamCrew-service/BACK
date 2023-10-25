@@ -49,7 +49,7 @@ export class NoticeRepository {
         'noticeIsDone',
         'createdAt',
       ])
-      .where('notice.crewId = :crewId', { crewId })
+      .where('crewId = :crewId', { crewId })
       .andWhere('deletedAt IS NULL')
       .orderBy('noticeDDay', 'ASC')
       .getRawMany();
@@ -70,8 +70,8 @@ export class NoticeRepository {
         'noticeLatitude',
         'noticeLongitude',
       ])
-      .where('notice.crewId = :crewId', { crewId })
-      .andWhere('notice.noticeId = :noticeId', { noticeId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('noticeId = :noticeId', { noticeId })
       .getRawOne();
     return notice;
   }
@@ -117,8 +117,8 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ deletedAt: today })
-      .where('notice.crewId = :crewId', { crewId })
-      .andWhere('notice.noticeId = :noticeId', { noticeId })
+      .where('crewId = :crewId', { crewId })
+      .andWhere('noticeId = :noticeId', { noticeId })
       .execute();
 
     return deletedNotice;
@@ -133,8 +133,8 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ noticeIsDone: true })
-      .where('notice.noticeDDay < :today', { today })
-      .andWhere('notice.noticeIsDone = :noticeIsDone', { noticeIsDone: false })
+      .where('noticeDDay < :today', { today })
+      .andWhere('noticeIsDone = :noticeIsDone', { noticeIsDone: false })
       .execute();
   }
 

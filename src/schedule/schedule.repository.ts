@@ -127,7 +127,6 @@ export class ScheduleRepository {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
       .leftJoin('schedule.crewId', 'crew') // crew 테이블과의 join
-      .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
       .leftJoin(
         'participant',
         'participant',
@@ -137,6 +136,7 @@ export class ScheduleRepository {
       .where('schedule.scheduleId = :scheduleId', { scheduleId }) // 해당 scheduleId를 가진 멤버만 필터링
       .andWhere('crew.crewId = :crewId', { crewId }) // 해당 crewId를 가진 멤버만 필터링
       .select([
+        'schedule.scheduleId',
         'schedule.scheduleTitle',
         'schedule.scheduleDDay',
         'schedule.scheduleContent',
@@ -148,7 +148,7 @@ export class ScheduleRepository {
         'COUNT(participant.crewId) AS scheduleAttendedMember',
         'users.profileImage AS captainProfileImage',
       ]) // 필요한 필드만 선택
-      .getOne();
+      .getRawOne();
 
     return schedule;
   }
@@ -213,8 +213,8 @@ export class ScheduleRepository {
       .createQueryBuilder('schedule')
       .update(Schedule)
       .set({ scheduleIsDone: true })
-      .where('schedule.scheduleDDay < :today', { today })
-      .andWhere('schedule.scheduleIsDone = :scheduleIsDone', {
+      .where('scheduleDDay < :today', { today })
+      .andWhere('scheduleIsDone = :scheduleIsDone', {
         scheduleIsDone: false,
       })
       .execute();
@@ -239,9 +239,9 @@ export class ScheduleRepository {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
       .select(['crewId', 'scheduleDDay'])
-      .where('schedule.crewId = :crewId', { crewId })
-      .andWhere('schedule.scheduleDDay > :today', { today })
-      .orderBy('schedule.scheduleDDay', 'ASC')
+      .where('crewId = :crewId', { crewId })
+      .andWhere('scheduleDDay > :today', { today })
+      .orderBy('scheduleDDay', 'ASC')
       .getRawMany();
 
     return schedule[0];

@@ -62,6 +62,11 @@ export class VoteController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       const voteForm = await this.voteFormService.findVoteFormDetail(
         crewId,
@@ -186,6 +191,11 @@ export class VoteController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       const voteForm = await this.voteFormService.findVoteFormDetail(
         crewId,
@@ -267,6 +277,11 @@ export class VoteController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
 
       for (let i = 0; i < member.length; i++) {

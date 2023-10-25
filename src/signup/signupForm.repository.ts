@@ -28,7 +28,7 @@ export class SignupFormRepository {
     const signupForm = await this.signupFormRepository
       .createQueryBuilder('signupform')
       .select(['signupFormId', 'question1', 'question2', 'createdAt', 'crewId'])
-      .where('signupform.signupFormId = :id', { id: signupFormId })
+      .where('signupFormId = :signupFormId', { signupFormId })
       .getRawOne();
 
     return signupForm;

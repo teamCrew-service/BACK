@@ -54,7 +54,7 @@ export class TopicRepository {
     const topic = await this.topicRepository
       .createQueryBuilder('topic')
       .select(['userId', 'interestTopic'])
-      .where('topic.userId = :userId', { userId })
+      .where('userId = :userId', { userId })
       .getRawMany();
     return topic;
   }
