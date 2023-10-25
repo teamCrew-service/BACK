@@ -201,4 +201,12 @@ export class ScheduleService {
     );
     return schedule;
   }
+
+  /* crew 삭제에 따른 schedule 삭제 */
+  async deleteScheduleByCrew(crewId: number): Promise<any> {
+    const deleteSchedule = await this.scheduleRepository.deleteScheduleByCrew(
+      crewId,
+    );
+    return deleteSchedule;
+  }
 }

@@ -98,4 +98,14 @@ export class SignupService {
     const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
     return exitCrew;
   }
+
+  /* crew 삭제에 따른 signup, signupForm 삭제 */
+  async deleteSignupAndSignupForm(crewId: number): Promise<any> {
+    const deleteSignup = await Promise.all([
+      this.signupRespository.deleteSignup(crewId),
+      this.signupFormRepository.deleteSignupForm(crewId),
+    ]);
+
+    return deleteSignup;
+  }
 }

@@ -37,7 +37,12 @@ export class LikeService {
   /* user가 crew를 찜했는지 확인하기 */
   async confirmLiked(crewId: number, userId: number): Promise<any> {
     const like = await this.likeRepository.confirmLiked(crewId, userId);
-
     return like;
+  }
+
+  /* 좋아요 삭제 */
+  async deleteLike(crewId: number): Promise<any> {
+    const deleteLike = await this.likeRepository.deleteLike(crewId);
+    return deleteLike;
   }
 }
