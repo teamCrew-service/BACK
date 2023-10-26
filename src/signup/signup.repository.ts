@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Signup } from './entities/signup.entity';
 import { Repository } from 'typeorm';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
+import { EditSignupDto } from './dto/editSubmit-signup.dto';
 
 @Injectable()
 export class SignupRepository {
@@ -29,18 +30,50 @@ export class SignupRepository {
 
   /* 본인이 작성한 signup확인 */
   async findMySignup(userId: number, crewId: number): Promise<any> {
-    const signup = this.signupRepository
+    const signup = await this.signupRepository
       .createQueryBuilder('signup')
-      .select(['userId'])
+      .select(['signupId', 'answer1', 'answer2', 'userId', 'permission'])
       .where('signup.userId = :userId', { userId })
       .andWhere('signup.crewId = :crewId', { crewId })
+      .andWhere('signup.permission IS NULL')
       .getRawOne();
     return signup;
   }
 
+  /* 본인이 작성한 signup 수정 */
+  async editMySubmitted(
+    editSignupDto: EditSignupDto,
+    crewId: number,
+    signupId: number,
+  ): Promise<any> {
+    const { answer1, answer2 } = editSignupDto;
+
+    const editSignup = await this.signupRepository.update(
+      { crewId, signupId },
+      {
+        answer1,
+        answer2,
+      },
+    );
+
+    return editSignup;
+  }
+
+  /* 본인이 작성한 signup 삭제 */
+  async deleteMySubmitted(crewId: number, signupId: number): Promise<any> {
+    const editSignup = await this.signupRepository
+      .createQueryBuilder('signup')
+      .delete()
+      .from(Signup)
+      .where('signup.crewId = :crewId', { crewId })
+      .andWhere('signup.signupId = :signupId', { signupId })
+      .execute();
+    return editSignup;
+  }
+
   /* 본인이 작성한 signup 모두 조회하기 */
   async findMyAllSignup(userId: number): Promise<any> {
-    const allSignup = this.signupRepository
+    const allSignup = await this.signupRepository
       .createQueryBuilder('signup')
       .select(['signupId', 'userId', 'crewId'])
       .where('signup.userId = :userId', { userId })

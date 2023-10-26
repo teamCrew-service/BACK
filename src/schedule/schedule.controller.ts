@@ -79,7 +79,8 @@ export class ScheduleController {
     summary: '일정 수정 API',
     description: '원하는 일정을 수정합니다.',
   })
-  @ApiParam({ name: 'crewId', description: 'scheduleId' })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
+  @ApiParam({ name: 'scheduleId', description: 'scheduleId' })
   @ApiResponse({
     status: 200,
     description: '일정 수정 성공',
