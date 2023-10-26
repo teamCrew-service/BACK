@@ -36,7 +36,7 @@ export class AddUserInfoDto {
   @ApiProperty({
     example: 'url',
     description: '프로필 이미지',
-    required: true,
+    required: false,
   })
   @IsOptional()
   @IsString()

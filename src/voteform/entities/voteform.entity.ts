@@ -27,10 +27,10 @@ export class VoteForm {
   crewId: number;
 
   @Column({ type: 'varchar' })
-  voteTitle: string;
+  voteFormTitle: string;
 
   @Column({ type: 'varchar' })
-  voteContent: string;
+  voteFormContent: string;
 
   @Column({ type: 'boolean' })
   multipleVotes: Boolean;
@@ -39,25 +39,25 @@ export class VoteForm {
   anonymousVote: Boolean;
 
   @Column({ type: 'datetime' })
-  voteEndDate: Date;
+  voteFormEndDate: Date;
 
   @Column({ type: 'boolean', default: false })
-  voteIsDone: Boolean;
+  voteFormIsDone: Boolean;
 
   @Column({ type: 'varchar', nullable: true })
-  voteOption1: string;
+  voteFormOption1: string;
 
   @Column({ type: 'varchar', nullable: true })
-  voteOption2: string;
+  voteFormOption2: string;
 
   @Column({ type: 'varchar', nullable: true })
-  voteOption3: string;
+  voteFormOption3: string;
 
   @Column({ type: 'varchar', nullable: true })
-  voteOption4: string;
+  voteFormOption4: string;
 
   @Column({ type: 'varchar', nullable: true })
-  voteOption5: string;
+  voteFormOption5: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

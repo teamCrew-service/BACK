@@ -244,8 +244,13 @@ export class HomeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      const user = res.locals.user ? res.locals.user : null;
+      const userId = user !== null ? user.userId : 0;
       // 카테고리별로 조회
-      const crew = await this.homeService.findCrewByCategoryAndMap(category);
+      const crew = await this.homeService.findCrewByCategoryAndMap(
+        category,
+        userId,
+      );
 
       // 카테고리별로 조회한 결과가 없을 경우
       // if (crew.length === 0) {

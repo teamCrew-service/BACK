@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -22,6 +23,7 @@ import { CrewService } from 'src/crew/crew.service';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberService } from 'src/member/member.service';
 import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
+import { EditSignupDto } from './dto/editSubmit-signup.dto';
 
 @Controller()
 @ApiTags('signup API')
@@ -73,6 +75,11 @@ export class SignupController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       if (crew.userId === userId) {
         return res
@@ -158,6 +165,11 @@ export class SignupController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       if (crew.userId === userId) {
         return res
           .status(HttpStatus.FORBIDDEN)
@@ -199,6 +211,153 @@ export class SignupController {
     }
   }
 
+  /* (본인) 제출한 가입서 조회 */
+  @Get('signup/mySubmitted/:crewId')
+  @ApiOperation({
+    summary: '본인이 제출한 가입서 조회 API',
+    description: '개인이 제출한 가입서 조회',
+  })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
+  @ApiResponse({
+    status: 200,
+    description: '제출한 가입서 불러오기',
+    schema: {
+      example: {
+        signupId: 2,
+        answer1: '안녕안녕 나는 지수야 헬륨가스 먹었더니 요렇게 됐지!',
+        answer2: '다정한,정직한,긍정적인',
+        userId: '3',
+        permission: null,
+      },
+    },
+  })
+  @ApiBearerAuth('accessToken')
+  async findOneSubmitted(
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      // 모임 정보 확인
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
+
+      // 제출한 가입서 조회
+      const signup = await this.signupService.findMySignup(userId, crewId);
+      if (!signup) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '제출한 가입서가 없습니다.' });
+      }
+      return res.status(HttpStatus.OK).json(signup);
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/findOneSubmitted');
+    }
+  }
+
+  /* (본인) 제출한 가입서 수정 */
+  @Put('signup/mySubmitted/:crewId/edit')
+  @ApiOperation({
+    summary: '제출한 가입서 수정 API',
+    description: '제출한 가입서를 수정합니다.',
+  })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
+  @ApiResponse({
+    status: 200,
+    description: '가입서 수정 성공',
+  })
+  @ApiBearerAuth('accessToken')
+  async editMySubmitted(
+    @Body() editSignupDto: EditSignupDto,
+    @Res() res: any,
+    @Param('crewId') crewId: number,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      // 제출한 가입서 조회
+      const signup = await this.signupService.findMySignup(userId, crewId);
+      if (!signup) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '제출한 가입서가 없습니다.' });
+      }
+      if (signup.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '작성자가 아닙니다.' });
+      }
+      const signupId = signup.signupId;
+      const editSignup = await this.signupService.editMySubmitted(
+        editSignupDto,
+        crewId,
+        signupId,
+      );
+      if (!editSignup) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '가입서 수정 실패' });
+      } else {
+        return res.status(HttpStatus.OK).json({ message: '가입서 수정 성공' });
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/editMySubmitted');
+    }
+  }
+
+  /* (본인) 제출한 가입서 삭제 */
+  @Delete('signup/mySubmitted/:crewId/delete')
+  @ApiOperation({
+    summary: '제출한 가입서 삭제 API',
+    description: '제출한 가입서를 삭제합니다.',
+  })
+  @ApiParam({ name: 'crewId', description: 'crewId' })
+  @ApiResponse({
+    status: 200,
+    description: '가입서 삭제 성공',
+  })
+  @ApiBearerAuth('accessToken')
+  async deleteMySubmitted(
+    @Res() res: any,
+    @Param('crewId') crewId: number,
+  ): Promise<any> {
+    try {
+      const { userId } = res.locals.user;
+      // 제출한 가입서 조회
+      const signup = await this.signupService.findMySignup(userId, crewId);
+      if (!signup) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '제출한 가입서가 없습니다.' });
+      }
+      if (signup.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '작성자가 아닙니다.' });
+      }
+      const signupId = signup.signupId;
+      const deleteSignup = await this.signupService.deleteMySubmitted(
+        crewId,
+        signupId,
+      );
+      if (!deleteSignup) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '가입서 삭제 실패' });
+      } else {
+        return res.status(HttpStatus.OK).json({ message: '가입서 삭제 성공' });
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupController/editMySubmitted');
+    }
+  }
+
   /* (모임장) 제출한 가입서 조회 */
   @Get('signup/:crewId')
   @ApiOperation({
@@ -234,6 +393,11 @@ export class SignupController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       if (crew.userId === userId) {
         const signup = await this.signupService.findAllSubmitted(crewId);
         return res.status(HttpStatus.OK).json(signup);
@@ -294,6 +458,12 @@ export class SignupController {
   ): Promise<any> {
     try {
       const { userId } = res.locals.user;
+      const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
         if (member[i].member_userId === userId) {

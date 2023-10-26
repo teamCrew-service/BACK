@@ -77,4 +77,16 @@ export class LikeRepository {
 
     return like;
   }
+
+  /* 좋아요 삭제 */
+  async deleteLike(crewId: number): Promise<any> {
+    const deleteLike = await this.likeRepository
+      .createQueryBuilder('like')
+      .delete()
+      .from(Like)
+      .where('like.crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteLike;
+  }
 }

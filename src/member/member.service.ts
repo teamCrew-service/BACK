@@ -39,4 +39,10 @@ export class MemberService {
     const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
     return exitCrew;
   }
+
+  /* member 삭제 */
+  async deleteMember(crewId: number): Promise<any> {
+    const deleteMember = await this.memberRepository.deleteMember(crewId);
+    return deleteMember;
+  }
 }

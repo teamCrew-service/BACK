@@ -155,7 +155,7 @@ export class ScheduleService {
         scheduleId,
         crewId,
       );
-      return { schedule, message: '일정 상세 조회 성공' };
+      return schedule;
     } catch (error) {
       console.error('Error while finding schedule detail:', error);
       throw new HttpException(
@@ -200,5 +200,13 @@ export class ScheduleService {
       crewId,
     );
     return schedule;
+  }
+
+  /* crew 삭제에 따른 schedule 삭제 */
+  async deleteScheduleByCrew(crewId: number): Promise<any> {
+    const deleteSchedule = await this.scheduleRepository.deleteScheduleByCrew(
+      crewId,
+    );
+    return deleteSchedule;
   }
 }

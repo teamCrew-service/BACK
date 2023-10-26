@@ -50,8 +50,8 @@ export class NoticeRepository {
         'createdAt',
       ])
       .where('notice.crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
-      .orderBy('noticeDDay', 'ASC')
+      .andWhere('notice.deletedAt IS NULL')
+      .orderBy('notice.noticeDDay', 'ASC')
       .getRawMany();
     return notice;
   }
@@ -144,8 +144,23 @@ export class NoticeRepository {
       .createQueryBuilder('notice')
       .update(Notice)
       .set({ userId: delegator })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
+      .where('notice.crewId = :crewId', { crewId })
+      .andWhere('notice.deletedAt IS NULL')
       .execute();
+  }
+
+  /* crew 삭제에 따른 notice 삭제 */
+  async deleteNoticeByCrew(crewId: number): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteNotice = await this.noticeRepository
+      .createQueryBuilder('notice')
+      .update(Notice)
+      .set({ deletedAt: today })
+      .where('notice.crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteNotice;
   }
 }

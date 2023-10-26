@@ -28,8 +28,11 @@ export class VoteFormService {
   }
 
   /* 투표 공지 전체 목록 조회 */
-  async findAllVoteForm(crewId: number): Promise<any> {
-    const voteForm = await this.voteFormRespository.findAllVoteForm(crewId);
+  async findAllVoteForm(crewId: number, userId: number): Promise<any> {
+    const voteForm = await this.voteFormRespository.findAllVoteForm(
+      crewId,
+      userId,
+    );
     return voteForm;
   }
 
@@ -81,5 +84,13 @@ export class VoteFormService {
   async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
     await this.voteFormRespository.delegateVoteForm(delegator, crewId);
     return '투표 공지 위임 완료';
+  }
+
+  /* crew 삭제에 따른 voteForm 삭제 */
+  async deleteVoteFormByCrew(crewId: number): Promise<any> {
+    const deleteVoteForm = await this.voteFormRespository.deleteVoteFormByCrew(
+      crewId,
+    );
+    return deleteVoteForm;
   }
 }

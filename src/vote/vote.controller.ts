@@ -62,19 +62,35 @@ export class VoteController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       const voteForm = await this.voteFormService.findVoteFormDetail(
         crewId,
         voteFormId,
       );
+      const vote = await this.voteService.findAllVote(crewId, voteFormId);
+
+      // 투표했는지 확인하기
+      for (let i = 0; i < vote.length; i++) {
+        if (vote[i].userId === userId) {
+          return res
+            .status(HttpStatus.NOT_ACCEPTABLE)
+            .json({ message: '이미 투표를 완료했습니다.' });
+        }
+      }
 
       // 다중 투표
-      if (
-        voteForm.voteform_multipleVotes === true ||
-        voteForm.voteform_multipleVotes === 1
-      ) {
+      if (voteForm.multipleVotes === true || voteForm.multipleVotes === 1) {
+        if (crew.userId === userId) {
+          await this.voteService.voting(userId, crewId, voteFormId, votingDto);
+          return res.status(HttpStatus.OK).json({ message: '투표 완료' });
+        }
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId || crew.userId === userId) {
+          if (member[i].member_userId === userId) {
             await this.voteService.voting(
               userId,
               crewId,
@@ -91,8 +107,7 @@ export class VoteController {
 
       // 단일 투표 검사
       if (
-        (voteForm.voteform_multipleVotes === false ||
-          voteForm.voteform_multipleVotes === 0) &&
+        (voteForm.multipleVotes === false || voteForm.multipleVotes === 0) &&
         votingDto.vote.includes(',')
       ) {
         return res
@@ -100,8 +115,12 @@ export class VoteController {
           .json({ message: '단일 투표만 가능합니다.' });
       }
       // 단일 투표
+      if (crew.userId === userId) {
+        await this.voteService.voting(userId, crewId, voteFormId, votingDto);
+        return res.status(HttpStatus.OK).json({ message: '투표 완료' });
+      }
       for (let i = 0; i < member.length; i++) {
-        if (member[i].member_userId === userId || crew.userId === userId) {
+        if (member[i].member_userId === userId) {
           await this.voteService.voting(userId, crewId, voteFormId, votingDto);
           return res.status(HttpStatus.OK).json({ message: '투표 완료' });
         }
@@ -133,18 +152,32 @@ export class VoteController {
   })
   @ApiResponse({
     status: 200,
-    description: 'crewId에 해당하는 투표를 조회.',
-    schema: {
-      example: {
-        schedule: {
-          userId: 1,
-          users: {
-            nickname: '돌핀맨',
-            prfileImage: 'URL',
+    description: '익명 투표',
+    content: {
+      'application/json': {
+        examples: {
+          '익명 투표': {
+            value: [
+              {
+                voteId: 1,
+                crewId: 22,
+                voteFormId: 4,
+                vote: '2시',
+              },
+            ],
           },
-          crewId: 1,
-          voteFormId: 2,
-          vote: '2시',
+          '공개 투표': {
+            value: [
+              {
+                voteId: 1,
+                crewId: 22,
+                voteFormId: 5,
+                vote: '4시',
+                userId: 3,
+                nickname: '돌핀맨',
+              },
+            ],
+          },
         },
       },
     },
@@ -158,6 +191,11 @@ export class VoteController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
       const voteForm = await this.voteFormService.findVoteFormDetail(
         crewId,
@@ -166,13 +204,20 @@ export class VoteController {
 
       // 익명 투표
       if (voteForm.anonymousVote === true || voteForm.anonymousVote === 1) {
+        if (crew.userId === userId) {
+          const vote = await this.voteService.findAllAnonymousVote(
+            crewId,
+            voteFormId,
+          );
+          return res.status(HttpStatus.OK).json({ voteForm, vote });
+        }
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllAnonymousVote(
               crewId,
               voteFormId,
             );
-            return res.status(HttpStatus.OK).json(vote);
+            return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
         }
         return res
@@ -182,10 +227,14 @@ export class VoteController {
 
       // 공개 투표
       if (voteForm.anonymousVote === false || voteForm.anonymousVote === 0) {
+        if (crew.userId === userId) {
+          const vote = await this.voteService.findAllVote(crewId, voteFormId);
+          return res.status(HttpStatus.OK).json({ voteForm, vote });
+        }
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllVote(crewId, voteFormId);
-            return res.status(HttpStatus.OK).json(vote);
+            return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
         }
         return res
@@ -228,6 +277,11 @@ export class VoteController {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findByCrewId(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
       const member = await this.memberService.findAllMember(crewId);
 
       for (let i = 0; i < member.length; i++) {

@@ -42,4 +42,24 @@ export class ParticipantService {
       );
     return canceledParticipant;
   }
+
+  /* crew 삭제에 따른 participant delete */
+  async deleteParticipant(crewId: number): Promise<any> {
+    const deleteParticipant =
+      await this.participantRepository.deleteParticipant(crewId);
+    return deleteParticipant;
+  }
+
+  /* schedule 삭제에 따라 participant delete */
+  async deleteParticipantBySchedule(
+    scheduleId: number,
+    crewId: number,
+  ): Promise<any> {
+    const deleteParticipant =
+      await this.participantRepository.deleteParticipantBySchedule(
+        scheduleId,
+        crewId,
+      );
+    return deleteParticipant;
+  }
 }

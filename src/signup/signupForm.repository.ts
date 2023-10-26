@@ -26,11 +26,23 @@ export class SignupFormRepository {
   /* form 불러오기 */
   async findOneSignupForm(signupFormId: number): Promise<any> {
     const signupForm = await this.signupFormRepository
-      .createQueryBuilder('signupForm')
+      .createQueryBuilder('signupform')
       .select(['signupFormId', 'question1', 'question2', 'createdAt', 'crewId'])
-      .where('signupForm.signupFormId = :id', { id: signupFormId })
+      .where('signupform.signupFormId = :signupFormId', { signupFormId })
       .getRawOne();
 
     return signupForm;
+  }
+
+  /* crew 삭제에 따른 signupForm 삭제 */
+  async deleteSignupForm(crewId: number): Promise<any> {
+    const deleteSignupForm = await this.signupFormRepository
+      .createQueryBuilder('signupform')
+      .delete()
+      .from(Signupform)
+      .where('signupform.crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteSignupForm;
   }
 }

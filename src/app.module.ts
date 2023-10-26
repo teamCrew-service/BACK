@@ -112,6 +112,9 @@ export class AppModule implements NestModule {
       },
       { path: 'signup/:signupId/confirmsignup', method: RequestMethod.PUT },
       { path: 'signup/:crewId', method: RequestMethod.GET },
+      { path: 'signup/mySubmitted/:crewId', method: RequestMethod.GET },
+      { path: 'signup/mySubmitted/:crewId/edit', method: RequestMethod.PUT },
+      { path: 'signup/mySubmitted/:crewId/delete', method: RequestMethod.PUT },
       { path: 'exitCrew/:crewId', method: RequestMethod.POST },
       { path: 'notice/:crewId/createNotice', method: RequestMethod.POST },
       { path: 'notice/:crewId', method: RequestMethod.GET },
@@ -126,7 +129,8 @@ export class AppModule implements NestModule {
         method: RequestMethod.DELETE,
       },
       { path: 'vote/:crewId/:voteFormId', method: RequestMethod.POST },
-      { path: 'vote/:crewId', method: RequestMethod.GET },
+      { path: 'vote/:crewId/:voteFormId', method: RequestMethod.GET },
+      { path: 'vote/:crewId/:voteFormId', method: RequestMethod.PUT },
       { path: 'image/saveImage/:crewId', method: RequestMethod.POST },
       { path: 'image/:crewId', method: RequestMethod.GET },
       { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
@@ -143,6 +147,7 @@ export class AppModule implements NestModule {
         { path: 'home/comingDate', method: RequestMethod.GET },
         { path: 'home/wholeComingDate', method: RequestMethod.GET },
         { path: 'home/map', method: RequestMethod.GET },
+        { path: 'home/map/:category', method: RequestMethod.GET },
         { path: 'home/:category', method: RequestMethod.GET },
       );
   }

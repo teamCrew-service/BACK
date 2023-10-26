@@ -127,7 +127,6 @@ export class ScheduleRepository {
     const schedule = await this.scheduleRepository
       .createQueryBuilder('schedule')
       .leftJoin('schedule.crewId', 'crew') // crew 테이블과의 join
-      .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
       .leftJoin(
         'participant',
         'participant',
@@ -137,6 +136,7 @@ export class ScheduleRepository {
       .where('schedule.scheduleId = :scheduleId', { scheduleId }) // 해당 scheduleId를 가진 멤버만 필터링
       .andWhere('crew.crewId = :crewId', { crewId }) // 해당 crewId를 가진 멤버만 필터링
       .select([
+        'schedule.scheduleId',
         'schedule.scheduleTitle',
         'schedule.scheduleDDay',
         'schedule.scheduleContent',
@@ -148,7 +148,7 @@ export class ScheduleRepository {
         'COUNT(participant.crewId) AS scheduleAttendedMember',
         'users.profileImage AS captainProfileImage',
       ]) // 필요한 필드만 선택
-      .getOne();
+      .getRawOne();
 
     return schedule;
   }
@@ -226,8 +226,8 @@ export class ScheduleRepository {
       .createQueryBuilder('schedule')
       .update(Schedule)
       .set({ userId: delegator })
-      .where('crewId = :crewId', { crewId })
-      .andWhere('deletedAt IS NULL')
+      .where('schedule.crewId = :crewId', { crewId })
+      .andWhere('schedule.deletedAt IS NULL')
       .execute();
   }
 
@@ -245,5 +245,19 @@ export class ScheduleRepository {
       .getRawMany();
 
     return schedule[0];
+  }
+
+  /* crew 삭제에 따른 schedule 삭제 */
+  async deleteScheduleByCrew(crewId: number): Promise<any> {
+    const koreaTimezoneOffset = 9 * 60;
+    const currentDate = new Date();
+    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
+    const deleteSchedule = await this.scheduleRepository
+      .createQueryBuilder('schedule')
+      .update(Schedule)
+      .set({ deletedAt: today })
+      .where('schedule.crewId = :crewId', { crewId })
+      .execute();
+    return deleteSchedule;
   }
 }

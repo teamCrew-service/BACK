@@ -17,7 +17,7 @@ export class UnsubscribeRepository {
     const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
     const toBeDeletedAccounts = await this.unsubscribeRepository
       .createQueryBuilder('unsubscribe')
-      .where('toBeDeletedDay <= :today', { today })
+      .where('unsubscribe.toBeDeletedDay <= :today', { today })
       .select(['userId', 'toBeDeletedDay'])
       .getRawMany();
 
@@ -53,7 +53,7 @@ export class UnsubscribeRepository {
       .createQueryBuilder('unsubscribe')
       .delete()
       .from(Unsubscribe)
-      .where('userId = :userId', { userId })
+      .where('unsubscribe.userId = :userId', { userId })
       .execute();
     return account;
   }

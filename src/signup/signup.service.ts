@@ -3,6 +3,7 @@ import { SignupFormRepository } from './signupForm.repository';
 import { SignupRepository } from './signup.repository';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberRepository } from 'src/member/member.repository';
+import { EditSignupDto } from './dto/editSubmit-signup.dto';
 
 @Injectable()
 export class SignupService {
@@ -50,8 +51,31 @@ export class SignupService {
 
   /* 본인이 작성한 signup확인 */
   async findMySignup(userId: number, crewId: number): Promise<any> {
-    const signup = this.signupRespository.findMySignup(userId, crewId);
+    const signup = await this.signupRespository.findMySignup(userId, crewId);
     return signup;
+  }
+
+  /* 본인이 작성한 signup 수정 */
+  async editMySubmitted(
+    editSignupDto: EditSignupDto,
+    crewId: number,
+    signupId: number,
+  ): Promise<any> {
+    const editSignup = await this.signupRespository.editMySubmitted(
+      editSignupDto,
+      crewId,
+      signupId,
+    );
+    return editSignup;
+  }
+
+  /* 본인이 작성한 signup 삭제 */
+  async deleteMySubmitted(crewId: number, signupId: number): Promise<any> {
+    const editSignup = await this.signupRespository.deleteMySubmitted(
+      crewId,
+      signupId,
+    );
+    return editSignup;
   }
 
   /* 본인이 작성한 signup 모두 조회 */
@@ -97,5 +121,15 @@ export class SignupService {
   async exitCrew(crewId: number, userId: number): Promise<any> {
     const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
     return exitCrew;
+  }
+
+  /* crew 삭제에 따른 signup, signupForm 삭제 */
+  async deleteSignupAndSignupForm(crewId: number): Promise<any> {
+    const deleteSignup = await Promise.all([
+      this.signupRespository.deleteSignup(crewId),
+      this.signupFormRepository.deleteSignupForm(crewId),
+    ]);
+
+    return deleteSignup;
   }
 }

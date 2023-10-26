@@ -67,10 +67,22 @@ export class MemberRepository {
       .createQueryBuilder('member')
       .delete()
       .from(Member)
-      .where('crewId = :crewId', { crewId })
-      .andWhere('userId = :userId', { userId })
+      .where('member.crewId = :crewId', { crewId })
+      .andWhere('member.userId = :userId', { userId })
       .execute();
 
     return exitCrew;
+  }
+
+  /* member 삭제 */
+  async deleteMember(crewId: number): Promise<any> {
+    const deleteMember = await this.memberRepository
+      .createQueryBuilder('member')
+      .delete()
+      .from(Member)
+      .where('member.crewId = :crewId', { crewId })
+      .execute();
+
+    return deleteMember;
   }
 }

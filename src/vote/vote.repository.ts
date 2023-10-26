@@ -48,13 +48,13 @@ export class VoteRepository {
       .where('vote.crewId = :crewId', { crewId })
       .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
       .select([
-        'vote.voteId',
-        'vote.userId',
-        'users.nickname',
-        'users.profileImage',
-        'vote.crewId',
-        'vote.voteFormId',
-        'vote.vote',
+        'vote.voteId AS voteId',
+        'vote.userId AS userId',
+        'users.nickname AS nickname',
+        'users.profileImage AS profileImage',
+        'vote.crewId AS crewId',
+        'vote.voteFormId AS voteFormId',
+        'vote.vote AS vote',
       ])
       .groupBy('vote.voteId')
       .getRawMany();
@@ -65,10 +65,10 @@ export class VoteRepository {
   async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
     const vote = await this.voteRepository
       .createQueryBuilder('vote')
-      .where('vote.crewId = :crewId', { crewId })
+      .where('crewId = :crewId', { crewId })
       .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
       .select(['voteId', 'crewId', 'voteFormId', 'vote'])
-      .groupBy('vote.voteId')
+      .groupBy('voteId')
       .getRawMany();
     return vote;
   }
@@ -115,5 +115,16 @@ export class VoteRepository {
       }
     }
     return { message: '수정한 투표를 성공적으로 저장했습니다.' };
+  }
+
+  /* crew 삭제에 따라 투표 삭제하기 */
+  async deleteVoteByCrew(crewId: number): Promise<any> {
+    const deleteVote = await this.voteRepository
+      .createQueryBuilder('vote')
+      .delete()
+      .from(Vote)
+      .where('vote.crewId = :crewId', { crewId })
+      .execute();
+    return deleteVote;
   }
 }

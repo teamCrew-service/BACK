@@ -53,4 +53,10 @@ export class VoteService {
     );
     return editedVote;
   }
+
+  /* crew 삭제에 따라 투표 삭제하기 */
+  async deleteVoteByCrew(crewId: number): Promise<any> {
+    const deleteVote = await this.voteRepository.deleteVoteByCrew(crewId);
+    return deleteVote;
+  }
 }

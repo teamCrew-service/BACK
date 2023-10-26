@@ -6,7 +6,7 @@ export class EditUserInfoDto {
   @ApiProperty({
     example: '돌핀맨',
     description: 'nickname',
-    required: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -16,7 +16,7 @@ export class EditUserInfoDto {
   @ApiProperty({
     example: 20,
     description: '나이',
-    required: true,
+    required: false,
   })
   @IsOptional()
   @IsNumber()
@@ -26,7 +26,7 @@ export class EditUserInfoDto {
   @ApiProperty({
     example: '남자',
     description: '성별',
-    required: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -36,7 +36,7 @@ export class EditUserInfoDto {
   @ApiProperty({
     example: 'url',
     description: '프로필 이미지',
-    required: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -56,7 +56,7 @@ export class EditUserInfoDto {
   @ApiProperty({
     example: '파주시 해솔마을',
     description: '자신의 위치',
-    required: true,
+    required: false,
   })
   @IsString()
   @IsOptional()

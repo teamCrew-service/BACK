@@ -22,13 +22,23 @@ export class TopicRepository {
         for (const interestTopic of topics) {
           const topic = new Topic();
           topic.userId = userId;
-          topic.interestTopic = interestTopic;
+          if (interestTopic.includes('%2F') === true) {
+            const item = interestTopic.replace('%2F', '/');
+            topic.interestTopic = item;
+          } else {
+            topic.interestTopic = interestTopic;
+          }
           await this.topicRepository.save(topic);
         }
       } else {
         const topic = new Topic();
         topic.userId = userId;
-        topic.interestTopic = interestTopic;
+        if (interestTopic.includes('%2F') === true) {
+          const item = interestTopic.replace('%2F', '/');
+          topic.interestTopic = item;
+        } else {
+          topic.interestTopic = interestTopic;
+        }
         await this.topicRepository.save(topic);
       }
 
@@ -59,7 +69,7 @@ export class TopicRepository {
         .createQueryBuilder()
         .delete()
         .from(Topic)
-        .where('userId = :userId', { userId })
+        .where('topic.userId = :userId', { userId })
         .execute();
 
       // 새로운 topic 넣어주기
@@ -92,7 +102,7 @@ export class TopicRepository {
       .createQueryBuilder('topic')
       .delete()
       .from(Topic)
-      .where('userId = :userId', { userId })
+      .where('topic.userId = :userId', { userId })
       .execute();
     return deleteTopic;
   }
