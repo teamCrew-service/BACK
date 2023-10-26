@@ -6,7 +6,6 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-// import { RoomsService } from './rooms.service';
 import { MessagesService } from './messages.service';
 
 @WebSocketGateway({ namespace: '/', cors: true, path: '/chat' }) // websocket 게이트웨이 설정
