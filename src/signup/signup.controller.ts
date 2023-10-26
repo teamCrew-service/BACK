@@ -22,7 +22,6 @@ import { CrewService } from 'src/crew/crew.service';
 import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberService } from 'src/member/member.service';
 import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
-import { RoomsService } from 'src/chat/rooms.service';
 
 @Controller()
 @ApiTags('signup API')
@@ -32,7 +31,6 @@ export class SignupController {
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
     private readonly leavecrewService: LeavecrewService,
-    private readonly roomsService: RoomsService,
   ) {}
 
   /* 모임 가입(form 생성): 버전 업그레이드에 맞춰 사용*/
@@ -94,7 +92,6 @@ export class SignupController {
           .json({ message: '모임 인원이 가득 찼습니다.' });
       }
       await this.memberService.addMember(crewId, userId);
-      await this.roomsService.findOrCreateByCrewId(crewId);
 
       return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
     } catch (e) {

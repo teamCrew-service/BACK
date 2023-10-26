@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { Room } from './room.schema';
+import { Document } from 'mongoose';
+// import { Room } from './room.schema';
 
 @Schema()
 export class Message extends Document {
@@ -10,8 +10,8 @@ export class Message extends Document {
   @Prop()
   content: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Room' })
-  room: Room;
+  @Prop()
+  crewId: number;
 
   @Prop({ default: Date.now })
   createdAt: Date;
