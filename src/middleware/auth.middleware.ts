@@ -14,7 +14,7 @@ export class AuthMiddleWare implements NestMiddleware<Request, Response> {
       const authorizationCookies = req.cookies.authorization;
       const authorizationHeaders = req.headers.authorization;
       const authorization = authorizationCookies
-        ? authorizationCookies
+        ? `Bearer ` + authorizationCookies
         : authorizationHeaders;
       // Cookie가 존재하지 않을 경우
       if (!authorization) {
