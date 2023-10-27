@@ -14,7 +14,7 @@ export class LoginMiddleware implements NestMiddleware<Request, Response> {
       const authorizationCookies = req.cookies.authorization;
       const authorizationHeaders = req.headers.authorization;
       const authorization = authorizationCookies
-        ? authorizationCookies
+        ? `Bearer ` + authorizationCookies
         : authorizationHeaders;
 
       // 인증 토큰이 없는 경우 다음 미들웨어로 진행합니다.
