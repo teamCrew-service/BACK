@@ -413,6 +413,9 @@ export class CrewController {
       const captainTopics = await this.topicService.findTopicById(captainId);
       const member = await this.memberService.findAllMember(crewId);
       const likeCount = await this.likeService.countLikedCrew(crewId);
+      const crewLiked = await this.likeService.confirmLiked(crewId, userId);
+      let likeCheck = false;
+      !crewLiked ? (likeCheck = false) : (likeCheck = true);
 
       // 모임이 생긴 기간
       const today: any = new Date();
@@ -460,6 +463,7 @@ export class CrewController {
           schedule,
           allNotice,
           likeCount,
+          likeCheck,
           personType: 'captain',
           myUserId: userId,
         });
@@ -475,6 +479,7 @@ export class CrewController {
             schedule,
             allNotice,
             likeCount,
+            likeCheck,
             personType: 'member',
             myUserId: userId,
           });
@@ -486,6 +491,7 @@ export class CrewController {
         captainTopics,
         member,
         likeCount,
+        likeCheck,
         personType: 'person',
         myUserId: userId,
       });
