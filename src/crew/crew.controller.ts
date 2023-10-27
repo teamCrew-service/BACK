@@ -431,6 +431,7 @@ export class CrewController {
           captainTopics,
           member,
           personType: 'person',
+          myUserId: userId,
         });
       }
 
@@ -460,6 +461,7 @@ export class CrewController {
           allNotice,
           likeCount,
           personType: 'captain',
+          myUserId: userId,
         });
       }
       for (let i = 0; i < member.length; i++) {
@@ -474,6 +476,7 @@ export class CrewController {
             allNotice,
             likeCount,
             personType: 'member',
+            myUserId: userId,
           });
         }
       }
@@ -484,6 +487,7 @@ export class CrewController {
         member,
         likeCount,
         personType: 'person',
+        myUserId: userId,
       });
     } catch (e) {
       console.error(e);
