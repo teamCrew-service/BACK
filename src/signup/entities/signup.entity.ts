@@ -20,7 +20,7 @@ export class Signup {
   @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @ManyToOne(() => Signupform, (signupForm) => signupForm.signup)
+  @ManyToOne(() => Signupform, (signupform) => signupform.signup)
   @JoinColumn({ name: 'signupFormId' })
   signupFormId: number;
 
