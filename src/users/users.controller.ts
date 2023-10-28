@@ -249,7 +249,7 @@ export class UsersController {
     const user = await this.usersService.findUserByEmail(email, provider);
     const userId = user.userId;
     const token = await this.authService.getToken(userId);
-    res.cookie('authorization', `Bearer ${token}`);
+    res.cookie('authorization', token);
     return res.status(HttpStatus.OK).json({ message: '로그인 성공' });
   }
 

@@ -414,10 +414,18 @@ export class CrewController {
       const captainTopics = await this.topicService.findTopicById(captainId);
       const member = await this.memberService.findAllMember(crewId);
       const likeCount = await this.likeService.countLikedCrew(crewId);
+      const crewLiked = await this.likeService.confirmLiked(crewId, userId);
+      let likeCheck = false;
+      !crewLiked ? (likeCheck = false) : (likeCheck = true);
 
       // 모임이 생긴 기간
-      const today: any = new Date();
+      const currentDate: any = new Date();
+      const koreaTimezoneOffset = 9 * 60;
+      const today: any = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
       const startDate: any = new Date(crew.crew_createdAt);
+      console.log(startDate);
       const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
       const createdCrewPeriod: number = Math.floor(
         (today - startDate) / oneDayInMilliseconds,
@@ -432,6 +440,7 @@ export class CrewController {
           captainTopics,
           member,
           personType: 'person',
+          myUserId: userId,
         });
       }
 
@@ -460,7 +469,9 @@ export class CrewController {
           schedule,
           allNotice,
           likeCount,
+          likeCheck,
           personType: 'captain',
+          myUserId: userId,
         });
       }
       for (let i = 0; i < member.length; i++) {
@@ -474,7 +485,9 @@ export class CrewController {
             schedule,
             allNotice,
             likeCount,
+            likeCheck,
             personType: 'member',
+            myUserId: userId,
           });
         }
       }
@@ -484,7 +497,9 @@ export class CrewController {
         captainTopics,
         member,
         likeCount,
+        likeCheck,
         personType: 'person',
+        myUserId: userId,
       });
     } catch (e) {
       console.error(e);
