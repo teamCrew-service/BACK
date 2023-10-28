@@ -3,8 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
-import * as debug from 'debug';
-import { Server as IOServer } from 'socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -39,19 +37,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  // await app.listen(80);
-  const server = await app.listen(80);
-  const io = new IOServer(server, {
-    path: '/chat',
-    cors: {
-      origin: '*', // 모든 도메인에 대한 액세스를 허용
-      methods: ['GET,HEAD,PUT,PATCH,POST,DELETE'], // 허용된 메서드 목록
-      credentials: true,
-    },
-  });
-
-  io.on('connection', (socket) => {
-    debug('Socket.io connection established')(socket.id);
-  });
+  await app.listen(80);
 }
 bootstrap();

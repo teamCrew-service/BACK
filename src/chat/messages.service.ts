@@ -16,10 +16,14 @@ export class MessagesService {
     content: string,
   ): Promise<Message> {
     console.log('createMessage called with:', crewId, userId, content);
+
+    const localDate = new Date();
+    localDate.setHours(localDate.getHours() + 9); // 한국 시간으로 변경
     const message = new this.messageModel({
       userId,
       content,
       crewId,
+      createdAt: localDate,
     });
     console.log('Message object created:', message);
 
@@ -41,7 +45,7 @@ export class MessagesService {
     try {
       // 방 번호와 skip, limit을 기반으로 이전 메시지를 조회합니다.
       const messages = await this.messageModel
-        .find({ room: crewId })
+        .find({ crewId: crewId })
         .sort({ createdAt: -1 }) // 최근 메시지부터 불러오기
         .skip(skip)
         .limit(limit)

@@ -168,9 +168,9 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
-      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
-        userId,
-      );
+      // const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+      //   userId,
+      // );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
@@ -218,9 +218,9 @@ export class UsersController {
       const token = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
-      const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
-        userId,
-      );
+      // const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
+      //   userId,
+      // );
       if (user.location === null) {
         const query = '?token=' + token;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
@@ -276,7 +276,7 @@ export class UsersController {
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
+      const { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
       const { userId } = res.locals.user;
       //files가 비어있으면 실행안함
       if (files.length > 0) {
@@ -451,7 +451,7 @@ export class UsersController {
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
+      const { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
       const { userId } = res.locals.user;
 
       if (!editTopicAndInfoDto) {

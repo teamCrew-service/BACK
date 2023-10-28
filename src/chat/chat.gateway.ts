@@ -8,15 +8,21 @@ import {
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from './messages.service';
 
-@WebSocketGateway({ namespace: '/', cors: true, path: '/chat' }) // websocket 게이트웨이 설정
+@WebSocketGateway({
+  namespace: '/',
+  cors: {
+    origin: 'http://localhost:3000', // 클라이언트의 주소
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['my-custom-header'],
+    credentials: true,
+  },
+  path: '/chat',
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server; // 웹소켓 서버 객체
 
   // 의존성 주입
-  constructor(
-    // private roomsService: RoomsService,
-    private messagesService: MessagesService,
-  ) {}
+  constructor(private messagesService: MessagesService) {}
 
   // 클라이언트가 연결되었을 때 실행되는 메소드
   handleConnection(client: Socket, ...args: any[]) {
@@ -39,6 +45,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       payload.crewId,
       0,
     );
+    console.log('findMessagesBycrewId messages', messages);
+
     if (messages && messages.length > 0) {
       console.log(
         `Sending previous messages to client ${client.id} for crewId ${payload.crewId}:`,
@@ -49,6 +57,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server
         .to(messages[0].crewId.toString())
         .emit('message', `User ${payload.userId} has joined the room.`);
+      client.emit('serverMessage', 'joinRoom 성공');
     }
   }
 
@@ -66,7 +75,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     client: Socket,
-    payload: { crewId: number; userId: number; content: string },
+    payload: { crewId: number; userId: number; content: string; user: string },
   ) {
     console.log('Payload: ', payload);
 
@@ -77,6 +86,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       payload.content,
     );
     console.log('Created Message: ', message);
-    this.server.to(payload.crewId.toString()).emit('message', message); // 방에 메시지를 보냄
+    this.server.to(payload.crewId.toString()).emit('message', { ...message }); // 방에 메시지를 보냄
   }
 }

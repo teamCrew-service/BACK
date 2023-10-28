@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-// import { Room } from './room.schema';
 
 @Schema()
 export class Message extends Document {

@@ -31,7 +31,7 @@ import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfigThumbnail } from 'src/crew/multerConfig';
 import { multerConfigImage } from 'src/crew/multerConfig';
 import { multerConfig } from 'src/crew/multerConfig';
@@ -111,7 +111,8 @@ export class CrewController {
   ): Promise<any> {
     //console.log(joinCreateCrewDto);
     //joinCreateCrewDto = JSON.parse(joinCreateCrewDto);
-    let { createCrewDto, createSignupFormDto } = JSON.parse(joinCreateCrewDto);
+    const { createCrewDto, createSignupFormDto } =
+      JSON.parse(joinCreateCrewDto);
     const { userId } = res.locals.user;
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
     //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
