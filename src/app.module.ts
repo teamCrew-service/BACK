@@ -46,7 +46,7 @@ import { ChatModule } from './chat/chat.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       timezone: 'Asia/Seoul',
       synchronize: true,
-      // synchronize: false,
+      //synchronize: false,
     }),
     UsersModule,
     AuthModule,
