@@ -276,7 +276,7 @@ export class UsersController {
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
+      const { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
       const { userId } = res.locals.user;
       //files가 비어있으면 실행안함
       if (files.length > 0) {
@@ -451,7 +451,7 @@ export class UsersController {
     @Res() res: any,
   ): Promise<any> {
     try {
-      let { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
+      const { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
       const { userId } = res.locals.user;
 
       if (!editTopicAndInfoDto) {

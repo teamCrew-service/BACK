@@ -27,8 +27,8 @@ import { ParticipantModule } from './participant/participant.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ImageModule } from './image/image.module';
 import { ReportModule } from './report/report.module';
-import { UnsubscribeModule } from './unsubscribe/unsubscribe.module';
-import { LeavecrewModule } from './leavecrew/leavecrew.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -45,8 +45,8 @@ import { LeavecrewModule } from './leavecrew/leavecrew.module';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       timezone: 'Asia/Seoul',
-      // synchronize: true,
-      synchronize: false,
+      synchronize: true,
+      // synchronize: false,
     }),
     UsersModule,
     AuthModule,
@@ -63,8 +63,8 @@ import { LeavecrewModule } from './leavecrew/leavecrew.module';
     ParticipantModule,
     ImageModule,
     ReportModule,
-    UnsubscribeModule,
-    LeavecrewModule,
+    MongooseModule.forRoot(process.env.MONGODB_URL),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

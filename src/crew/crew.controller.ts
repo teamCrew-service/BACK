@@ -31,11 +31,10 @@ import { NoticeService } from 'src/notice/notice.service';
 import { VoteFormService } from 'src/voteform/voteform.service';
 import { LikeService } from 'src/like/like.service';
 import { ImageService } from 'src/image/image.service';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfigThumbnail } from 'src/crew/multerConfig';
 import { multerConfigImage } from 'src/crew/multerConfig';
 import { multerConfig } from 'src/crew/multerConfig';
-import { join } from 'path';
 import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
 import { IsOptional } from 'class-validator';
@@ -112,7 +111,8 @@ export class CrewController {
   ): Promise<any> {
     //console.log(joinCreateCrewDto);
     //joinCreateCrewDto = JSON.parse(joinCreateCrewDto);
-    let { createCrewDto, createSignupFormDto } = JSON.parse(joinCreateCrewDto);
+    const { createCrewDto, createSignupFormDto } =
+      JSON.parse(joinCreateCrewDto);
     const { userId } = res.locals.user;
     //thumbnail 을 aws3에 업로드하고 그 url을 받아온다.
     //const filename = `${createCrewDto.crewTitle}-${Date.now()}`; // 파일명 중복 방지
@@ -123,6 +123,7 @@ export class CrewController {
     //createCrewDto.thumbnail = 'thumbnail_temp';
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
+
     if (newCrew.crewSignup === true || newCrew.crewSignup === 1) {
       await this.signupService.createSignupForm(
         newCrew.crewId,

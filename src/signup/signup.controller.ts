@@ -99,6 +99,7 @@ export class SignupController {
           .json({ message: '모임 인원이 가득 찼습니다.' });
       }
       await this.memberService.addMember(crewId, userId);
+
       return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
     } catch (e) {
       console.error(e);
