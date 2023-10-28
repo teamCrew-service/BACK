@@ -115,6 +115,8 @@ jobs:
           -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
           -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
+          -e MONGODB_URL=${{ secrets.MONGODB_URL }} \
+          -e CORS_ORIGIN=${{ secrets.CORS_ORIGIN }} \
           --name superman --restart always ${{ env.DOCKER_IMAGE }}:latest
 
 
