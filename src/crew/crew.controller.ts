@@ -418,8 +418,13 @@ export class CrewController {
       !crewLiked ? (likeCheck = false) : (likeCheck = true);
 
       // 모임이 생긴 기간
-      const today: any = new Date();
+      const currentDate: any = new Date();
+      const koreaTimezoneOffset = 9 * 60;
+      const today: any = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
       const startDate: any = new Date(crew.crew_createdAt);
+      console.log(startDate);
       const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
       const createdCrewPeriod: number = Math.floor(
         (today - startDate) / oneDayInMilliseconds,
