@@ -73,19 +73,23 @@ export class SignupController {
   @ApiBearerAuth('accessToken')
   async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
       if (crew.userId === userId) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '모임의 방장입니다.' });
       }
+      // 멤버 숫자 확인, 가입 여부 확인
       if (crew.crewMaxMember === member.length) {
         for (let i = 0; i < member.length; i++) {
           if (member[i].member_userId === userId) {
@@ -163,18 +167,22 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 권한 확인
       if (crew.userId === userId) {
         return res
           .status(HttpStatus.FORBIDDEN)
           .json({ message: '모임장입니다.' });
       }
+      // 탈퇴 기록 확인
       const leaveUser = await this.leavecrewService.findOneLeaveUser(
         crewId,
         userId,
@@ -184,6 +192,24 @@ export class SignupController {
           message: '탈퇴 기록이 있습니다. 7일 뒤에 다시 가입할 수 있습니다.',
         });
       }
+
+      // 멤버 조회
+      const member = await this.memberService.findAllMember(crewId);
+      // 멤버 숫자 확인, 가입 여부 확인
+      if (crew.crewMaxMember === member.length) {
+        for (let i = 0; i < member.length; i++) {
+          if (member[i].member_userId === userId) {
+            return res
+              .status(HttpStatus.BAD_REQUEST)
+              .json({ message: '모임에 이미 가입했습니다.' });
+          }
+        }
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임 인원이 가득 찼습니다.' });
+      }
+
+      // 가입서 조회
       const submitedSignup = await this.signupService.findMySignup(
         userId,
         crewId,
@@ -196,6 +222,7 @@ export class SignupController {
       if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
         throw new Error('작성을 완료해주세요');
       }
+      // 가입서 생성
       await this.signupService.submitSignup(
         userId,
         crewId,
@@ -237,6 +264,7 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
       // 모임 정보 확인
       const crew = await this.crewService.findByCrewId(crewId);
@@ -278,6 +306,7 @@ export class SignupController {
     @Param('crewId') crewId: number,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
       // 제출한 가입서 조회
       const signup = await this.signupService.findMySignup(userId, crewId);
@@ -286,12 +315,14 @@ export class SignupController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '제출한 가입서가 없습니다.' });
       }
+      // 작성자 권한
       if (signup.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '작성자가 아닙니다.' });
       }
       const signupId = signup.signupId;
+      // 가입서 수정
       const editSignup = await this.signupService.editMySubmitted(
         editSignupDto,
         crewId,
@@ -327,6 +358,7 @@ export class SignupController {
     @Param('crewId') crewId: number,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
       // 제출한 가입서 조회
       const signup = await this.signupService.findMySignup(userId, crewId);
@@ -335,12 +367,14 @@ export class SignupController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '제출한 가입서가 없습니다.' });
       }
+      // 작성자 권한
       if (signup.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '작성자가 아닙니다.' });
       }
       const signupId = signup.signupId;
+      // 가입서 삭제
       const deleteSignup = await this.signupService.deleteMySubmitted(
         crewId,
         signupId,
@@ -391,13 +425,16 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 권한 확인
       if (crew.userId === userId) {
         const signup = await this.signupService.findAllSubmitted(crewId);
         return res.status(HttpStatus.OK).json(signup);
@@ -430,6 +467,7 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // 가입서 확인
       await this.signupService.confirmSingup(singupId, confirmSingupDto);
       return res
         .status(HttpStatus.OK)
@@ -457,13 +495,16 @@ export class SignupController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
         if (member[i].member_userId === userId) {

@@ -15,34 +15,55 @@ export class SignupFormRepository {
     crewId: number,
     createSignupFormDto: any,
   ): Promise<any> {
-    const signupForm = new Signupform();
-    signupForm.crewId = crewId;
-    signupForm.question1 = createSignupFormDto.question1;
-    signupForm.question2 = createSignupFormDto.question2;
-    await this.signupFormRepository.save(signupForm);
-    return signupForm;
+    try {
+      const signupForm = new Signupform();
+      signupForm.crewId = crewId;
+      signupForm.question1 = createSignupFormDto.question1;
+      signupForm.question2 = createSignupFormDto.question2;
+      await this.signupFormRepository.save(signupForm);
+      return signupForm;
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupFormRepository/createSignupForm');
+    }
   }
 
   /* form 불러오기 */
   async findOneSignupForm(signupFormId: number): Promise<any> {
-    const signupForm = await this.signupFormRepository
-      .createQueryBuilder('signupform')
-      .select(['signupFormId', 'question1', 'question2', 'createdAt', 'crewId'])
-      .where('signupform.signupFormId = :signupFormId', { signupFormId })
-      .getRawOne();
+    try {
+      const signupForm = await this.signupFormRepository
+        .createQueryBuilder('signupform')
+        .select([
+          'signupFormId',
+          'question1',
+          'question2',
+          'createdAt',
+          'crewId',
+        ])
+        .where('signupform.signupFormId = :signupFormId', { signupFormId })
+        .getRawOne();
 
-    return signupForm;
+      return signupForm;
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupFormRepository/findOneSignupForm');
+    }
   }
 
   /* crew 삭제에 따른 signupForm 삭제 */
   async deleteSignupForm(crewId: number): Promise<any> {
-    const deleteSignupForm = await this.signupFormRepository
-      .createQueryBuilder('signupform')
-      .delete()
-      .from(Signupform)
-      .where('signupform.crewId = :crewId', { crewId })
-      .execute();
+    try {
+      const deleteSignupForm = await this.signupFormRepository
+        .createQueryBuilder('signupform')
+        .delete()
+        .from(Signupform)
+        .where('signupform.crewId = :crewId', { crewId })
+        .execute();
 
-    return deleteSignupForm;
+      return deleteSignupForm;
+    } catch (e) {
+      console.error(e);
+      throw new Error('SignupFormRepository/deleteSignupForm');
+    }
   }
 }
