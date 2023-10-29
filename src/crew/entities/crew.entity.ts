@@ -32,42 +32,6 @@ export class Crew {
   @JoinColumn({ name: 'userId' })
   userId: number;
 
-  @OneToMany(() => Member, (member) => member.crewId)
-  member: Member[];
-
-  @OneToMany(() => Schedule, (schedule) => schedule.crewId)
-  schedule: Schedule[];
-
-  @OneToMany(() => Signupform, (signupForm) => signupForm.crewId)
-  signupForm: Signupform[];
-
-  @OneToMany(() => Signup, (signup) => signup.crewId)
-  signup: Signupform[];
-
-  @OneToMany(() => Like, (like) => like.crewId)
-  like: Like[];
-
-  @OneToMany(() => Notice, (notice) => notice.crewId)
-  notice: Notice[];
-
-  @OneToMany(() => VoteForm, (voteForm) => voteForm.crewId)
-  voteForm: VoteForm[];
-
-  @OneToMany(() => Vote, (vote) => vote.crewId)
-  vote: Vote[];
-
-  @OneToMany(() => Participant, (participant) => participant.crewId)
-  participant: Participant[];
-
-  @OneToMany(() => Image, (image) => image.crewId)
-  image: Image[];
-
-  @OneToMany(() => Report, (report) => report.crewId)
-  report: Report[];
-
-  @OneToMany(() => Leavecrew, (leavecrew) => leavecrew.crewId)
-  leavecrew: Leavecrew[];
-
   @Column({ type: 'varchar' })
   category: string;
 
@@ -121,4 +85,40 @@ export class Crew {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt: Date;
+
+  @OneToMany(() => Member, (member) => member.crewId)
+  member: Member[];
+
+  @OneToMany(() => Schedule, (schedule) => schedule.crewId)
+  schedule: Schedule[];
+
+  @OneToMany(() => Signupform, (signupForm) => signupForm.crewId)
+  signupForm: Signupform[];
+
+  @OneToMany(() => Signup, (signup) => signup.crewId)
+  signup: Signupform[];
+
+  @OneToMany(() => Like, (like) => like.crewId)
+  like: Like[];
+
+  @OneToMany(() => Notice, (notice) => notice.crewId)
+  notice: Notice[];
+
+  @OneToMany(() => VoteForm, (voteForm) => voteForm.crewId)
+  voteForm: VoteForm[];
+
+  @OneToMany(() => Vote, (vote) => vote.crewId)
+  vote: Vote[];
+
+  @OneToMany(() => Participant, (participant) => participant.crewId)
+  participant: Participant[];
+
+  @OneToMany(() => Image, (image) => image.crewId)
+  image: Image[];
+
+  @OneToMany(() => Report, (report) => report.crewId)
+  report: Report[];
+
+  @OneToMany(() => Leavecrew, (leavecrew) => leavecrew.crewId)
+  leavecrew: Leavecrew[];
 }
