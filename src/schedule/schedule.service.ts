@@ -10,105 +10,120 @@ export class ScheduleService {
 
   @Cron('0 0 * * * *')
   async scheduleCron() {
-    await this.scheduleRepository.updateScheduleIsDone();
+    try {
+      await this.scheduleRepository.updateScheduleIsDone();
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/scheduleCron');
+    }
   }
 
   // 일정 조회
   async findSchedule(userId: number): Promise<any[]> {
-    const rawData = await this.scheduleRepository.findSchedule(userId);
+    try {
+      const rawData = await this.scheduleRepository.findSchedule(userId);
 
-    // 일정별로 데이터를 묶는 맵을 생성
-    const scheduleMap = new Map();
+      // 일정별로 데이터를 묶는 맵을 생성
+      const scheduleMap = new Map();
 
-    for (const data of rawData) {
-      const scheduleKey = data.scheduleTitle + data.scheduleDDay; // 일정 제목과 날짜를 키로 사용
-      let scheduleData = scheduleMap.get(scheduleKey); // 일정별로 데이터를 묶음
+      for (const data of rawData) {
+        const scheduleKey = data.scheduleTitle + data.scheduleDDay; // 일정 제목과 날짜를 키로 사용
+        let scheduleData = scheduleMap.get(scheduleKey); // 일정별로 데이터를 묶음
 
-      // 일정이 없을 경우
-      if (!scheduleData) {
-        scheduleData = {
-          schedule: {
-            scheduleTitle: data.scheduleTitle,
-            scheduleDDay: data.scheduleDDay,
-            scheduleId: data.scheduleId,
-            crewType: data.crewType,
-            crewId: data.crewId,
-          },
-          profileImage: [],
-        };
-        scheduleMap.set(scheduleKey, scheduleData);
+        // 일정이 없을 경우
+        if (!scheduleData) {
+          scheduleData = {
+            schedule: {
+              scheduleTitle: data.scheduleTitle,
+              scheduleDDay: data.scheduleDDay,
+              scheduleId: data.scheduleId,
+              crewType: data.crewType,
+              crewId: data.crewId,
+            },
+            profileImage: [],
+          };
+          scheduleMap.set(scheduleKey, scheduleData);
+        }
+
+        // 멤버의 프로필 이미지를 배열에 추가
+        if (data.participant_profileImage) {
+          scheduleData.profileImage.push({
+            participant_profileImage: data.participant_profileImage,
+            participant_userId: data.participant_userId,
+            participant_userName: data.participant_userName,
+          });
+        } else {
+          scheduleData.profileImage.push({
+            user_profileImage: null,
+            participant_userId: data.participant_userId,
+            participant_userName: data.participant_userName,
+          });
+        }
       }
 
-      // 멤버의 프로필 이미지를 배열에 추가
-      if (data.participant_profileImage) {
-        scheduleData.profileImage.push({
-          participant_profileImage: data.participant_profileImage,
-          participant_userId: data.participant_userId,
-          participant_userName: data.participant_userName,
-        });
-      } else {
-        scheduleData.profileImage.push({
-          user_profileImage: null,
-          participant_userId: data.participant_userId,
-          participant_userName: data.participant_userName,
-        });
-      }
+      // 결과 배열을 생성
+      const result = Array.from(scheduleMap.values());
+
+      return result;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/findSchedule');
     }
-
-    // 결과 배열을 생성
-    const result = Array.from(scheduleMap.values());
-
-    return result;
   }
 
   // 다가오는 일정, 참여 완료 일정 전체
   async findParticipateSchedule(userId: number): Promise<any> {
-    const rawData = await this.scheduleRepository.findParticipateSchedule(
-      userId,
-    );
+    try {
+      const rawData = await this.scheduleRepository.findParticipateSchedule(
+        userId,
+      );
 
-    // 일정별로 데이터를 묶는 맵을 생성
-    const scheduleMap = new Map();
+      // 일정별로 데이터를 묶는 맵을 생성
+      const scheduleMap = new Map();
 
-    for (const data of rawData) {
-      const scheduleKey = data.shceduleTitle + data.scheduleDDay;
-      let scheduleData = scheduleMap.get(scheduleKey);
+      for (const data of rawData) {
+        const scheduleKey = data.shceduleTitle + data.scheduleDDay;
+        let scheduleData = scheduleMap.get(scheduleKey);
 
-      // 일정이 없을 경우
-      if (!scheduleData) {
-        scheduleData = {
-          schedule: {
-            scheduleTitle: data.scheduleTitle,
-            scheduleDDay: data.scheduleDDay,
-            scheduleId: data.scheduleId,
-            crewType: data.crewType,
-            crewId: data.crewId,
-          },
-          profileImage: [],
-        };
-        scheduleMap.set(scheduleKey, scheduleData);
+        // 일정이 없을 경우
+        if (!scheduleData) {
+          scheduleData = {
+            schedule: {
+              scheduleTitle: data.scheduleTitle,
+              scheduleDDay: data.scheduleDDay,
+              scheduleId: data.scheduleId,
+              crewType: data.crewType,
+              crewId: data.crewId,
+            },
+            profileImage: [],
+          };
+          scheduleMap.set(scheduleKey, scheduleData);
+        }
+
+        // 멤버의 프로필 이미지를 배열에 추가
+        if (data.participant_profileImage) {
+          scheduleData.profileImage.push({
+            participant_profileImage: data.participant_profileImage,
+            participant_userId: data.participant_userId,
+            participant_userName: data.participant_userName,
+          });
+        } else {
+          scheduleData.profileImage.push({
+            user_profileImage: null,
+            participant_userId: data.participant_userId,
+            participant_userName: data.participant_userName,
+          });
+        }
       }
 
-      // 멤버의 프로필 이미지를 배열에 추가
-      if (data.participant_profileImage) {
-        scheduleData.profileImage.push({
-          participant_profileImage: data.participant_profileImage,
-          participant_userId: data.participant_userId,
-          participant_userName: data.participant_userName,
-        });
-      } else {
-        scheduleData.profileImage.push({
-          user_profileImage: null,
-          participant_userId: data.participant_userId,
-          participant_userName: data.participant_userName,
-        });
-      }
+      // 결과 배열을 생성
+      const result = Array.from(scheduleMap.values());
+
+      return result;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/findParticipateSchedule');
     }
-
-    // 결과 배열을 생성
-    const result = Array.from(scheduleMap.values());
-
-    return result;
   }
 
   // 일정 생성
@@ -181,32 +196,52 @@ export class ScheduleService {
 
   /* crew 해당하는 schedule 조회 */
   async findScheduleByCrew(crewId: number, userId: number): Promise<any> {
-    const schedule = await this.scheduleRepository.findScheduleByCrew(
-      crewId,
-      userId,
-    );
-    return schedule;
+    try {
+      const schedule = await this.scheduleRepository.findScheduleByCrew(
+        crewId,
+        userId,
+      );
+      return schedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/findScheduleByCrew');
+    }
   }
 
   /* 위임에 따라 schedule 작성자 변경 */
   async delegateSchedule(delegator: number, crewId: number): Promise<any> {
-    await this.scheduleRepository.delegateSchedule(delegator, crewId);
-    return '일정 위임 완료';
+    try {
+      await this.scheduleRepository.delegateSchedule(delegator, crewId);
+      return '일정 위임 완료';
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/delegateSchedule');
+    }
   }
 
   /* 오늘 날짜에 가까운 schedule만 조회하기 */
-  async findScheduleCloseToToday(crewId: number) {
-    const schedule = await this.scheduleRepository.findScheduleCloseToToday(
-      crewId,
-    );
-    return schedule;
+  async findScheduleCloseToToday(crewId: number): Promise<any> {
+    try {
+      const schedule = await this.scheduleRepository.findScheduleCloseToToday(
+        crewId,
+      );
+      return schedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/findScheduleCloseToToday');
+    }
   }
 
   /* crew 삭제에 따른 schedule 삭제 */
   async deleteScheduleByCrew(crewId: number): Promise<any> {
-    const deleteSchedule = await this.scheduleRepository.deleteScheduleByCrew(
-      crewId,
-    );
-    return deleteSchedule;
+    try {
+      const deleteSchedule = await this.scheduleRepository.deleteScheduleByCrew(
+        crewId,
+      );
+      return deleteSchedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleService/deleteScheduleByCrew');
+    }
   }
 }
