@@ -16,29 +16,39 @@ export class ParticipantRepository {
     crewId: number,
     scheduleId: number,
   ): Promise<any> {
-    const participant = new Participant();
-    participant.userId = userId;
-    participant.crewId = crewId;
-    participant.scheduleId = scheduleId;
-    await this.participantRepository.save(participant);
-    return participant;
+    try {
+      const participant = new Participant();
+      participant.userId = userId;
+      participant.crewId = crewId;
+      participant.scheduleId = scheduleId;
+      await this.participantRepository.save(participant);
+      return participant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantRepository/participateSchedule');
+    }
   }
 
   /* schedule에 참여한 인원 조회하기 */
   async findAllParticipant(crewId: number, scheduleId: number): Promise<any> {
-    const participant = await this.participantRepository
-      .createQueryBuilder('participant')
-      .where('participant.crewId = :crewId', { crewId })
-      .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
-      .leftJoin('users', 'users', 'users.userId = participant.userId')
-      .select([
-        'participant.participantId',
-        'participant.userId',
-        'users.profileImage',
-      ])
-      .groupBy('participant.participantId')
-      .getRawMany();
-    return participant;
+    try {
+      const participant = await this.participantRepository
+        .createQueryBuilder('participant')
+        .where('participant.crewId = :crewId', { crewId })
+        .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
+        .leftJoin('users', 'users', 'users.userId = participant.userId')
+        .select([
+          'participant.participantId',
+          'participant.userId',
+          'users.profileImage',
+        ])
+        .groupBy('participant.participantId')
+        .getRawMany();
+      return participant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantRepository/findAllParticipant');
+    }
   }
 
   /* 참여한 schedule 취소하기 */
@@ -47,27 +57,37 @@ export class ParticipantRepository {
     scheduleId: number,
     userId: number,
   ): Promise<any> {
-    const canceledParticipant = await this.participantRepository
-      .createQueryBuilder('participant')
-      .delete()
-      .from(Participant)
-      .where('participant.crewId = :crewId', { crewId })
-      .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
-      .andWhere('participant.userId = :userId', { userId })
-      .execute();
-    return canceledParticipant;
+    try {
+      const canceledParticipant = await this.participantRepository
+        .createQueryBuilder('participant')
+        .delete()
+        .from(Participant)
+        .where('participant.crewId = :crewId', { crewId })
+        .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
+        .andWhere('participant.userId = :userId', { userId })
+        .execute();
+      return canceledParticipant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantRepository/cancelParticipate');
+    }
   }
 
   /* crew 삭제에 따른 participant delete */
   async deleteParticipant(crewId: number): Promise<any> {
-    const deleteParticipant = await this.participantRepository
-      .createQueryBuilder('participant')
-      .delete()
-      .from(Participant)
-      .where('participant.crewId = :crewId', { crewId })
-      .execute();
+    try {
+      const deleteParticipant = await this.participantRepository
+        .createQueryBuilder('participant')
+        .delete()
+        .from(Participant)
+        .where('participant.crewId = :crewId', { crewId })
+        .execute();
 
-    return deleteParticipant;
+      return deleteParticipant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantRepository/deleteParticipant');
+    }
   }
 
   /* schedule 삭제에 따라 participant delete */
@@ -75,13 +95,18 @@ export class ParticipantRepository {
     scheduleId: number,
     crewId: number,
   ): Promise<any> {
-    const deleteParticipant = await this.participantRepository
-      .createQueryBuilder('participant')
-      .delete()
-      .from(Participant)
-      .where('participant.crewId = :crewId', { crewId })
-      .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
-      .execute();
-    return deleteParticipant;
+    try {
+      const deleteParticipant = await this.participantRepository
+        .createQueryBuilder('participant')
+        .delete()
+        .from(Participant)
+        .where('participant.crewId = :crewId', { crewId })
+        .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
+        .execute();
+      return deleteParticipant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantRepository/deleteParticipantBySchedule');
+    }
   }
 }
