@@ -79,9 +79,12 @@ export class ImageController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // crew 정보 및 member 정보 조회
       const crew = await this.crewService.findByCrewId(crewId);
       const member = await this.memberService.findAllMember(crewId);
+      // 저장된 이미지 조회
       const exImages = await this.imageService.findMyImages(crewId, userId);
       if (crew.userId === userId || member.member_userId === userId) {
         // 이미지는 최대 5개까지만 저장 가능합니다.
@@ -92,6 +95,7 @@ export class ImageController {
         }
         const saveImageDto = JSON.parse(body);
 
+        // 새로운 이미지 저장
         files.forEach((file) => {
           saveImageDto.image = file.location;
           const newImage = this.imageService.saveImage(
@@ -149,9 +153,12 @@ export class ImageController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // crew 정보 및 member 정보 조회
       const crew = await this.crewService.findByCrewId(crewId);
       const member = await this.memberService.findAllMember(crewId);
+      // 권한 확인
       if (crew.userId === userId || member.member_userId === userId) {
         const image = await this.imageService.findCrewImages(crewId);
         return res.status(HttpStatus.OK).json(image);
@@ -184,8 +191,11 @@ export class ImageController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 본인 image 조회
       const myImage = await this.imageService.findMyImages(crewId, userId);
+      // 권한 확인
       if (myImage.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
