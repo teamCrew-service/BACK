@@ -11,6 +11,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Notice]),
+    // 순환 의존성
     forwardRef(() => CrewModule),
     forwardRef(() => VoteFormModule),
   ],

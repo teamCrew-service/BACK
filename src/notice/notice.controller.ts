@@ -47,21 +47,25 @@ export class NoticeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
 
-      // 모임장이 아닌 경우
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '공지를 등록할 권한이 없습니다.' });
       }
 
+      // 공지 생성
       const notice = await this.noticeService.createNotice(
         userId,
         crewId,
         createNoticeDto,
       );
+      // 생성된 공지 Id
       const noticeId = notice.noticeId;
 
       return res
@@ -108,13 +112,16 @@ export class NoticeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 공지, 투표 조회
       const notice = await this.noticeService.findAllNotice(crewId);
       const voteForm = await this.voteFormService.findAllVoteForm(
         crewId,
         userId,
       );
 
+      // 모든 공지
       const allNotice = { notice, voteForm };
       return res.status(HttpStatus.OK).json(allNotice);
     } catch (e) {
@@ -150,10 +157,12 @@ export class NoticeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // 공지 상세 조회
       const notice = await this.noticeService.findNoticeDetail(
         crewId,
         noticeId,
       );
+      // 공지 조회 확인
       if (!notice) {
         return res
           .status(HttpStatus.NOT_FOUND)
@@ -185,19 +194,23 @@ export class NoticeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 글입니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '공지 수정 권한이 없습니다.' });
       }
 
+      // 공지 수정
       const editedNotice = await this.noticeService.editNotice(
         crewId,
         noticeId,
@@ -234,19 +247,23 @@ export class NoticeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 글입니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '공지 삭제 권한이 없습니다.' });
       }
 
+      // 모임 삭제
       const deletedNotice = await this.noticeService.deleteNotice(
         crewId,
         noticeId,
