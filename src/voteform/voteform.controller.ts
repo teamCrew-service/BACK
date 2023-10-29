@@ -53,19 +53,23 @@ export class VoteformController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '투표 공지를 등록할 권한이 없습니다.' });
       }
 
+      // 투표 폼 생성
       const voteForm = await this.voteFormService.createVoteForm(
         userId,
         crewId,
@@ -122,7 +126,9 @@ export class VoteformController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
@@ -186,13 +192,17 @@ export class VoteformController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '투표 공지 수정 권한이 없습니다.' });
       }
+      // 투표 폼 수정
       const editedVoteForm = await this.voteFormService.editVoteForm(
         crewId,
         voteFormId,
@@ -237,19 +247,23 @@ export class VoteformController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '투표 공지 삭제 권한이 없습니다.' });
       }
 
+      // 투표 폼 삭제
       const deletedVoteForm = await this.voteFormService.deleteVoteForm(
         crewId,
         voteFormId,
