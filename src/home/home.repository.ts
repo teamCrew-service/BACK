@@ -36,7 +36,11 @@ export class HomeRepository {
         'COUNT(member.crewId) AS crewAttendedMember',
         'COUNT(like.userId) > 0 AS likeCheck',
       ])
-      .andWhere('crew.deletedAt IS NULL')
+      .where('crew.deletedAt IS NULL')
+      .andWhere('member.userId != :userId OR member.userId IS NULL', {
+        userId,
+      })
+      .andWhere('crew.userId != :userId', { userId })
       .groupBy('crew.crewId')
       .getRawMany();
 
@@ -72,9 +76,13 @@ export class HomeRepository {
         'like.crewId = crew.crewId AND like.userId = :userId',
         { userId },
       )
-      .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
       .andWhere('crew.deletedAt IS NULL')
+      .andWhere('member.userId != :userId OR member.userId IS NULL', {
+        userId,
+      })
+      .andWhere('crew.userId != :userId', { userId })
+      .groupBy('crew.crewId')
       .getRawMany();
 
     return crew;
@@ -104,10 +112,13 @@ export class HomeRepository {
         'like.crewId = crew.crewId AND like.userId = :userId',
         { userId },
       )
-      .groupBy('crew.crewId')
       .where('crew.category = :category', { category })
-      .andWhere('crew.userId != :userId', { userId })
       .andWhere('crew.deletedAt IS NULL')
+      .andWhere('member.userId != :userId OR member.userId IS NULL', {
+        userId,
+      })
+      .andWhere('crew.userId != :userId', { userId })
+      .groupBy('crew.crewId')
       .orderBy('like.userId', 'DESC')
       .getRawMany();
 
