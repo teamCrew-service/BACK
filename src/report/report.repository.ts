@@ -17,11 +17,16 @@ export class ReportRepository {
     userId: number,
     crewId: number,
   ): Promise<any> {
-    const report = new Report();
-    report.userId = userId;
-    report.crewId = crewId;
-    report.reportContent = createReportDto.reportContent;
-    await this.reportRepository.save(report);
-    return report;
+    try {
+      const report = new Report();
+      report.userId = userId;
+      report.crewId = crewId;
+      report.reportContent = createReportDto.reportContent;
+      await this.reportRepository.save(report);
+      return report;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ReportRepository/createReport');
+    }
   }
 }

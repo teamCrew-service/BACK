@@ -32,7 +32,9 @@ export class ReportController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 신고
       await this.reportService.createReport(createReportDto, userId, crewId);
       return res.status(HttpStatus.OK).json({ message: '신고하기 성공' });
     } catch (e) {
