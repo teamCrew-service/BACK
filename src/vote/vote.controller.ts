@@ -60,18 +60,23 @@ export class VoteController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
+      // 투표 폼 정보 조회
       const voteForm = await this.voteFormService.findVoteFormDetail(
         crewId,
         voteFormId,
       );
+      // 투표 정보 조회
       const vote = await this.voteService.findAllVote(crewId, voteFormId);
 
       // 투표했는지 확인하기
@@ -189,14 +194,18 @@ export class VoteController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
+      // 투표 폼 정보 조회
       const voteForm = await this.voteFormService.findVoteFormDetail(
         crewId,
         voteFormId,
@@ -275,15 +284,19 @@ export class VoteController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
 
+      // 권한 확인
       for (let i = 0; i < member.length; i++) {
         if (member[i].member_userId === userId || crew.userId === userId) {
           await this.voteService.editVote(

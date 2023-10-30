@@ -10,14 +10,24 @@ export class ImageService {
 
   /* 나의 image 조회 */
   async findMyImages(crewId: number, userId: number): Promise<any> {
-    const exImages = await this.imageRepository.findMyImages(crewId, userId);
-    return exImages;
+    try {
+      const exImages = await this.imageRepository.findMyImages(crewId, userId);
+      return exImages;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/findMyImages');
+    }
   }
 
   /* image 조회 */
   async findCrewImages(crewId: number): Promise<any> {
-    const image = await this.imageRepository.findCrewImages(crewId);
-    return image;
+    try {
+      const image = await this.imageRepository.findCrewImages(crewId);
+      return image;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/findCrewImages');
+    }
   }
 
   /* image 저장 */
@@ -26,48 +36,63 @@ export class ImageService {
     crewId: number,
     userId: number,
   ): Promise<any> {
-    const newImage = await this.imageRepository.saveImage(
-      saveImageDto,
-      crewId,
-      userId,
-    );
-    return newImage;
+    try {
+      const newImage = await this.imageRepository.saveImage(
+        saveImageDto,
+        crewId,
+        userId,
+      );
+      return newImage;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/saveImage');
+    }
   }
 
   /* image 삭제 */
   async deleteImage(imageId: number): Promise<any> {
-    const deleteImage = await this.imageRepository.deleteImage(imageId);
-    return deleteImage;
+    try {
+      const deleteImage = await this.imageRepository.deleteImage(imageId);
+      return deleteImage;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/deleteImage');
+    }
   }
 
   /* url 이미지를 변경하여 s3에 저장 */
   async urlToS3(url: string, key: string): Promise<string> {
-    const response = await axios.get(url, { responseType: 'arraybuffer' });
-    const mimeType = response.headers['content-type'];
-    const bucket = process.env.AWS_BUCKET_NAME || 'YOUR_BUCKET_NAME'; // 환경 변수 또는 직접 값을 입력
-    //key(filename) = 'YOUR_S3_OBJECT_KEY_HERE'; // 예: 'images/2020/08/01/abcdef.jpg'
+    try {
+      const response = await axios.get(url, { responseType: 'arraybuffer' });
+      const mimeType = response.headers['content-type'];
+      const bucket = process.env.AWS_BUCKET_NAME || 'YOUR_BUCKET_NAME'; // 환경 변수 또는 직접 값을 입력
+      //key(filename) = 'YOUR_S3_OBJECT_KEY_HERE'; // 예: 'images/2020/08/01/abcdef.jpg'
 
-    AWS.config.update({
-      accessKeyId: process.env.AWS_ACCESS_KEY || 'YOUR_ACCESS_KEY',
-      secretAccessKey: process.env.AWS_SECRET_KEY || 'YOUR_SECRET_KEY',
-      region: process.env.AWS_REGION || 'YOUR_REGION', // 예: 'us-west-1'
-    });
-
-    const s3 = new AWS.S3();
-
-    const s3Params = {
-      Bucket: bucket,
-      Key: key,
-      Body: response.data,
-      ContentType: mimeType,
-      //ACL: 'public-read',
-    };
-
-    return new Promise((resolve, reject) => {
-      s3.upload(s3Params, (err, data) => {
-        if (err) reject(err);
-        else resolve(data.Location);
+      AWS.config.update({
+        accessKeyId: process.env.AWS_ACCESS_KEY || 'YOUR_ACCESS_KEY',
+        secretAccessKey: process.env.AWS_SECRET_KEY || 'YOUR_SECRET_KEY',
+        region: process.env.AWS_REGION || 'YOUR_REGION', // 예: 'us-west-1'
       });
-    });
+
+      const s3 = new AWS.S3();
+
+      const s3Params = {
+        Bucket: bucket,
+        Key: key,
+        Body: response.data,
+        ContentType: mimeType,
+        //ACL: 'public-read',
+      };
+
+      return new Promise((resolve, reject) => {
+        s3.upload(s3Params, (err, data) => {
+          if (err) reject(err);
+          else resolve(data.Location);
+        });
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/urlToS3');
+    }
   }
 }

@@ -124,6 +124,7 @@ export class CrewController {
 
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
 
+    // 새로운 모임 생성할 때 crewSignup이 true일 경우 signupForm을 생성해준다.
     if (newCrew.crewSignup === true || newCrew.crewSignup === 1) {
       await this.signupService.createSignupForm(
         newCrew.crewId,
@@ -425,7 +426,6 @@ export class CrewController {
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
       const startDate: any = new Date(crew.crew_createdAt);
-      console.log(startDate);
       const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
       const createdCrewPeriod: number = Math.floor(
         (today - startDate) / oneDayInMilliseconds,
@@ -539,23 +539,31 @@ export class CrewController {
     @Body() editCrewDto: EditCrewDto,
     @Res() res: any,
   ): Promise<any> {
-    const { userId } = res.locals.user;
+    try {
+      // 토큰을 통해 userId 확인
+      const { userId } = res.locals.user;
 
-    const crew = await this.crewService.findCrewForAuth(crewId);
-    if (crew.userId !== userId) {
+      // 모임 조회
+      const crew = await this.crewService.findCrewForAuth(crewId);
+      if (crew.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '모임 수정 권한이 없습니다.' });
+      }
+      // 권한이 있을 경우 모임 수정
+      const editCrew = await this.crewService.editCrew(crewId, editCrewDto);
+      if (!editCrew) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임 수정 실패했습니다.' });
+      }
       return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: '모임 수정 권한이 없습니다.' });
+        .status(HttpStatus.OK)
+        .json({ message: '모임 수정 완료했습니다.' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewController/editCrew');
     }
-    const editCrew = await this.crewService.editCrew(crewId, editCrewDto);
-    if (!editCrew) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '모임 수정 실패했습니다.' });
-    }
-    return res
-      .status(HttpStatus.OK)
-      .json({ message: '모임 수정 완료했습니다.' });
   }
 
   /* 모임 Thumbnail 수정 */
@@ -591,32 +599,42 @@ export class CrewController {
     @UploadedFiles() files,
     @Res() res: any,
   ): Promise<any> {
-    const { userId } = res.locals.user;
-    const crew = await this.crewService.findCrewForAuth(crewId);
-    if (!crew) {
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: '존재하지 않는 모임입니다.' });
-    }
+    try {
+      // 토큰을 통해 userId 확인
+      const { userId } = res.locals.user;
 
-    if (crew.userId !== userId) {
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: '모임 Thumbnail 수정 권한이 없습니다.' });
-    }
-    const editThumbnail = await this.crewService.editThumbnail(
-      crewId,
-      files[0].location,
-    );
+      // 모임 조회
+      const crew = await this.crewService.findCrewForAuth(crewId);
+      if (!crew) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 모임입니다.' });
+      }
 
-    if (!editThumbnail) {
+      // 권한 확인
+      if (crew.userId !== userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: '모임 Thumbnail 수정 권한이 없습니다.' });
+      }
+      // 권한이 있을 경우 thumbnail 수정
+      const editThumbnail = await this.crewService.editThumbnail(
+        crewId,
+        files[0].location,
+      );
+
+      if (!editThumbnail) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: '모임 Thumbnail 수정 실패했습니다.' });
+      }
       return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '모임 Thumbnail 수정 실패했습니다.' });
+        .status(HttpStatus.OK)
+        .json({ message: '모임 Thumbnail 수정 완료했습니다.' });
+    } catch (e) {
+      console.error(e);
+      throw new Error('CrewController/editThumbnail');
     }
-    return res
-      .status(HttpStatus.OK)
-      .json({ message: '모임 Thumbnail 수정 완료했습니다.' });
   }
 
   /* 모임 글 삭제 */
@@ -645,13 +663,17 @@ export class CrewController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
+
+      // 모임 조회
       const crew = await this.crewService.findCrewForAuth(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
@@ -707,14 +729,19 @@ export class CrewController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
       const { delegator } = delegateDto;
+
+      // 모임 조회
       const crew = await this.crewService.findOneCrew(crewId, userId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
+
+      // member 확인, 확인 후 member일 경우에 위임 실행
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
         if (parseInt(member[i].member_userId) === delegator) {
@@ -759,6 +786,7 @@ export class CrewController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
       const leaveUser = await this.leavecrewService.findOneLeaveUser(
         crewId,

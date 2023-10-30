@@ -15,33 +15,56 @@ export class UsersService {
 
   // user 정보 email로 조회
   async findUserByEmail(email: string, provider: string): Promise<any> {
-    const exUser = await this.usersRepository.findUserByEmail(email, provider);
-    return exUser;
+    try {
+      const exUser = await this.usersRepository.findUserByEmail(
+        email,
+        provider,
+      );
+      return exUser;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/findUserByEmail');
+    }
   }
 
   // urser 정보 findByPk
   async findUserByPk(userId: number): Promise<any> {
-    const user = await this.usersRepository.findUserByPk(userId);
-    return user;
+    try {
+      const user = await this.usersRepository.findUserByPk(userId);
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/findUserByPk');
+    }
   }
 
   // newUser create
   async create({ email, nickname, provider }): Promise<any> {
-    const user = await this.usersRepository.create({
-      email,
-      nickname,
-      provider,
-    });
-    return user;
+    try {
+      const user = await this.usersRepository.create({
+        email,
+        nickname,
+        provider,
+      });
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/create');
+    }
   }
 
   // 새로운 유저 추가 정보 입력
   async userInfo(addUserInfoDto: AddUserInfoDto, userId: number): Promise<any> {
-    const addUserInfo = await this.usersRepository.userInfo(
-      addUserInfoDto,
-      userId,
-    );
-    return addUserInfo;
+    try {
+      const addUserInfo = await this.usersRepository.userInfo(
+        addUserInfoDto,
+        userId,
+      );
+      return addUserInfo;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/userInfo');
+    }
   }
 
   // 유저 정보 edit
@@ -49,43 +72,73 @@ export class UsersService {
     editUserInfoDto: EditUserInfoDto,
     userId: number,
   ): Promise<any> {
-    const editUserInfo = await this.usersRepository.editUserInfo(
-      editUserInfoDto,
-      userId,
-    );
-    return editUserInfo;
+    try {
+      const editUserInfo = await this.usersRepository.editUserInfo(
+        editUserInfoDto,
+        userId,
+      );
+      return editUserInfo;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/editUserInfo');
+    }
   }
 
   //topic 정보 입력
   async addTopic(topicDto: TopicDto, userId: number): Promise<any> {
-    const addTopic = await this.topicService.addTopic(topicDto, userId);
-    return addTopic;
+    try {
+      const addTopic = await this.topicService.addTopic(topicDto, userId);
+      return addTopic;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/addTopic');
+    }
   }
 
   // userId로 topic 정보 받기
   async findTopicById(userId: number): Promise<any> {
-    const topic = await this.topicService.findTopicById(userId);
-    return topic;
+    try {
+      const topic = await this.topicService.findTopicById(userId);
+      return topic;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/findTopicById');
+    }
   }
 
   //edit topic
   async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
-    const editTopic = await this.topicService.editTopic(editTopicDto, userId);
-    return editTopic;
+    try {
+      const editTopic = await this.topicService.editTopic(editTopicDto, userId);
+      return editTopic;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/editTopic');
+    }
   }
 
   // nickname으로 체크하기
   async checkNickname(newNickname: string): Promise<any> {
-    const exNickname = await this.usersRepository.checkNickname(newNickname);
-    if (!exNickname) {
-      return null;
+    try {
+      const exNickname = await this.usersRepository.checkNickname(newNickname);
+      if (!exNickname) {
+        return null;
+      }
+      return exNickname;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/checkNickname');
     }
-    return exNickname;
   }
 
   /* 탈퇴하기 */
   async deleteAccount(userId: number): Promise<any> {
-    const deleteAccount = await this.usersRepository.deleteAccount(userId);
-    return deleteAccount;
+    try {
+      const deleteAccount = await this.usersRepository.deleteAccount(userId);
+      return deleteAccount;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService/deleteAccount');
+    }
   }
 }

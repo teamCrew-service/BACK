@@ -6,7 +6,11 @@ import { Topic } from './entities/topic.entity';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Topic]), forwardRef(() => UsersModule)],
+  imports: [
+    TypeOrmModule.forFeature([Topic]),
+    // 순환 의존성
+    forwardRef(() => UsersModule),
+  ],
   providers: [TopicService, TopicRepository],
   exports: [TopicService, TopicRepository],
 })

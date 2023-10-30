@@ -10,6 +10,7 @@ import { CrewModule } from 'src/crew/crew.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Like]),
+    // 순환 의존성
     forwardRef(() => UsersModule),
     forwardRef(() => CrewModule),
   ],

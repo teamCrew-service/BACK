@@ -21,6 +21,7 @@ import { VoteModule } from 'src/vote/vote.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Crew]),
+    // 순환 의존성
     forwardRef(() => HomeModule),
     forwardRef(() => SignupModule),
     forwardRef(() => MemberModule),

@@ -52,14 +52,18 @@ export class ScheduleController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '일정 등록 권한이 없습니다.' });
       }
 
+      // schedule 생성
       const result = await this.scheduleService.createSchedule(
         createscheduleDto,
         userId,
@@ -93,18 +97,23 @@ export class ScheduleController {
     @Body() editscheduleDto: EditScheduleDto,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '모임이 존재하지 않습니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '일정 수정 권한이 없습니다.' });
       }
+
+      // schedule 수정
       const updatedSchedule = await this.scheduleService.editSchedule(
         crewId,
         scheduleId,
@@ -159,6 +168,7 @@ export class ScheduleController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // 일정 상세 조회
       const schedule = await this.scheduleService.findScheduleDetail(
         scheduleId,
         crewId,
@@ -168,6 +178,7 @@ export class ScheduleController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 일정입니다.' });
       }
+      // 참여자 조회
       const participant = await this.participantService.findAllParticipant(
         crewId,
         scheduleId,
@@ -205,18 +216,23 @@ export class ScheduleController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '모임이 존재하지 않습니다.' });
       }
+      // 권한 확인
       if (crew.userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '일정 삭제 권한이 없습니다.' });
       }
+
+      // 일정에 관련 된 정보 삭제 처리
       const result = await Promise.all([
         this.scheduleService.deleteSchedule(scheduleId, crewId),
         this.participantService.deleteParticipantBySchedule(scheduleId, crewId),
@@ -250,19 +266,23 @@ export class ScheduleController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '모임이 존재하지 않습니다.' });
       }
+      // 멤버, 참여자 조회
       const member = await this.memberService.findAllMember(crewId);
       const participant = await this.participantService.findAllParticipant(
         crewId,
         scheduleId,
       );
 
+      // 모임장은 참여 여부에 포함하지 않는다.
       if (crew.userId === userId) {
         return res.status(HttpStatus.OK).json({ message: '모임장입니다.' });
       }
@@ -276,6 +296,7 @@ export class ScheduleController {
         }
       }
 
+      // 일정에 참가, member가 아닐 경우 참가 불가
       for (let i = 0; i < member.length; i++) {
         if (userId === member[i].member_userId) {
           await this.participantService.participateSchedule(
@@ -320,13 +341,15 @@ export class ScheduleController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 참여자 조회
       const participant = await this.participantService.findAllParticipant(
         crewId,
         scheduleId,
       );
 
-      // 참가자 조회해서 참가 인원인지
+      // 참가자 조회해서 참가 인원인지 확인 뒤 취소 처리
       for (let i = 0; i < participant.length; i++) {
         if (userId === participant.participant_userId) {
           const canceledParticipant =

@@ -41,28 +41,50 @@ export class UnsubscribeService {
 
   /* 탈퇴 대기 계정 조회*/
   async findAllUnsubscribe(): Promise<any> {
-    const toBeDeletedAccounts = await this.findAllUnsubscribe();
-    return toBeDeletedAccounts;
+    try {
+      const toBeDeletedAccounts = await this.findAllUnsubscribe();
+      return toBeDeletedAccounts;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UnsubscribeService/findAllUnsubscribe');
+    }
   }
 
   /* 탈퇴 대기 계정 하나 조회 */
   async findOneUnsubscribe(userId: any): Promise<any> {
-    const toBeDeletedAccount =
-      await this.unsubscribeRepository.findOneUnsubscribe(userId);
-    return toBeDeletedAccount;
+    try {
+      const toBeDeletedAccount =
+        await this.unsubscribeRepository.findOneUnsubscribe(userId);
+      return toBeDeletedAccount;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UnsubscribeService/findOneUnsubscribe');
+    }
   }
 
   /* 탈퇴 대기 등록 */
   async createUnsubscribe(userId: number): Promise<any> {
-    const unsubscribe = await this.unsubscribeRepository.createUnsubscribe(
-      userId,
-    );
-    return unsubscribe;
+    try {
+      const unsubscribe = await this.unsubscribeRepository.createUnsubscribe(
+        userId,
+      );
+      return unsubscribe;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UnsubscribeService/createUnsubscribe');
+    }
   }
 
   /* 탈퇴 대기 취소 */
   async deleteUnsubscribe(userId: number): Promise<any> {
-    const account = await this.unsubscribeRepository.deleteUnsubscribe(userId);
-    return account;
+    try {
+      const account = await this.unsubscribeRepository.deleteUnsubscribe(
+        userId,
+      );
+      return account;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UnsubscribeService/deleteUnsubscribe');
+    }
   }
 }

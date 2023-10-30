@@ -18,20 +18,29 @@ export class LeavecrewService {
 
   /* crew 탈퇴 등록하기 */
   async createLeaveCrew(crewId: number, userId: number): Promise<any> {
-    const leaveUser = await this.leavecrewRepository.createLeaveCrew(
-      crewId,
-      userId,
-    );
-    return leaveUser;
+    try {
+      const leaveUser = await this.leavecrewRepository.createLeaveCrew(
+        crewId,
+        userId,
+      );
+      return leaveUser;
+    } catch (e) {
+      console.error(e);
+      throw new Error('LeavecrewService/createLeaveCrew');
+    }
   }
 
   /* crew 탈퇴자 조회하기 */
   async findOneLeaveUser(crewId: number, userId: number): Promise<any> {
-    const leaveUser = await this.leavecrewRepository.findOneLeaveUser(
-      crewId,
-      userId,
-    );
-
-    return leaveUser;
+    try {
+      const leaveUser = await this.leavecrewRepository.findOneLeaveUser(
+        crewId,
+        userId,
+      );
+      return leaveUser;
+    } catch (e) {
+      console.error(e);
+      throw new Error('LeavecrewService/findOneLeaveUser');
+    }
   }
 }

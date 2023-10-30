@@ -14,6 +14,7 @@ import { ChatModule } from 'src/chat/chat.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Signupform, Signup]),
+    // 순환 의존성
     forwardRef(() => MemberModule),
     forwardRef(() => CrewModule),
     forwardRef(() => LeavecrewModule),

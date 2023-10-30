@@ -35,13 +35,16 @@ export class LikeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 좋아요 확인
       const like = await this.likeService.confirmLiked(crewId, userId);
       if (like) {
         return res
           .status(HttpStatus.NOT_ACCEPTABLE)
           .json({ message: '이미 찜한 crew입니다.' });
       }
+      // 없을 경우 좋아요 생성
       await this.likeService.likeCrew(crewId, userId);
       return res.status(HttpStatus.OK).json({ message: '찜하기 성공' });
     } catch (e) {
@@ -68,7 +71,9 @@ export class LikeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      // user 정보 확인
       const { userId } = res.locals.user;
+      // 좋아요 확인
       const like = await this.likeService.confirmLiked(crewId, userId);
       if (like) {
         await this.likeService.cancelLikeCrew(crewId, userId);
