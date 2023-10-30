@@ -51,12 +51,17 @@ export class TopicRepository {
 
   /* 관심사 조회 */
   async findTopicById(userId: number): Promise<any> {
-    const topic = await this.topicRepository
-      .createQueryBuilder('topic')
-      .select(['userId', 'interestTopic'])
-      .where('topic.userId = :userId', { userId })
-      .getRawMany();
-    return topic;
+    try {
+      const topic = await this.topicRepository
+        .createQueryBuilder('topic')
+        .select(['userId', 'interestTopic'])
+        .where('topic.userId = :userId', { userId })
+        .getRawMany();
+      return topic;
+    } catch (e) {
+      console.error(e);
+      throw new Error('TopicRepository/findTopicById');
+    }
   }
 
   /* 관심사 수정*/
@@ -98,12 +103,17 @@ export class TopicRepository {
 
   /* 탈퇴에 따라 topic 삭제 처리 */
   async deleteTopic(userId: number): Promise<any> {
-    const deleteTopic = await this.topicRepository
-      .createQueryBuilder('topic')
-      .delete()
-      .from(Topic)
-      .where('topic.userId = :userId', { userId })
-      .execute();
-    return deleteTopic;
+    try {
+      const deleteTopic = await this.topicRepository
+        .createQueryBuilder('topic')
+        .delete()
+        .from(Topic)
+        .where('topic.userId = :userId', { userId })
+        .execute();
+      return deleteTopic;
+    } catch (e) {
+      console.error(e);
+      throw new Error('TopicRepository/deleteTopic');
+    }
   }
 }

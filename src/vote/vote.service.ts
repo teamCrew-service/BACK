@@ -14,28 +14,43 @@ export class VoteService {
     voteFormId: number,
     votingDto: VotingDto,
   ): Promise<any> {
-    const vote = await this.voteRepository.voting(
-      userId,
-      crewId,
-      voteFormId,
-      votingDto,
-    );
-    return vote;
+    try {
+      const vote = await this.voteRepository.voting(
+        userId,
+        crewId,
+        voteFormId,
+        votingDto,
+      );
+      return vote;
+    } catch (e) {
+      console.error(e);
+      throw new Error('VoteService/voting');
+    }
   }
 
   /* 투표 확인하기 */
   async findAllVote(crewId: number, voteFormId: number): Promise<any> {
-    const vote = await this.voteRepository.findAllVote(crewId, voteFormId);
-    return vote;
+    try {
+      const vote = await this.voteRepository.findAllVote(crewId, voteFormId);
+      return vote;
+    } catch (e) {
+      console.error(e);
+      throw new Error('VoteService/findAllVote');
+    }
   }
 
   /* 익명 투표 확인하기 */
   async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
-    const vote = await this.voteRepository.findAllAnonymousVote(
-      crewId,
-      voteFormId,
-    );
-    return vote;
+    try {
+      const vote = await this.voteRepository.findAllAnonymousVote(
+        crewId,
+        voteFormId,
+      );
+      return vote;
+    } catch (e) {
+      console.error(e);
+      throw new Error('VoteService/findAllAnonymousVote');
+    }
   }
 
   /* 투표 수정하기 */
@@ -45,18 +60,28 @@ export class VoteService {
     voteFormId: number,
     editVotingDto: EditVotingDto,
   ): Promise<any> {
-    const editedVote = await this.voteRepository.editVote(
-      userId,
-      crewId,
-      voteFormId,
-      editVotingDto,
-    );
-    return editedVote;
+    try {
+      const editedVote = await this.voteRepository.editVote(
+        userId,
+        crewId,
+        voteFormId,
+        editVotingDto,
+      );
+      return editedVote;
+    } catch (e) {
+      console.error(e);
+      throw new Error('VoteService/editVote');
+    }
   }
 
   /* crew 삭제에 따라 투표 삭제하기 */
   async deleteVoteByCrew(crewId: number): Promise<any> {
-    const deleteVote = await this.voteRepository.deleteVoteByCrew(crewId);
-    return deleteVote;
+    try {
+      const deleteVote = await this.voteRepository.deleteVoteByCrew(crewId);
+      return deleteVote;
+    } catch (e) {
+      console.error(e);
+      throw new Error('VoteService/deleteVoteByCrew');
+    }
   }
 }

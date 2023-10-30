@@ -23,18 +23,22 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     const nickname = profile.name;
     const provider = profile.provider;
 
-    // user 정보 확인
+    /* user 정보 확인 */
+    // 기존 user 정보 확인
     const exUser = await this.authService.validateUser(email, provider);
     if (exUser) {
+      // user 정보에 맞춰 token 발행
       const token = await this.authService.getToken(exUser.userId);
       return { token, userId: exUser.userId };
     }
+    // user 정보가 없을 경우 새로운 user db에 저장
     if (exUser === null) {
       const newUser = await this.authService.create({
         email,
         nickname,
         provider,
       });
+      // user 정보에 맞춰 token 발행
       const token = await this.authService.getToken(newUser.userId);
       return { token, userId: newUser.userId };
     }

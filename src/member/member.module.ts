@@ -10,6 +10,7 @@ import { VoteFormModule } from 'src/voteform/voteform.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Member]),
+    // 순환 의존성
     forwardRef(() => CrewModule),
     forwardRef(() => SignupModule),
     forwardRef(() => VoteFormModule),

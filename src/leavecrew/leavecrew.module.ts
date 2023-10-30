@@ -8,6 +8,7 @@ import { LeavecrewRepository } from './leavecrew.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Leavecrew]),
+    // 순환 의존성
     forwardRef(() => CrewModule),
   ],
   providers: [LeavecrewService, LeavecrewRepository],

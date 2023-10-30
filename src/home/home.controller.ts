@@ -59,18 +59,16 @@ export class HomeController {
   @ApiBearerAuth('accessToken')
   async findSchedule(@Res() res: any): Promise<any> {
     try {
-      // 다가오는 일정 리스트 조회
+      /* user 정보 확인 */
+      // guest일 경우 userId를 0으로 처리
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
       const nickname = user.nickname;
+
+      // 다가오는 일정 list 조회 오늘 날짜에 가까운 일정만 반환
       const data = await this.homeService.findSchedule(userId);
       const schedule = data[0];
 
-      // 다가오는 일정 리스트 조회 결과가 없을 경우
-      // if (schedule.length === 0) {
-      //   // 조회 된 일정이 없을 경우 null로 반환
-      //   return res.status(HttpStatus.NOT_FOUND).json(null);
-      // }
       // 다가오는 일정 리스트 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json({ schedule, nickname });
     } catch (error) {
@@ -82,7 +80,7 @@ export class HomeController {
     }
   }
 
-  /* 다가오는 일정 전체 */
+  /* 다가오는 일정 전체, 승인 완료된 모임 일정 조회 */
   @Get('wholeComingDate')
   @ApiOperation({
     summary: '다가오는 일정 리스트 전체 조회 API',
@@ -148,6 +146,8 @@ export class HomeController {
   @ApiBearerAuth('accessToken')
   async findWholeSchedule(@Res() res: any): Promise<any> {
     try {
+      /* user 정보 확인 */
+      // guest일 경우 userId를 0으로 처리
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
       // 다가오는 일정, 참여완료 일정 조회
@@ -188,12 +188,16 @@ export class HomeController {
   })
   async getCrew(@Res() res: any): Promise<any> {
     try {
+      /* user 정보 확인 */
+      // guest일 경우 userId를 0으로 처리
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
 
       // 내 주변 모임 조회
       const crew = await this.homeService.getCrew(userId);
 
+      /* 장기 모임은 crewDDay가 null로 들어간다. 
+      따라서 제일 최근 일정이 crewDDay이므로 제일 최근 일정으로 crewDDay를 조회에서 보내준다.*/
       for (let i = 0; i < crew.length; i++) {
         if (crew[i].crew_crewDDay === null) {
           const crewId = parseInt(crew[i].crew_crewId);
@@ -244,21 +248,19 @@ export class HomeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      /* user 정보 확인 */
+      // guest일 경우 userId를 0으로 처리
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
+
       // 카테고리별로 조회
       const crew = await this.homeService.findCrewByCategoryAndMap(
         category,
         userId,
       );
 
-      // 카테고리별로 조회한 결과가 없을 경우
-      // if (crew.length === 0) {
-      //   return res.status(HttpStatus.NOT_FOUND).json({
-      //     errormessage: '카테고리별로 조회한 결과가 없습니다.',
-      //   });
-      // }
-
+      /* 장기 모임은 crewDDay가 null로 들어간다. 
+      따라서 제일 최근 일정이 crewDDay이므로 제일 최근 일정으로 crewDDay를 조회에서 보내준다.*/
       for (let i = 0; i < crew.length; i++) {
         if (crew[i].crew_crewDDay === null) {
           const crewId = parseInt(crew[i].crew_crewId);
@@ -307,11 +309,16 @@ export class HomeController {
     @Res() res: any,
   ): Promise<any> {
     try {
+      /* user 정보 확인 */
+      // guest일 경우 userId를 0으로 처리
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
+
       // 카테고리별 모임 조회
       const crew = await this.homeService.findCrewByCategory(category, userId);
 
+      /* 장기 모임은 crewDDay가 null로 들어간다. 
+      따라서 제일 최근 일정이 crewDDay이므로 제일 최근 일정으로 crewDDay를 조회에서 보내준다.*/
       for (let i = 0; i < crew.length; i++) {
         if (crew[i].crew_crewDDay === null) {
           const crewId = parseInt(crew[i].crew_crewId);

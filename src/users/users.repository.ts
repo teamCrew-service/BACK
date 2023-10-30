@@ -29,18 +29,28 @@ export class UsersRepository {
 
   // userId로 유저 정보 찾기
   async findUserByPk(userId: number): Promise<any> {
-    const user = await this.usersRepository.findOne({ where: { userId } });
-    return user;
+    try {
+      const user = await this.usersRepository.findOne({ where: { userId } });
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository/findUserByPk');
+    }
   }
 
   // 유저 생성
   async create({ email, nickname, provider }): Promise<any> {
-    const user = new Users();
-    user.email = email;
-    user.nickname = nickname;
-    user.provider = provider;
-    await this.usersRepository.save(user);
-    return user;
+    try {
+      const user = new Users();
+      user.email = email;
+      user.nickname = nickname;
+      user.provider = provider;
+      await this.usersRepository.save(user);
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository/create');
+    }
   }
 
   // 최초 유저 정보 입력
@@ -80,16 +90,26 @@ export class UsersRepository {
 
   // nickname 체크
   async checkNickname(newNickname: string): Promise<any> {
-    const user = await this.usersRepository.findOne({
-      where: { nickname: newNickname },
-    });
-    const exNickname = user ? user.nickname : null;
-    return exNickname;
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { nickname: newNickname },
+      });
+      const exNickname = user ? user.nickname : null;
+      return exNickname;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository/checkNickname');
+    }
   }
 
   /* 탈퇴하기 */
   async deleteAccount(userId: number): Promise<any> {
-    const deleteAccount = await this.usersRepository.delete(userId);
-    return deleteAccount;
+    try {
+      const deleteAccount = await this.usersRepository.delete(userId);
+      return deleteAccount;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository/deleteAccount');
+    }
   }
 }

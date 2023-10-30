@@ -12,19 +12,37 @@ export class HomeService {
 
   // 다가오는 일정
   async findSchedule(userId: number): Promise<any> {
-    const schedule = await this.scheduleService.findSchedule(userId);
-    return schedule;
+    try {
+      const schedule = await this.scheduleService.findSchedule(userId);
+      return schedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeService/findSchedule');
+    }
   }
 
   // 다가오는 일정, 참여완료 일정
   async findParticipateSchedule(userId: number): Promise<any> {
-    const schedule = await this.scheduleService.findParticipateSchedule(userId);
-    return schedule;
+    try {
+      const schedule = await this.scheduleService.findParticipateSchedule(
+        userId,
+      );
+      return schedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeService/findParticipateSchedule');
+    }
   }
 
   // 내 주변 모임 찾기
   async getCrew(userId: number): Promise<any> {
-    return this.homeRepository.getCrew(userId);
+    try {
+      const crew = await this.homeRepository.getCrew(userId);
+      return crew;
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeService/getCrew');
+    }
   }
 
   // 내 주변 모임 찾기(카테고리별)
@@ -32,11 +50,29 @@ export class HomeService {
     category: string,
     userId: number,
   ): Promise<any> {
-    return this.homeRepository.findCrewByCategoryAndMap(category, userId);
+    try {
+      const crew = await this.homeRepository.findCrewByCategoryAndMap(
+        category,
+        userId,
+      );
+      return crew;
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeService/findCrewByCategoryAndMap');
+    }
   }
 
   // 카테고리별 모임 찾기
   async findCrewByCategory(category: string, userId: number): Promise<any> {
-    return this.homeRepository.findCrewByCategory(category, userId);
+    try {
+      const crew = await this.homeRepository.findCrewByCategory(
+        category,
+        userId,
+      );
+      return crew;
+    } catch (e) {
+      console.error(e);
+      throw new Error('HomeService/findCrewByCategory');
+    }
   }
 }

@@ -32,10 +32,12 @@ import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
+    // cronJob
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // db 설정
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -71,6 +73,7 @@ import { ChatModule } from './chat/chat.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    // auth 미들웨어
     consumer.apply(AuthMiddleWare).forRoutes(
       { path: 'mypage', method: RequestMethod.GET },
       { path: 'mypage/edit', method: RequestMethod.PUT },
@@ -140,6 +143,7 @@ export class AppModule implements NestModule {
       { path: 'unsubscribe', method: RequestMethod.POST },
       { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
     );
+    // login 미들웨어
     consumer
       .apply(LoginMiddleware)
       .forRoutes(

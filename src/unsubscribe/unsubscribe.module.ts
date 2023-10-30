@@ -9,6 +9,7 @@ import { TopicModule } from 'src/topic/topic.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Unsubscribe]),
+    // 순환 의존성
     forwardRef(() => UsersModule),
     forwardRef(() => TopicModule),
   ],

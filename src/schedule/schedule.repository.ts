@@ -15,7 +15,8 @@ export class ScheduleRepository {
 
   // 일정 조회
   async findSchedule(userId: number): Promise<any[]> {
-    const query = `
+    try {
+      const query = `
      SELECT 
             schedule.scheduleTitle,
             schedule.scheduleDDay,
@@ -36,13 +37,18 @@ export class ScheduleRepository {
       AND schedule.scheduleIsDone = false
       ORDER BY schedule.scheduleDDay;`;
 
-    const result = await this.entityManager.query(query);
-    return result;
+      const result = await this.entityManager.query(query);
+      return result;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/findSchedule');
+    }
   }
 
   // 종료된 일정 조회
   async findParticipateSchedule(userId: number): Promise<any> {
-    const query = `
+    try {
+      const query = `
      SELECT 
             schedule.scheduleTitle,
             schedule.scheduleDDay,
@@ -63,8 +69,12 @@ export class ScheduleRepository {
       AND schedule.scheduleIsDone = true
       ORDER BY schedule.scheduleDDay;`;
 
-    const result = await this.entityManager.query(query);
-    return result;
+      const result = await this.entityManager.query(query);
+      return result;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/findParticipateSchedule');
+    }
   }
 
   // 일정 생성
@@ -73,20 +83,25 @@ export class ScheduleRepository {
     userId: number,
     crewId: number,
   ): Promise<Schedule> {
-    const schedule = new Schedule();
-    schedule.userId = userId;
-    schedule.crewId = crewId;
-    schedule.scheduleTitle = createScheduleDto.scheduleTitle;
-    schedule.scheduleContent = createScheduleDto.scheduleContent;
-    schedule.scheduleDDay = createScheduleDto.scheduleDDay;
-    schedule.scheduleAddress = createScheduleDto.scheduleAddress;
-    schedule.schedulePlaceName = createScheduleDto.schedulePlaceName;
-    schedule.scheduleLatitude = createScheduleDto.scheduleLatitude;
-    schedule.scheduleLongitude = createScheduleDto.scheduleLongitude;
+    try {
+      const schedule = new Schedule();
+      schedule.userId = userId;
+      schedule.crewId = crewId;
+      schedule.scheduleTitle = createScheduleDto.scheduleTitle;
+      schedule.scheduleContent = createScheduleDto.scheduleContent;
+      schedule.scheduleDDay = createScheduleDto.scheduleDDay;
+      schedule.scheduleAddress = createScheduleDto.scheduleAddress;
+      schedule.schedulePlaceName = createScheduleDto.schedulePlaceName;
+      schedule.scheduleLatitude = createScheduleDto.scheduleLatitude;
+      schedule.scheduleLongitude = createScheduleDto.scheduleLongitude;
 
-    const createdSchedule = await this.scheduleRepository.save(schedule);
+      const createdSchedule = await this.scheduleRepository.save(schedule);
 
-    return createdSchedule;
+      return createdSchedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/createSchedule');
+    }
   }
 
   // 일정 수정
@@ -95,20 +110,9 @@ export class ScheduleRepository {
     crewId: number,
     scheduleId: number,
   ): Promise<any> {
-    // 수정할 필드만 선택적으로 업데이트
-    const {
-      scheduleTitle,
-      scheduleAddress,
-      schedulePlaceName,
-      scheduleDDay,
-      scheduleContent,
-      scheduleLatitude,
-      scheduleLongitude,
-    } = editScheduleDto;
-
-    const updatedSchedule = await this.scheduleRepository.update(
-      { scheduleId, crewId },
-      {
+    try {
+      // 수정할 필드만 선택적으로 업데이트
+      const {
         scheduleTitle,
         scheduleAddress,
         schedulePlaceName,
@@ -116,148 +120,207 @@ export class ScheduleRepository {
         scheduleContent,
         scheduleLatitude,
         scheduleLongitude,
-      },
-    );
+      } = editScheduleDto;
 
-    return updatedSchedule;
+      const updatedSchedule = await this.scheduleRepository.update(
+        { scheduleId, crewId },
+        {
+          scheduleTitle,
+          scheduleAddress,
+          schedulePlaceName,
+          scheduleDDay,
+          scheduleContent,
+          scheduleLatitude,
+          scheduleLongitude,
+        },
+      );
+
+      return updatedSchedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/editSchedule');
+    }
   }
 
   // 일정 상세 조회
   async findScheduleDetail(scheduleId: number, crewId: number): Promise<any> {
-    const schedule = await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .leftJoin('schedule.crewId', 'crew') // crew 테이블과의 join
-      .leftJoin(
-        'participant',
-        'participant',
-        'participant.crewId = schedule.crewId',
-      )
-      .leftJoin('users', 'users', 'users.userId = schedule.userId')
-      .where('schedule.scheduleId = :scheduleId', { scheduleId }) // 해당 scheduleId를 가진 멤버만 필터링
-      .andWhere('crew.crewId = :crewId', { crewId }) // 해당 crewId를 가진 멤버만 필터링
-      .select([
-        'schedule.scheduleId',
-        'schedule.scheduleTitle',
-        'schedule.scheduleDDay',
-        'schedule.scheduleContent',
-        'schedule.scheduleAddress',
-        'schedule.schedulePlaceName',
-        'schedule.scheduleLatitude',
-        'schedule.scheduleLongitude',
-        'crew.crewMaxMember',
-        'COUNT(participant.crewId) AS scheduleAttendedMember',
-        'users.profileImage AS captainProfileImage',
-      ]) // 필요한 필드만 선택
-      .getRawOne();
+    try {
+      const schedule = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .leftJoin('schedule.crewId', 'crew') // crew 테이블과의 join
+        .leftJoin(
+          'participant',
+          'participant',
+          'participant.crewId = schedule.crewId',
+        )
+        .leftJoin('users', 'users', 'users.userId = schedule.userId')
+        .where('schedule.scheduleId = :scheduleId', { scheduleId }) // 해당 scheduleId를 가진 멤버만 필터링
+        .andWhere('crew.crewId = :crewId', { crewId }) // 해당 crewId를 가진 멤버만 필터링
+        .select([
+          'schedule.scheduleId',
+          'schedule.scheduleTitle',
+          'schedule.scheduleDDay',
+          'schedule.scheduleContent',
+          'schedule.scheduleAddress',
+          'schedule.schedulePlaceName',
+          'schedule.scheduleLatitude',
+          'schedule.scheduleLongitude',
+          'crew.crewMaxMember',
+          'COUNT(participant.crewId) AS scheduleAttendedMember',
+          'users.profileImage AS captainProfileImage',
+        ]) // 필요한 필드만 선택
+        .getRawOne();
 
-    return schedule;
+      return schedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/findScheduleDetail');
+    }
   }
 
   // 일정 삭제
   async deleteSchedule(scheduleId: number, crewId: number): Promise<any> {
-    const schedule = await this.scheduleRepository.findOne({
-      where: { scheduleId, crewId },
-    });
+    try {
+      const schedule = await this.scheduleRepository.findOne({
+        where: { scheduleId, crewId },
+      });
 
-    const deletedSchedule = await this.scheduleRepository.softRemove(schedule); // soft delete
+      const deletedSchedule = await this.scheduleRepository.softRemove(
+        schedule,
+      ); // soft delete
 
-    return deletedSchedule;
+      return deletedSchedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/deleteSchedule');
+    }
   }
 
   /* crew에 해당하는 schedule 조회 */
   async findScheduleByCrew(crewId: number, userId: number): Promise<any> {
-    const schedules = await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .leftJoin(
-        'participant',
-        'participant',
-        'participant.crewId = schedule.crewId',
-      )
-      .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
-      .where('schedule.crewId = :crewId', { crewId })
-      .andWhere('schedule.deletedAt IS NULL')
-      .select([
-        'schedule.scheduleId AS scheduleId',
-        'schedule.userId AS userId',
-        'schedule.scheduleTitle AS scheduleTitle',
-        'schedule.scheduleContent AS scheduleContent',
-        'schedule.scheduleDDay AS scheduleDDay',
-        'schedule.scheduleIsDone AS scheduleIsDone',
-        'schedule.scheduleAddress AS scheduleAddress',
-        'schedule.schedulePlaceName AS schedulePlaceName',
-        'crew.crewMaxMember AS scheduleMaxMember',
-        'COUNT(participant.scheduleId) AS scheduleAttendedMember',
-        'schedule.scheduleLatitude AS scheduleLatitude',
-        'schedule.scheduleLongitude AS scheduleLongitude',
-        'schedule.createdAt AS createdAt',
-        `CASE WHEN participant.userId = ${userId} OR schedule.userId = ${userId} THEN true ELSE false END AS participate`, // participant가 존재하면 1, 그렇지 않으면 0 반환
-      ])
-      .groupBy('schedule.scheduleId')
-      .orderBy('schedule.scheduleDDay', 'ASC')
-      .getRawMany();
-    if (schedules.length < 1 || schedules[0].scheduleId === null) {
-      const schedule = [];
-      return schedule;
-    } else {
-      const schedule = schedules;
-      return schedule;
+    try {
+      const schedules = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .leftJoin(
+          'participant',
+          'participant',
+          'participant.crewId = schedule.crewId',
+        )
+        .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
+        .where('schedule.crewId = :crewId', { crewId })
+        .andWhere('schedule.deletedAt IS NULL')
+        .select([
+          'schedule.scheduleId AS scheduleId',
+          'schedule.userId AS userId',
+          'schedule.scheduleTitle AS scheduleTitle',
+          'schedule.scheduleContent AS scheduleContent',
+          'schedule.scheduleDDay AS scheduleDDay',
+          'schedule.scheduleIsDone AS scheduleIsDone',
+          'schedule.scheduleAddress AS scheduleAddress',
+          'schedule.schedulePlaceName AS schedulePlaceName',
+          'crew.crewMaxMember AS scheduleMaxMember',
+          'COUNT(participant.scheduleId) AS scheduleAttendedMember',
+          'schedule.scheduleLatitude AS scheduleLatitude',
+          'schedule.scheduleLongitude AS scheduleLongitude',
+          'schedule.createdAt AS createdAt',
+          `CASE WHEN participant.userId = ${userId} OR schedule.userId = ${userId} THEN true ELSE false END AS participate`, // participant가 존재하면 1, 그렇지 않으면 0 반환
+        ])
+        .groupBy('schedule.scheduleId')
+        .orderBy('schedule.scheduleDDay', 'ASC')
+        .getRawMany();
+      if (schedules.length < 1 || schedules[0].scheduleId === null) {
+        const schedule = [];
+        return schedule;
+      } else {
+        const schedule = schedules;
+        return schedule;
+      }
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/findScheduleByCrew');
     }
   }
 
   /* 오늘 날짜 기준보다 날짜가 지난 일정을 찾아 IsDone을 true로 전환 */
   async updateScheduleIsDone(): Promise<any> {
-    const koreaTimezoneOffset = 9 * 60;
-    const currentDate = new Date();
-    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
-    await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .update(Schedule)
-      .set({ scheduleIsDone: true })
-      .where('schedule.scheduleDDay < :today', { today })
-      .andWhere('schedule.scheduleIsDone = :scheduleIsDone', {
-        scheduleIsDone: false,
-      })
-      .execute();
+    try {
+      const koreaTimezoneOffset = 9 * 60;
+      const currentDate = new Date();
+      const today = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
+      await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .update(Schedule)
+        .set({ scheduleIsDone: true })
+        .where('schedule.scheduleDDay < :today', { today })
+        .andWhere('schedule.scheduleIsDone = :scheduleIsDone', {
+          scheduleIsDone: false,
+        })
+        .execute();
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/updateScheduleIsDone');
+    }
   }
 
   /* 위임에 따라 schedule 작성자 변경 */
   async delegateSchedule(delegator: number, crewId: number): Promise<any> {
-    await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .update(Schedule)
-      .set({ userId: delegator })
-      .where('schedule.crewId = :crewId', { crewId })
-      .andWhere('schedule.deletedAt IS NULL')
-      .execute();
+    try {
+      await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .update(Schedule)
+        .set({ userId: delegator })
+        .where('schedule.crewId = :crewId', { crewId })
+        .andWhere('schedule.deletedAt IS NULL')
+        .execute();
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/delegateSchedule');
+    }
   }
 
   /* 오늘 날짜에 가까운 schedule만 조회하기 */
-  async findScheduleCloseToToday(crewId: number) {
-    const koreaTimezoneOffset = 9 * 60;
-    const currentDate = new Date();
-    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
-    const schedule = await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .select(['crewId', 'scheduleDDay'])
-      .where('schedule.crewId = :crewId', { crewId })
-      .andWhere('schedule.scheduleDDay > :today', { today })
-      .orderBy('schedule.scheduleDDay', 'ASC')
-      .getRawMany();
+  async findScheduleCloseToToday(crewId: number): Promise<any> {
+    try {
+      const koreaTimezoneOffset = 9 * 60;
+      const currentDate = new Date();
+      const today = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
+      const schedule = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .select(['crewId', 'scheduleDDay'])
+        .where('schedule.crewId = :crewId', { crewId })
+        .andWhere('schedule.scheduleDDay > :today', { today })
+        .orderBy('schedule.scheduleDDay', 'ASC')
+        .getRawMany();
 
-    return schedule[0];
+      return schedule[0];
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/findScheduleCloseToToday');
+    }
   }
 
   /* crew 삭제에 따른 schedule 삭제 */
   async deleteScheduleByCrew(crewId: number): Promise<any> {
-    const koreaTimezoneOffset = 9 * 60;
-    const currentDate = new Date();
-    const today = new Date(currentDate.getTime() + koreaTimezoneOffset * 60000);
-    const deleteSchedule = await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .update(Schedule)
-      .set({ deletedAt: today })
-      .where('schedule.crewId = :crewId', { crewId })
-      .execute();
-    return deleteSchedule;
+    try {
+      const koreaTimezoneOffset = 9 * 60;
+      const currentDate = new Date();
+      const today = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
+      const deleteSchedule = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .update(Schedule)
+        .set({ deletedAt: today })
+        .where('schedule.crewId = :crewId', { crewId })
+        .execute();
+      return deleteSchedule;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ScheduleRepository/deleteScheduleByCrew');
+    }
   }
 }

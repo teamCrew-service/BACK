@@ -12,11 +12,16 @@ export class ReportService {
     userId: number,
     crewId: number,
   ): Promise<any> {
-    const report = await this.reportRepository.createReport(
-      createReportDto,
-      userId,
-      crewId,
-    );
-    return report;
+    try {
+      const report = await this.reportRepository.createReport(
+        createReportDto,
+        userId,
+        crewId,
+      );
+      return report;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ReportService/createReport');
+    }
   }
 }

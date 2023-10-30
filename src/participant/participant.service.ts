@@ -11,21 +11,31 @@ export class ParticipantService {
     crewId: number,
     scheduleId: number,
   ): Promise<any> {
-    const participant = await this.participantRepository.participateSchedule(
-      userId,
-      crewId,
-      scheduleId,
-    );
-    return participant;
+    try {
+      const participant = await this.participantRepository.participateSchedule(
+        userId,
+        crewId,
+        scheduleId,
+      );
+      return participant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantService/participateSchedule');
+    }
   }
 
   /* schedule에 참여한 인원 조회하기 */
   async findAllParticipant(crewId: number, scheduleId: number): Promise<any> {
-    const participant = await this.participantRepository.findAllParticipant(
-      crewId,
-      scheduleId,
-    );
-    return participant;
+    try {
+      const participant = await this.participantRepository.findAllParticipant(
+        crewId,
+        scheduleId,
+      );
+      return participant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantService/findAllParticipant');
+    }
   }
 
   /* 참여한 schedule 취소하기 */
@@ -34,20 +44,30 @@ export class ParticipantService {
     scheduleId: number,
     userId: number,
   ): Promise<any> {
-    const canceledParticipant =
-      await this.participantRepository.cancelParticipate(
-        crewId,
-        scheduleId,
-        userId,
-      );
-    return canceledParticipant;
+    try {
+      const canceledParticipant =
+        await this.participantRepository.cancelParticipate(
+          crewId,
+          scheduleId,
+          userId,
+        );
+      return canceledParticipant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantService/cancelParticipate');
+    }
   }
 
   /* crew 삭제에 따른 participant delete */
   async deleteParticipant(crewId: number): Promise<any> {
-    const deleteParticipant =
-      await this.participantRepository.deleteParticipant(crewId);
-    return deleteParticipant;
+    try {
+      const deleteParticipant =
+        await this.participantRepository.deleteParticipant(crewId);
+      return deleteParticipant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantService/deleteParticipant');
+    }
   }
 
   /* schedule 삭제에 따라 participant delete */
@@ -55,11 +75,16 @@ export class ParticipantService {
     scheduleId: number,
     crewId: number,
   ): Promise<any> {
-    const deleteParticipant =
-      await this.participantRepository.deleteParticipantBySchedule(
-        scheduleId,
-        crewId,
-      );
-    return deleteParticipant;
+    try {
+      const deleteParticipant =
+        await this.participantRepository.deleteParticipantBySchedule(
+          scheduleId,
+          crewId,
+        );
+      return deleteParticipant;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ParticipantService/deleteParticipantBySchedule');
+    }
   }
 }

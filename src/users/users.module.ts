@@ -16,6 +16,7 @@ import { scheduleModule } from 'src/schedule/schedule.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Users]),
+    // 순환 의존성
     forwardRef(() => AuthModule),
     forwardRef(() => CrewModule),
     forwardRef(() => TopicModule),

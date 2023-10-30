@@ -10,6 +10,7 @@ import { scheduleModule } from 'src/schedule/schedule.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Crew]),
+    // 순환 의존성
     forwardRef(() => CrewModule),
     forwardRef(() => scheduleModule),
   ],
