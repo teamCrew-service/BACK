@@ -11,7 +11,7 @@ import { MessagesService } from './messages.service';
 @WebSocketGateway({
   namespace: '/',
   cors: {
-    origin: 'http://localhost:3000', // 클라이언트의 주소
+    origin: ['http://localhost:3000', process.env.CORS_ORIGIN], // 클라이언트의 주소
     methods: ['GET', 'POST'],
     allowedHeaders: ['my-custom-header'],
     credentials: true,
@@ -52,10 +52,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         `Sending previous messages to client ${client.id} for crewId ${payload.crewId}:`,
         messages,
       );
-      client.join(messages[0].crewId.toString());
+      client.join('' + messages[0].crewId);
       client.emit('previousMessages', messages);
       this.server
-        .to(messages[0].crewId.toString())
+        .to('' + messages[0].crewId)
         .emit('message', `User ${payload.userId} has joined the room.`);
       client.emit('serverMessage', 'joinRoom 성공');
     }
@@ -66,9 +66,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client: Socket,
     payload: { crewId: number; userId: number; content: string },
   ) {
-    client.leave(payload.crewId.toString()); // 클라이언트를 방에서 떠나게 함
+    client.leave('' + payload.crewId); // 클라이언트를 방에서 떠나게 함
     this.server
-      .to(payload.crewId.toString())
+      .to('' + payload.crewId)
       .emit('message', `User ${payload.userId} has left the room.`); // 방에 떠난 클라이언트에게 메시지를 보냄
   }
 
@@ -86,6 +86,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       payload.content,
     );
     console.log('Created Message: ', message);
-    this.server.to(payload.crewId.toString()).emit('message', { ...message }); // 방에 메시지를 보냄
+    this.server.to('' + payload.crewId).emit('message', { ...message }); // 방에 메시지를 보냄
   }
 }
