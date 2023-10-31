@@ -11,7 +11,7 @@ import {
 @Entity('leavecrew')
 export class Leavecrew {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  levaecrewId: number;
+  leavecrewId: number;
 
   @ManyToOne(() => Users, (user) => user.leavecrew)
   @JoinColumn({ name: 'userId' })
