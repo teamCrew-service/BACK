@@ -33,6 +33,7 @@ export class ImageRepository {
         .createQueryBuilder('image')
         .select(['imageId', 'crewId', 'userId', 'image'])
         .where('image.crewId = :crewId', { crewId })
+        .orderBy('image.createdAt', 'DESC')
         .getRawMany();
 
       return image;

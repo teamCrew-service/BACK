@@ -459,6 +459,9 @@ export class CrewController {
 
       const allNotice = { regularNotice, voteForm };
 
+      // image 조회
+      const image = await this.imageService.findCrewImages(crewId);
+
       // 방장일 경우
       if (userId === crew.captainId) {
         return res.status(HttpStatus.OK).json({
@@ -468,6 +471,7 @@ export class CrewController {
           member,
           schedule,
           allNotice,
+          image,
           likeCount,
           likeCheck,
           personType: 'captain',
@@ -484,6 +488,7 @@ export class CrewController {
             member,
             schedule,
             allNotice,
+            image,
             likeCount,
             likeCheck,
             personType: 'member',
@@ -496,6 +501,7 @@ export class CrewController {
         crew,
         captainTopics,
         member,
+        image,
         likeCount,
         likeCheck,
         personType: 'person',
