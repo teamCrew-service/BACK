@@ -37,6 +37,8 @@ export class HomeRepository {
           'COUNT(member.crewId) AS crewAttendedMember',
           'COUNT(like.userId) > 0 AS likeCheck',
         ])
+        .where('crew.userId != :userId', { userId })
+        .andWhere('(member.userId != :userId OR member.userId IS NULL)')
         .andWhere('crew.deletedAt IS NULL')
         .groupBy('crew.crewId')
         .getRawMany();
@@ -80,6 +82,8 @@ export class HomeRepository {
         )
         .groupBy('crew.crewId')
         .where('crew.category = :category', { category })
+        .andWhere('crew.userId != :userId', { userId })
+        .andWhere('(member.userId != :userId OR member.userId IS NULL)')
         .andWhere('crew.deletedAt IS NULL')
         .getRawMany();
 
@@ -118,6 +122,7 @@ export class HomeRepository {
         .groupBy('crew.crewId')
         .where('crew.category = :category', { category })
         .andWhere('crew.userId != :userId', { userId })
+        .andWhere('(member.userId != :userId OR member.userId IS NULL)')
         .andWhere('crew.deletedAt IS NULL')
         .orderBy('like.userId', 'DESC')
         .getRawMany();
