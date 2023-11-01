@@ -206,6 +206,7 @@ export class ScheduleRepository {
           'participant',
           'participant.crewId = schedule.crewId',
         )
+        .leftJoin('users', 'users', 'users.userId = participant.userId')
         .leftJoin('crew', 'crew', 'crew.crewId = schedule.crewId')
         .where('schedule.crewId = :crewId', { crewId })
         .andWhere('schedule.deletedAt IS NULL')
@@ -223,7 +224,7 @@ export class ScheduleRepository {
           'schedule.scheduleLatitude AS scheduleLatitude',
           'schedule.scheduleLongitude AS scheduleLongitude',
           'schedule.createdAt AS createdAt',
-          `CASE WHEN participant.userId = ${userId} OR schedule.userId = ${userId} THEN true ELSE false END AS participate`, // participant가 존재하면 1, 그렇지 않으면 0 반환
+          `JSON_ARRAYAGG(JSON_OBJECT('participantUserId', participant.userId, 'participantProfileImage', users.profileImage)) AS participants`,
         ])
         .groupBy('schedule.scheduleId')
         .orderBy('schedule.scheduleDDay', 'ASC')
