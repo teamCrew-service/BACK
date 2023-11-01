@@ -289,7 +289,7 @@ export class ScheduleController {
 
       // 참가자 조회해서 참가 인원인지
       for (let i = 0; i < participant.length; i++) {
-        if (userId === participant.participant_userId) {
+        if (userId === participant[i].participant_userId) {
           return res
             .status(HttpStatus.BAD_REQUEST)
             .json({ message: '이미 참여한 인원입니다.' });
@@ -307,10 +307,6 @@ export class ScheduleController {
           return res
             .status(HttpStatus.OK)
             .json({ message: '일정에 참가 성공' });
-        } else {
-          return res
-            .status(HttpStatus.UNAUTHORIZED)
-            .json({ message: 'crew에 가입 후에 사용할 수 있는 기능입니다.' });
         }
       }
       return res
