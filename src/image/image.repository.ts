@@ -31,8 +31,14 @@ export class ImageRepository {
     try {
       const image = await this.imageRepository
         .createQueryBuilder('image')
-        .select(['imageId', 'crewId', 'userId', 'image'])
+        .select([
+          'image.imageId AS imageId',
+          'image.crewId AS crewId',
+          'image.userId AS userId',
+          'image.image AS image',
+        ])
         .where('image.crewId = :crewId', { crewId })
+        .andWhere('image.deletedAt IS NULL')
         .orderBy('image.createdAt', 'DESC')
         .getRawMany();
 
