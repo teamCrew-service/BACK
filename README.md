@@ -30,11 +30,15 @@
 
 #### :calendar: 프로젝트 기간 : 2023년 08월 06일 ~ 2023년 10월
 
-### [GitHub](https://github.com/teamCrew-service)
+---
 
-### [Notion](https://burly-fridge-a81.notion.site/Team-CREW-d3269422b794420495da4d74548012cd?pvs=4)
+### :cat: [GitHub](https://github.com/teamCrew-service)
+
+### :scroll: [Notion](https://burly-fridge-a81.notion.site/Team-CREW-d3269422b794420495da4d74548012cd?pvs=4)
 
 ### :mag: [API Document](http://13.125.234.29/swagger)
+
+---
 
 ### 주요 기능
 
