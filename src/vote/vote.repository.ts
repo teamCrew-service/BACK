@@ -149,7 +149,7 @@ export class VoteRepository {
         .createQueryBuilder('vote')
         .delete()
         .from(Vote)
-        .where('vote.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
       return deleteVote;
     } catch (e) {

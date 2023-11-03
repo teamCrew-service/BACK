@@ -230,7 +230,7 @@ export class VoteFormRepository {
         .createQueryBuilder('voteform')
         .update(VoteForm)
         .set({ deletedAt: today })
-        .where('voteform.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
       return deleteVoteForm;
     } catch (e) {

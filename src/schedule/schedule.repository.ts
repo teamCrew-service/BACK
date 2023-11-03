@@ -316,7 +316,7 @@ export class ScheduleRepository {
         .createQueryBuilder('schedule')
         .update(Schedule)
         .set({ deletedAt: today })
-        .where('schedule.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
       return deleteSchedule;
     } catch (e) {

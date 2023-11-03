@@ -62,9 +62,9 @@ export class ParticipantRepository {
         .createQueryBuilder('participant')
         .delete()
         .from(Participant)
-        .where('participant.crewId = :crewId', { crewId })
-        .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
-        .andWhere('participant.userId = :userId', { userId })
+        .where('crewId = :crewId', { crewId })
+        .andWhere('scheduleId = :scheduleId', { scheduleId })
+        .andWhere('userId = :userId', { userId })
         .execute();
       return canceledParticipant;
     } catch (e) {
@@ -80,7 +80,7 @@ export class ParticipantRepository {
         .createQueryBuilder('participant')
         .delete()
         .from(Participant)
-        .where('participant.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
 
       return deleteParticipant;
@@ -100,8 +100,8 @@ export class ParticipantRepository {
         .createQueryBuilder('participant')
         .delete()
         .from(Participant)
-        .where('participant.crewId = :crewId', { crewId })
-        .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
+        .where('crewId = :crewId', { crewId })
+        .andWhere('scheduleId = :scheduleId', { scheduleId })
         .execute();
       return deleteParticipant;
     } catch (e) {
