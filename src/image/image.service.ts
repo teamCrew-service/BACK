@@ -95,4 +95,29 @@ export class ImageService {
       throw new Error('ImageService/urlToS3');
     }
   }
+
+  /* crew 삭제로 인한 image 삭제 */
+  async deleteImageByCrew(crewId: number): Promise<any> {
+    try {
+      const deleteImage = await this.imageRepository.deleteImageByCrew(crewId);
+      return deleteImage;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/deleteImageByCrew');
+    }
+  }
+
+  /* 탈퇴 시 user에 해당하는 부분 image 삭제 */
+  async deleteImageExitCrew(crewId: number, userId: number): Promise<any> {
+    try {
+      const deleteImage = await this.imageRepository.deleteImageExitCrew(
+        crewId,
+        userId,
+      );
+      return deleteImage;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageService/deleteImageExitCrew');
+    }
+  }
 }

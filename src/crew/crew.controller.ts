@@ -701,6 +701,7 @@ export class CrewController {
         await this.signupService.deleteSignupAndSignupForm(crewId);
         await this.voteFormService.deleteVoteFormByCrew(crewId);
         await this.voteService.deleteVoteByCrew(crewId);
+        await this.imageService.deleteImageByCrew(crewId);
         return res
           .status(HttpStatus.OK)
           .json({ message: '모임 삭제를 성공했습니다.' });

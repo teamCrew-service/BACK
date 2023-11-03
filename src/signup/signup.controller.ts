@@ -24,6 +24,7 @@ import { ConfirmSingupDto } from './dto/confirm-singup.dto';
 import { MemberService } from 'src/member/member.service';
 import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
 import { EditSignupDto } from './dto/editSubmit-signup.dto';
+import { ImageService } from 'src/image/image.service';
 
 @Controller()
 @ApiTags('signup API')
@@ -33,6 +34,7 @@ export class SignupController {
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
     private readonly leavecrewService: LeavecrewService,
+    private readonly imageService: ImageService,
   ) {}
 
   /* 모임 가입(form 생성): 버전 업그레이드에 맞춰 사용*/
@@ -509,6 +511,7 @@ export class SignupController {
       for (let i = 0; i < member.length; i++) {
         if (member[i].member_userId === userId) {
           await this.signupService.exitCrew(crewId, userId);
+          await this.imageService.deleteImageExitCrew(crewId, userId);
           return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
         }
       }
