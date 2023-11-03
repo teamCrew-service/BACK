@@ -96,7 +96,7 @@ export class CrewRepository {
           'crew.crewContent',
           'crew.thumbnail',
           'crew.crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'crew.latitude',
           'crew.longtitude',
           'crew.createdAt',
@@ -132,7 +132,7 @@ export class CrewRepository {
           'crew.crewTitle',
           'crew.crewContent',
           'crew.crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'crew.thumbnail',
         ])
         .where('crew.userId = :userId', { userId })
@@ -225,7 +225,7 @@ export class CrewRepository {
           'crew.crewTitle AS crewTitle',
           'crew.crewContent AS crewContent',
           'crew.crewMaxMember AS crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'crew.thumbnail AS thumbnail',
         ])
         .where('crew.crewId = :crewId', { crewId })
@@ -255,7 +255,7 @@ export class CrewRepository {
           'crew.crewTitle',
           'crew.crewContent',
           'crew.crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'crew.thumbnail',
         ])
         .where('crew.crewId = :crewId', { crewId })
@@ -290,7 +290,7 @@ export class CrewRepository {
           'crew.crewTitle',
           'crew.crewContent',
           'crew.crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'crew.thumbnail',
           'CASE WHEN COUNT(signup.crewId) > 0 THEN TRUE ELSE FALSE END AS existSignup',
         ])
@@ -322,7 +322,7 @@ export class CrewRepository {
           'crew.crewContent',
           'crew.crewDDay',
           'crew.crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'crew.thumbnail',
         ])
         .where('crew.crewId = :crewId', { crewId })

@@ -34,7 +34,7 @@ export class HomeRepository {
           'crew.crewMaxMember',
           'crew.latitude',
           'crew.longtitude',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'COUNT(like.userId) > 0 AS likeCheck',
         ])
         .where('crew.userId != :userId', { userId })
@@ -70,7 +70,7 @@ export class HomeRepository {
           'crew.crewMaxMember',
           'crew.latitude',
           'crew.longtitude',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'COUNT(like.userId) > 0 AS likeCheck',
         ])
         .leftJoin('member', 'member', 'member.crewId = crew.crewId')
@@ -109,7 +109,7 @@ export class HomeRepository {
           'crew.crewDDay',
           'crew.crewAddress',
           'crew.crewMaxMember',
-          'COUNT(member.crewId) AS crewAttendedMember',
+          'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'COUNT(like.userId) > 0 AS likeCheck',
         ])
         .leftJoin('member', 'member', 'member.crewId = crew.crewId')

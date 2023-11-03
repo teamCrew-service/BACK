@@ -344,17 +344,18 @@ export class ScheduleController {
         crewId,
         scheduleId,
       );
+      console.log(participant);
 
       // 참가자 조회해서 참가 인원인지 확인 뒤 취소 처리
       for (let i = 0; i < participant.length; i++) {
-        if (userId === participant.participant_userId) {
+        if (userId === participant[i].participant_userId) {
           const canceledParticipant =
             await this.participantService.cancelParticipate(
               crewId,
               scheduleId,
               userId,
             );
-          if (canceledParticipant < 1) {
+          if (canceledParticipant.length < 1) {
             return res
               .status(HttpStatus.INTERNAL_SERVER_ERROR)
               .json({ message: '일정 참가 취소 실패' });
