@@ -797,6 +797,7 @@ export class CrewController {
       );
       if (!leaveUser) {
         await this.memberService.exitCrew(crewId, userId);
+        await this.imageService.deleteImageExitCrew(crewId, userId);
         await this.leavecrewService.createLeaveCrew(crewId, userId);
       }
     } catch (e) {
