@@ -57,7 +57,7 @@ export class SignupFormRepository {
         .createQueryBuilder('signupform')
         .delete()
         .from(Signupform)
-        .where('signupform.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
 
       return deleteSignupForm;

@@ -202,7 +202,7 @@ export class NoticeRepository {
         .createQueryBuilder('notice')
         .update(Notice)
         .set({ deletedAt: today })
-        .where('notice.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
 
       return deleteNotice;

@@ -109,7 +109,7 @@ export class LikeRepository {
         .createQueryBuilder('like')
         .delete()
         .from(Like)
-        .where('like.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
       return deleteLike;
     } catch (e) {

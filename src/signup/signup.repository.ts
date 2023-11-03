@@ -176,7 +176,7 @@ export class SignupRepository {
         .createQueryBuilder('signup')
         .delete()
         .from(Signup)
-        .where('signup.crewId = :crewId', { crewId })
+        .where('crewId = :crewId', { crewId })
         .execute();
       return deleteSignup;
     } catch (e) {
