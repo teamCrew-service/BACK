@@ -81,4 +81,47 @@ export class ImageRepository {
       throw new Error('ImageRepository/deleteImage');
     }
   }
+
+  /* crew 삭제로 인한 image 삭제 */
+  async deleteImageByCrew(crewId: number): Promise<any> {
+    try {
+      const koreaTimezoneOffset = 9 * 60;
+      const currentDate = new Date();
+      const today = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
+      const deleteImage = await this.imageRepository
+        .createQueryBuilder('image')
+        .update(Image)
+        .set({ deletedAt: today })
+        .where('crewId = :crewId', { crewId })
+        .execute();
+      return deleteImage;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageRepository/deleteImageByCrew');
+    }
+  }
+
+  /* 탈퇴 시 user에 해당하는 부분 image 삭제 */
+  async deleteImageExitCrew(crewId: number, userId: number): Promise<any> {
+    try {
+      const koreaTimezoneOffset = 9 * 60;
+      const currentDate = new Date();
+      const today = new Date(
+        currentDate.getTime() + koreaTimezoneOffset * 60000,
+      );
+      const deleteImage = await this.imageRepository
+        .createQueryBuilder('image')
+        .update(Image)
+        .set({ deletedAt: today })
+        .where('crewId = :crewId', { crewId })
+        .andWhere('userId = :userId', { userId })
+        .execute();
+      return deleteImage;
+    } catch (e) {
+      console.error(e);
+      throw new Error('ImageRepository/deleteImageExitCrew');
+    }
+  }
 }
