@@ -82,9 +82,14 @@ export class AppModule implements NestModule {
       { path: 'mycrew/mycreatedcrew', method: RequestMethod.GET },
       { path: 'mycrew/waitingcrew', method: RequestMethod.GET },
       { path: 'auth/info', method: RequestMethod.PUT },
+      { path: 'unsubscribe', method: RequestMethod.POST },
+      { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
       { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
       { path: 'crew/:crewId/editThumbnail', method: RequestMethod.PUT },
+      { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
+      { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
+      { path: 'crew/delegate/:crewId', method: RequestMethod.POST },
       { path: 'schedule/:crewId/createSchedule', method: RequestMethod.POST },
       { path: 'schedule/edit/:crewId/:scheduleId', method: RequestMethod.PUT },
       {
@@ -103,10 +108,6 @@ export class AppModule implements NestModule {
         path: 'schedule/cancelParticipate/:crewId/:scheduleId',
         method: RequestMethod.DELETE,
       },
-      { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
-      { path: 'crew/:crewId/delete', method: RequestMethod.DELETE },
-      { path: 'crew/delegate/:crewId', method: RequestMethod.POST },
-      { path: 'crew/leaveCrew/:crewId', method: RequestMethod.POST },
       { path: 'signup/:crewId', method: RequestMethod.POST },
       { path: 'signupform/:signupFormId', method: RequestMethod.GET },
       {
@@ -140,8 +141,6 @@ export class AppModule implements NestModule {
       { path: 'report/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.DELETE },
-      { path: 'unsubscribe', method: RequestMethod.POST },
-      { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
     );
     // login 미들웨어
     consumer
