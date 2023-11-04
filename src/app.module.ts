@@ -84,7 +84,6 @@ export class AppModule implements NestModule {
       { path: 'auth/info', method: RequestMethod.PUT },
       { path: 'unsubscribe', method: RequestMethod.POST },
       { path: 'deleteUnsubscribe', method: RequestMethod.DELETE },
-      { path: 'crewId', method: RequestMethod.POST },
       { path: 'crew/createcrew', method: RequestMethod.POST },
       { path: 'crew/:crewId/editThumbnail', method: RequestMethod.PUT },
       { path: 'crew/:crewId/edit', method: RequestMethod.PUT },
