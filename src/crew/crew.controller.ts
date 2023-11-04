@@ -768,41 +768,4 @@ export class CrewController {
     }
   }
 
-  /* member가 모임 탈퇴 */
-  @Post('leaveCrew/:crewId')
-  @ApiOperation({
-    summary: '모임 탈퇴 API',
-    description: '모임을 탈퇴합니다.',
-  })
-  @ApiParam({
-    name: 'crewId',
-    type: 'number',
-    description: '모임 Id',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '모임 탈퇴 성공',
-  })
-  @ApiBearerAuth('accessToken')
-  async leaveCrew(
-    @Param('crewId') crewId: number,
-    @Res() res: any,
-  ): Promise<any> {
-    try {
-      // 토큰을 통해 userId 확인
-      const { userId } = res.locals.user;
-      const leaveUser = await this.leavecrewService.findOneLeaveUser(
-        crewId,
-        userId,
-      );
-      if (!leaveUser) {
-        await this.memberService.exitCrew(crewId, userId);
-        await this.imageService.deleteImageExitCrew(crewId, userId);
-        await this.leavecrewService.createLeaveCrew(crewId, userId);
-      }
-    } catch (e) {
-      console.error(e);
-      throw new Error('CrewController/leaveCrew');
-    }
-  }
 }

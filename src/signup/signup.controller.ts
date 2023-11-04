@@ -506,13 +506,24 @@ export class SignupController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
       }
-      // 멤버 조회
-      const member = await this.memberService.findAllMember(crewId);
-      for (let i = 0; i < member.length; i++) {
-        if (member[i].member_userId === userId) {
-          await this.signupService.exitCrew(crewId, userId);
-          await this.imageService.deleteImageExitCrew(crewId, userId);
-          return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
+      const leaveUser = await this.leavecrewService.findOneLeaveUser(
+        crewId,
+        userId,
+      );
+      if (!leaveUser) {
+        // 멤버 조회
+        const member = await this.memberService.findAllMember(crewId);
+        for (let i = 0; i < member.length; i++) {
+          if (member[i].member_userId === userId) {
+            await this.signupService.exitCrew(crewId, userId);
+            await this.imageService.deleteImageExitCrew(crewId, userId);
+            await this.leavecrewService.createLeaveCrew(crewId, userId);
+            return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
+          } else {
+            return res
+              .status(HttpStatus.BAD_REQUEST)
+              .json({ message: '탈퇴 실패' });
+          }
         }
       }
     } catch (e) {
