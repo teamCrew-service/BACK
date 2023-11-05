@@ -56,7 +56,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('previousMessages', messages);
       this.server
         .to('' + messages[0].crewId)
-        .emit('message', `User ${payload.userId} has joined the room.`);
+        .emit('noticeMessage', `User ${payload.userId} has joined the room.`);
       client.emit('serverMessage', 'joinRoom 성공');
     }
   }
@@ -69,7 +69,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.leave('' + payload.crewId); // 클라이언트를 방에서 떠나게 함
     this.server
       .to('' + payload.crewId)
-      .emit('message', `User ${payload.userId} has left the room.`); // 방에 떠난 클라이언트에게 메시지를 보냄
+      .emit('noticeMessage', `User ${payload.userId} has left the room.`); // 방에 떠난 클라이언트에게 메시지를 보냄
   }
 
   @SubscribeMessage('sendMessage')
@@ -85,7 +85,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       payload.userId,
       payload.content,
     );
-    console.log('Created Message: ', message);
-    this.server.to('' + payload.crewId).emit('message', { ...message }); // 방에 메시지를 보냄
+    console.log('Created Message: ', message['_doc']);
+    this.server.to('' + payload.crewId).emit('message', { ...message['_doc'] }); // 방에 메시지를 보냄
   }
 }
