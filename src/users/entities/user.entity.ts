@@ -20,6 +20,7 @@ import { Image } from 'src/image/entities/image.entity';
 import { Report } from 'src/report/entities/report.entity';
 import { Unsubscribe } from 'src/unsubscribe/entities/unsubscribe.entity';
 import { Leavecrew } from 'src/leavecrew/entities/leavecrew.entity';
+import { Alarm } from 'src/alarm/entities/alarm.entity';
 
 @Entity('users')
 export class Users {
@@ -97,4 +98,7 @@ export class Users {
 
   @OneToMany(() => Leavecrew, (leavecrew) => leavecrew.userId)
   leavecrew: Leavecrew[];
+
+  @OneToMany(() => Alarm, (alarm) => alarm.userId)
+  alarm: Alarm[];
 }

@@ -29,6 +29,7 @@ import { ImageModule } from './image/image.module';
 import { ReportModule } from './report/report.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatModule } from './chat/chat.module';
+import { AlarmModule } from './alarm/alarm.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { ChatModule } from './chat/chat.module';
     ReportModule,
     MongooseModule.forRoot(process.env.MONGODB_URL),
     ChatModule,
+    AlarmModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
@@ -140,6 +142,7 @@ export class AppModule implements NestModule {
       { path: 'report/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.DELETE },
+      { path: 'alarm/checkAlarm', method: RequestMethod.POST },
     );
     // login 미들웨어
     consumer
