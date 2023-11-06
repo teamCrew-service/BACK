@@ -13,15 +13,17 @@ import { NoticeModule } from 'src/notice/notice.module';
 import { VoteFormModule } from 'src/voteform/voteform.module';
 import { ImageModule } from 'src/image/image.module';
 import { TopicModule } from 'src/topic/topic.module';
-import { LeavecrewModule } from 'src/leavecrew/leavecrew.module';
 import { ChatModule } from 'src/chat/chat.module';
 import { ParticipantModule } from 'src/participant/participant.module';
 import { VoteModule } from 'src/vote/vote.module';
+import { AlarmModule } from 'src/alarm/alarm.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Crew]),
     // 순환 의존성
+    forwardRef(() => UsersModule),
     forwardRef(() => HomeModule),
     forwardRef(() => SignupModule),
     forwardRef(() => MemberModule),
@@ -31,10 +33,10 @@ import { VoteModule } from 'src/vote/vote.module';
     forwardRef(() => VoteFormModule),
     forwardRef(() => ImageModule),
     forwardRef(() => TopicModule),
-    forwardRef(() => LeavecrewModule),
     forwardRef(() => ChatModule),
     forwardRef(() => ParticipantModule),
     forwardRef(() => VoteModule),
+    forwardRef(() => AlarmModule),
   ],
   providers: [CrewService, CrewRepository],
   exports: [CrewService, CrewRepository],

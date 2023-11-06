@@ -22,6 +22,7 @@ import { Participant } from 'src/participant/entities/participant.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Report } from 'src/report/entities/report.entity';
 import { Leavecrew } from 'src/leavecrew/entities/leavecrew.entity';
+import { Alarm } from 'src/alarm/entities/alarm.entity';
 
 @Entity('crew')
 export class Crew {
@@ -121,4 +122,7 @@ export class Crew {
 
   @OneToMany(() => Leavecrew, (leavecrew) => leavecrew.crewId)
   leavecrew: Leavecrew[];
+
+  @OneToMany(() => Alarm, (alarm) => alarm.crewId)
+  alarm: Alarm[];
 }

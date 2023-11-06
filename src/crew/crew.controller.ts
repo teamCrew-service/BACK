@@ -38,9 +38,10 @@ import { multerConfig } from 'src/crew/multerConfig';
 import { TopicService } from 'src/topic/topic.service';
 import { DelegateDto } from './dto/delegate.dto';
 import { IsOptional } from 'class-validator';
-import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
 import { ParticipantService } from 'src/participant/participant.service';
 import { VoteService } from 'src/vote/vote.service';
+import { AlarmService } from 'src/alarm/alarm.service';
+import { UsersService } from 'src/users/users.service';
 
 export class CrewFilesUploadDto {
   @ApiProperty()
@@ -73,6 +74,7 @@ export class CrewFilesEditDto {
 @ApiTags('Crew API')
 export class CrewController {
   constructor(
+    private readonly usersService: UsersService,
     private readonly crewService: CrewService,
     private readonly topicService: TopicService,
     private readonly signupService: SignupService,
@@ -82,9 +84,9 @@ export class CrewController {
     private readonly voteFormService: VoteFormService,
     private readonly likeService: LikeService,
     private readonly imageService: ImageService,
-    private readonly leavecrewService: LeavecrewService,
     private readonly participantService: ParticipantService,
     private readonly voteService: VoteService,
+    private readonly alarmService: AlarmService,
   ) {}
 
   /* 모임 생성 */
@@ -431,9 +433,12 @@ export class CrewController {
         (today - startDate) / oneDayInMilliseconds,
       );
 
+      // 알림 확인
+      const alarm = await this.alarmService.findOneAlarm(crewId, userId);
+
       /* userId를 통해 crew 방장 및 member 확인 */
       // 게스트일 경우
-      if (userId === null) {
+      if (user === null) {
         return res.status(HttpStatus.OK).json({
           createdCrewPeriod,
           crew,
@@ -465,6 +470,7 @@ export class CrewController {
       // 방장일 경우
       if (userId === crew.captainId) {
         return res.status(HttpStatus.OK).json({
+          alarmMessage: alarm ? alarm.alarmMessage : null,
           createdCrewPeriod,
           crew,
           captainTopics,
@@ -738,6 +744,15 @@ export class CrewController {
       const { userId } = res.locals.user;
       const { delegator } = delegateDto;
 
+      // 위임자 nickname
+      const user = await this.usersService.findUserByPk(delegator);
+      if (!user) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: '존재하지 않는 유저입니다.' });
+      }
+      const nickname = user.nickname;
+
       // 모임 조회
       const crew = await this.crewService.findOneCrew(crewId, userId);
       if (!crew) {
@@ -755,6 +770,7 @@ export class CrewController {
           await this.noticeService.delegateNotice(delegator, crewId);
           await this.scheduleService.delegateSchedule(delegator, crewId);
           await this.voteFormService.delegateVoteForm(delegator, crewId);
+          await this.alarmService.createAlarm(crewId, delegator, nickname);
           return res.status(HttpStatus.OK).json({ message: '위임 완료' });
         }
       }
@@ -767,5 +783,4 @@ export class CrewController {
       throw new Error('CrewContrller/changeCaptain');
     }
   }
-
 }

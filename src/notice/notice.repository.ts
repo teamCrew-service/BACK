@@ -181,8 +181,8 @@ export class NoticeRepository {
         .createQueryBuilder('notice')
         .update(Notice)
         .set({ userId: delegator })
-        .where('notice.crewId = :crewId', { crewId })
-        .andWhere('notice.deletedAt IS NULL')
+        .where('crewId = :crewId', { crewId })
+        .andWhere('deletedAt IS NULL')
         .execute();
     } catch (e) {
       console.error(e);
