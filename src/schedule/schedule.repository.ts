@@ -254,8 +254,8 @@ export class ScheduleRepository {
         .createQueryBuilder('schedule')
         .update(Schedule)
         .set({ scheduleIsDone: true })
-        .where('schedule.scheduleDDay < :today', { today })
-        .andWhere('schedule.scheduleIsDone = :scheduleIsDone', {
+        .where('scheduleDDay < :today', { today })
+        .andWhere('scheduleIsDone = :scheduleIsDone', {
           scheduleIsDone: false,
         })
         .execute();
@@ -272,8 +272,8 @@ export class ScheduleRepository {
         .createQueryBuilder('schedule')
         .update(Schedule)
         .set({ userId: delegator })
-        .where('schedule.crewId = :crewId', { crewId })
-        .andWhere('schedule.deletedAt IS NULL')
+        .where('crewId = :crewId', { crewId })
+        .andWhere('deletedAt IS NULL')
         .execute();
     } catch (e) {
       console.error(e);

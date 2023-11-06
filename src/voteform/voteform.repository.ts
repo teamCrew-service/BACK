@@ -169,8 +169,8 @@ export class VoteFormRepository {
         .createQueryBuilder('voteform')
         .update(VoteForm)
         .set({ deletedAt: today })
-        .where('voteform.crewId = :crewId', { crewId })
-        .andWhere('voteform.voteFormId = :voteFormId', { voteFormId })
+        .where('crewId = :crewId', { crewId })
+        .andWhere('voteFormId = :voteFormId', { voteFormId })
         .execute();
       return deleteVoteForm;
     } catch (e) {
@@ -191,8 +191,8 @@ export class VoteFormRepository {
         .createQueryBuilder('voteform')
         .update(VoteForm)
         .set({ voteFormIsDone: true })
-        .where('voteform.voteFormEndDate < :today', { today })
-        .andWhere('voteform.voteFormIsDone = :voteFormIsDone', {
+        .where('voteFormEndDate < :today', { today })
+        .andWhere('voteFormIsDone = :voteFormIsDone', {
           voteFormIsDone: false,
         })
         .execute();
@@ -209,8 +209,8 @@ export class VoteFormRepository {
         .createQueryBuilder('voteform')
         .update(VoteForm)
         .set({ userId: delegator })
-        .where('voteform.crewId = :crewId', { crewId })
-        .andWhere('voteform.deletedAt IS NULL')
+        .where('crewId = :crewId', { crewId })
+        .andWhere('deletedAt IS NULL')
         .execute();
     } catch (e) {
       console.error(e);
