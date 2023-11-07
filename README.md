@@ -121,7 +121,6 @@
 | mongoose                | NoSQL DB(채팅)                    |
 | aws-sdk                 | AWS 서비스 이용을 위한 라이브러리 |
 | cron                    | cronJob                           |
-| schedule                | scheduling                        |
 | multer                  | formData 저장을 위한 라이브러리   |
 | multer-s3               | s3를 이용하여 이미지 저장         |
 
@@ -135,6 +134,7 @@
 
 ![teamCrew](https://github.com/teamCrew-service/BACK/assets/125416958/5a055e39-5957-4bdc-be16-cd12f3738e39)
 
+---
 
 ## :rocket: 개선 사항
 
