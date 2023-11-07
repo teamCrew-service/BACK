@@ -133,7 +133,8 @@
 
 ## :bank: ERD
 
-## ![ERD](https://www.notion.so/Team-CREW-d3269422b794420495da4d74548012cd?pvs=4#8d4624f609cb43ca984d6e3c694f958f)
+![teamCrew](https://github.com/teamCrew-service/BACK/assets/125416958/5a055e39-5957-4bdc-be16-cd12f3738e39)
+
 
 ## :rocket: 개선 사항
 
