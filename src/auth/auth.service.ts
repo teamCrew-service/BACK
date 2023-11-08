@@ -17,8 +17,12 @@ export class AuthService {
 
   /* token 설정 */
   async getToken(userId: any): Promise<any> {
+    // 토큰 만료 시간
+    const tokenExpiry = 3600;
     // token 생성
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: tokenExpiry,
+    });
     return token;
   }
 
