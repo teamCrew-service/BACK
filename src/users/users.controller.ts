@@ -733,7 +733,7 @@ export class UsersController {
     try {
       const { userId } = res.locals.user;
       const crewList = await this.crewService.findMyCrew(userId);
-      if (crewList > 0) {
+      if (crewList.length > 0) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '모임장 위임을 하지 않은 crew가 있습니다.' });
