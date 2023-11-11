@@ -24,7 +24,7 @@
 - 가입이 등록된 모임에서는 가입을 통해 모임에 가입
 - 실시간 채팅을 통해 모임 구성원들과 원활한 소통 제공
 - S3를 이용한 image 관리 storage 구축
-- Docker를 이용한 CI/CD 구축
+- Github Action을 이용한 CI/CD 구축
 
 #### 홈페이지 :
 
@@ -121,7 +121,6 @@
 | mongoose                | NoSQL DB(채팅)                    |
 | aws-sdk                 | AWS 서비스 이용을 위한 라이브러리 |
 | cron                    | cronJob                           |
-| schedule                | scheduling                        |
 | multer                  | formData 저장을 위한 라이브러리   |
 | multer-s3               | s3를 이용하여 이미지 저장         |
 
@@ -133,7 +132,9 @@
 
 ## :bank: ERD
 
-## ![ERD](https://www.notion.so/Team-CREW-d3269422b794420495da4d74548012cd?pvs=4#8d4624f609cb43ca984d6e3c694f958f)
+![teamCrew](https://github.com/teamCrew-service/BACK/assets/125416958/5a055e39-5957-4bdc-be16-cd12f3738e39)
+
+---
 
 ## :rocket: 개선 사항
 
