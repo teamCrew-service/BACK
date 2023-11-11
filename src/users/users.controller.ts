@@ -768,6 +768,7 @@ export class UsersController {
         await this.unsubscribeService.findOneUnsubscribe(userId);
       if (toBeDeletedAccount) {
         await this.unsubscribeService.deleteUnsubscribe(userId);
+        return res.status(HttpStatus.OK).json({ message: '계정 복구 완료' });
       }
     } catch (e) {
       console.error(e);
