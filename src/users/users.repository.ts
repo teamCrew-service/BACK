@@ -11,6 +11,43 @@ export class UsersRepository {
     @InjectRepository(Users) private usersRepository: Repository<Users>,
   ) {}
 
+  // refresh 토큰 저장
+  async setRefreshToken(refreshToken: string, userId: any): Promise<any> {
+    try {
+      await this.usersRepository.update(userId, {
+        refreshToken,
+      });
+      return 'refresh token 저장 성공';
+    } catch (e) {
+      console.error(e.message);
+      throw new Error('UsersRepository / setRefreshToken');
+    }
+  }
+
+  // refresh 토큰 확인
+  async checkRefreshToken(refreshToken: string): Promise<any> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { refreshToken },
+      });
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersRepository / checkRefreshToken');
+    }
+  }
+
+  // refresh 토큰 제거
+  async deleteRefreshToken(refreshToken: string): Promise<any> {
+    try {
+      await this.usersRepository.update(refreshToken, { refreshToken: null });
+      return '토큰 삭제 성공';
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService / deleteRefreshToken');
+    }
+  }
+
   // email로 유저 정보 찾기
   async findUserByEmail(
     email: string,

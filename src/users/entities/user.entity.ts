@@ -51,6 +51,9 @@ export class Users {
   @Column({ type: 'varchar', nullable: true })
   location: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  refreshToken: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

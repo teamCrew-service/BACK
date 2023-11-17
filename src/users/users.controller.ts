@@ -114,21 +114,21 @@ export class UsersController {
   async kakaoCallback(@Req() req: any, @Res() res: Response) {
     // res.cookie('authorization', `Bearer ${req.user}`);
     try {
-      const token = req.user.token;
+      const accesssToken = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
       const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
         userId,
       );
       if (user.location === null) {
-        const query = '?token=' + token;
+        const query = '?token=' + accesssToken;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
         if (unsubscribe) {
-          const query = '?token=' + token;
+          const query = '?token=' + accesssToken;
           res.redirect(process.env.REDIRECT_URI_UNSUBSCRIBE + `/${query}`);
         }
-        const query = '?token=' + token;
+        const query = '?token=' + accesssToken;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
     } catch (e) {
@@ -165,21 +165,21 @@ export class UsersController {
   async naverCallback(@Req() req: any, @Res() res: Response) {
     // res.cookie('authorization', `Bearer ${req.user}`);
     try {
-      const token = req.user.token;
+      const accesssToken = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
       const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
         userId,
       );
       if (user.location === null) {
-        const query = '?token=' + token;
+        const query = '?token=' + accesssToken;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
         if (unsubscribe) {
-          const query = '?token=' + token;
+          const query = '?token=' + accesssToken;
           res.redirect(process.env.REDIRECT_URI_UNSUBSCRIBE + `/${query}`);
         }
-        const query = '?token=' + token;
+        const query = '?token=' + accesssToken;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
     } catch (e) {
@@ -215,21 +215,21 @@ export class UsersController {
   })
   async googleCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const token = req.user.token;
+      const accesssToken = req.user.token;
       const userId = req.user.userId;
       const user = await this.usersService.findUserByPk(userId);
       const unsubscribe = await this.unsubscribeService.findOneUnsubscribe(
         userId,
       );
       if (user.location === null) {
-        const query = '?token=' + token;
+        const query = '?token=' + accesssToken;
         res.redirect(process.env.REDIRECT_URI_AUTH + `/${query}`);
       } else {
         if (unsubscribe) {
-          const query = '?token=' + token;
+          const query = '?token=' + accesssToken;
           res.redirect(process.env.REDIRECT_URI_UNSUBSCRIBE + `/${query}`);
         }
-        const query = '?token=' + token;
+        const query = '?token=' + accesssToken;
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
     } catch (e) {
@@ -248,8 +248,10 @@ export class UsersController {
     const provider = testLoginDto.provider;
     const user = await this.usersService.findUserByEmail(email, provider);
     const userId = user.userId;
-    const token = await this.authService.getToken(userId);
-    res.cookie('authorization', token);
+    const accesssToken = await this.authService.getAccessToken(userId);
+    const refreshToken = await this.authService.setRefreshToken(userId);
+    res.cookie('authorization', accesssToken);
+    res.cookie('refreshToken', refreshToken);
     return res.status(HttpStatus.OK).json({ message: '로그인 성공' });
   }
 

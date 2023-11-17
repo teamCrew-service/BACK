@@ -15,15 +15,29 @@ export class AuthService {
     return exUser;
   }
 
-  /* token 설정 */
-  async getToken(userId: any): Promise<any> {
+  /* accessToken 설정 */
+  async getAccessToken(userId: any): Promise<any> {
     // 토큰 만료 시간
-    const tokenExpiry = 3600;
+    const tokenExpiry = 7200;
     // token 생성
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
       expiresIn: tokenExpiry,
     });
-    return token;
+    return accessToken;
+  }
+
+  /* refreshToken 설정 */
+  async setRefreshToken(userId: any): Promise<any> {
+    // 토큰 만료 시간
+    const tokenExpiry = 14 * 24 * 60 * 60;
+    // token 생성
+    const refreshToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: tokenExpiry,
+    });
+    // db에 저장 시키기
+    await this.usersService.setRefreshToken(refreshToken, userId);
+
+    return refreshToken;
   }
 
   /* newUser 생성 */

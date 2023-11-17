@@ -13,6 +13,39 @@ export class UsersService {
     private topicService: TopicService,
   ) {}
 
+  // refresh 토큰 저장
+  async setRefreshToken(refreshToken: string, userId: any): Promise<any> {
+    try {
+      await this.usersRepository.setRefreshToken(refreshToken, userId);
+      return 'refresh token 저장 성공';
+    } catch (e) {
+      console.error(e.message);
+      throw new Error('UsersService / setRefreshToken');
+    }
+  }
+
+  // refresh 토큰 확인
+  async checkRefreshToken(refreshToken: string): Promise<any> {
+    try {
+      const user = await this.usersRepository.checkRefreshToken(refreshToken);
+      return user;
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService / checkRefreshToken');
+    }
+  }
+
+  // refresh 토큰 제거
+  async deleteRefreshToken(refreshToken: string): Promise<any> {
+    try {
+      await this.usersRepository.deleteRefreshToken(refreshToken);
+      return '토큰 삭제 성공';
+    } catch (e) {
+      console.error(e);
+      throw new Error('UsersService / deleteRefreshToken');
+    }
+  }
+
   // user 정보 email로 조회
   async findUserByEmail(email: string, provider: string): Promise<any> {
     try {

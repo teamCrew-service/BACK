@@ -29,8 +29,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const exUser = await this.authService.validateUser(email, provider);
     if (exUser) {
       // user 정보에 맞춰 token 발행
-      const token = await this.authService.getToken(exUser.userId);
-      return { token, userId: exUser.userId };
+      const accessToken = await this.authService.getAccessToken(exUser.userId);
+      const refreshToken = await this.authService.setRefreshToken(
+        exUser.userId,
+      );
+      return { accessToken, refreshToken, userId: exUser.userId };
     }
     // user 정보가 없을 경우 새로운 user db에 저장
     if (exUser === null) {
@@ -40,8 +43,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         provider,
       });
       // user 정보에 맞춰 token 발행
-      const token = await this.authService.getToken(newUser.userId);
-      return { token, userId: newUser.userId };
+      const accessToken = await this.authService.getAccessToken(newUser.userId);
+      const refreshToken = await this.authService.setRefreshToken(
+        newUser.userId,
+      );
+      return { accessToken, refreshToken, userId: newUser.userId };
     }
   }
 }
