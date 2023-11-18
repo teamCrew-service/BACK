@@ -18,9 +18,9 @@ export class AuthService {
   /* accessToken 설정 */
   async getAccessToken(userId: any): Promise<any> {
     // 토큰 만료 시간
-    const tokenExpiry = 7200;
+    const tokenExpiry = 10;
     // token 생성
-    const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const accessToken = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET, {
       expiresIn: tokenExpiry,
     });
     return accessToken;
@@ -31,7 +31,7 @@ export class AuthService {
     // 토큰 만료 시간
     const tokenExpiry = 14 * 24 * 60 * 60;
     // token 생성
-    const refreshToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET, {
       expiresIn: tokenExpiry,
     });
     // db에 저장 시키기

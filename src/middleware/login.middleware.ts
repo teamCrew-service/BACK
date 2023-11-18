@@ -2,12 +2,14 @@ import { HttpStatus, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class LoginMiddleware implements NestMiddleware<Request, Response> {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly authService: AuthService,
   ) {}
   async use(req: Request, res: Response, next: NextFunction) {
     try {
@@ -33,15 +35,46 @@ export class LoginMiddleware implements NestMiddleware<Request, Response> {
 
       try {
         const { userId } = this.jwtService.verify(tokenValue, {
-          secret: process.env.JWT_SECRET,
+          secret: process.env.JWT_ACCESS_SECRET,
         });
         const user = await this.usersService.findUserByPk(userId);
         res.locals.user = user;
-      } catch (error) {
-        // 토큰 검증이 실패하는 경우, 사용자를 게스트로 처리합니다.
-        console.log('토큰 검증 실패:', error);
+      } catch (accessTokenError) {
+        if (accessTokenError.name === 'TokenExpiredError') {
+          // accessToken이 만료되면 cookie에서 제거
+          res.clearCookie('authorization');
+          // refreshToken 검사 시작
+          const refreshToken = req.cookies.refreshToken;
+          const user = await this.usersService.checkRefreshToken(refreshToken);
+          if (!user) {
+            res.clearCookie('refreshToken');
+            return res.status(HttpStatus.NOT_FOUND).json({
+              message: '유저 정보를 찾을 수 없습니다. 재로그인이 필요합니다.',
+            });
+          }
+          try {
+            const { userId } = await this.jwtService.verify(refreshToken, {
+              secret: process.env.JWT_REFRESH_SECRET,
+            });
+            if (userId) {
+              const accessToken = await this.authService.getAccessToken(userId);
+              res.cookie('authorization', accessToken);
+              res.locals.user = user;
+            }
+          } catch (refreshTokenError) {
+            if (refreshTokenError.name === 'TokenExpiredError') {
+              res.clearCookie('refreshToken');
+              // db에 저장된 refreshToken 제거
+              await this.usersService.deleteRefreshToken(refreshToken);
+              return res
+                .status(HttpStatus.UNAUTHORIZED)
+                .json({ message: '재로그인이 필요합니다.' });
+            }
+          }
+        } else {
+          throw accessTokenError; // 다른 종류의 오류는 재전파
+        }
       }
-
       next(); // next() 호출 시 반환 값을 반환합니다.
     } catch (e) {
       console.error(e);

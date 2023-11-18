@@ -68,6 +68,7 @@ export class AuthMiddleWare implements NestMiddleware<Request, Response> {
             if (userId) {
               const accessToken = await this.authService.getAccessToken(userId);
               res.cookie('authorization', accessToken);
+              const user = await this.usersService.findUserByPk(userId);
               res.locals.user = user;
               next();
             }
