@@ -629,6 +629,10 @@ export class CrewController {
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '모임 Thumbnail 수정 권한이 없습니다.' });
       }
+      const { thumbnail } = await this.crewService.findCrewDetailByCrewId(crewId)
+      const deleteImageKey = thumbnail.image.split('/').pop();
+      // s3에 저장된 image 삭제
+      const deleteS3Image = await this.crewService.deleteS3Image(deleteImageKey);
       // 권한이 있을 경우 thumbnail 수정
       const editThumbnail = await this.crewService.editThumbnail(
         crewId,
