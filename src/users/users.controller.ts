@@ -461,6 +461,9 @@ export class UsersController {
       }
       //files가 비어있으면 실행안함
       if (files.length > 0) {
+        const thumbnail = await this.usersService.findUserByPk(userId);
+        const deleteImageKey = thumbnail.profileImage.split('/').pop();
+        await this.usersService.deleteS3Image(deleteImageKey);
         const profileImage = files[0].location;
         editUserInfoDto.profileImage = profileImage;
       }
