@@ -80,7 +80,7 @@ export class ImageController {
   ): Promise<any> {
     try {
       // user 정보 확인
-      const { userId } = res.locals.user;
+            const { userId } = res.locals.user;
       // crew 정보 및 member 정보 조회
       const crew = await this.crewService.findByCrewId(crewId);
       const member = await this.memberService.findAllMember(crewId);
@@ -196,12 +196,18 @@ export class ImageController {
       // 본인 image 조회
       const myImage = await this.imageService.findMyImages(crewId, userId);
       // 권한 확인
-      if (myImage.userId !== userId) {
+      if (myImage[0].image_userId !== userId) {
         return res
           .status(HttpStatus.UNAUTHORIZED)
           .json({ message: '이미지 삭제 권한이 없습니다.' });
       } else {
+        //db 이미지 소프트 삭제
         const deleteImage = await this.imageService.deleteImage(imageId);
+        //deleteImage 에서 끝에 위치한 파일명 추출
+        const deleteImageKey = deleteImage.image.split('/').pop();
+        //s3 이미지 삭제
+        await this.imageService.deleteS3Image(deleteImageKey)
+
         if (!deleteImage) {
           return res
             .status(HttpStatus.INTERNAL_SERVER_ERROR)

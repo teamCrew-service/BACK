@@ -139,6 +139,7 @@ export class AppModule implements NestModule {
       { path: 'image/saveImage/:crewId', method: RequestMethod.POST },
       { path: 'image/:crewId', method: RequestMethod.GET },
       { path: 'image/:crewId/:imageId', method: RequestMethod.DELETE },
+      { path: 'image/delete/:crewId/:imageId', method: RequestMethod.DELETE },
       { path: 'report/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.POST },
       { path: 'like/:crewId', method: RequestMethod.DELETE },

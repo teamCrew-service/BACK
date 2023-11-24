@@ -120,4 +120,29 @@ export class ImageService {
       throw new Error('ImageService/deleteImageExitCrew');
     }
   }
+
+  /* s3에 저장된 image 삭제 */
+  async deleteS3Image(key: string): Promise<any> {
+    const bucket = process.env.AWS_BUCKET_NAME || 'YOUR_BUCKET_NAME'; // 환경 변수 또는 직접 값을 입력
+      //key(filename) = 'YOUR_S3_OBJECT_KEY_HERE'; // 예: 'images/2020/08/01/abcdef.jpg'
+
+      AWS.config.update({
+        accessKeyId: process.env.AWS_ACCESS_KEY || 'YOUR_ACCESS_KEY',
+        secretAccessKey: process.env.AWS_SECRET_KEY || 'YOUR_SECRET_KEY',
+        region: process.env.AWS_REGION || 'YOUR_REGION', // 예: 'us-west-1'
+      });
+
+
+      const s3 = new AWS.S3();
+
+      const deleteParams = {
+        Bucket: bucket,
+        Key: 'image/'+key,
+      };
+  
+      const deleteResult = await s3.deleteObject(deleteParams).promise();
+      return deleteResult;
+
+  }
+
 }

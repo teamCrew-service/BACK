@@ -71,11 +71,17 @@ export class ImageRepository {
   /* image 삭제 */
   async deleteImage(imageId: number): Promise<any> {
     try {
-      const deleteImage = await this.imageRepository.update(
-        { imageId },
-        { deletedAt: new Date() },
-      );
-      return deleteImage;
+      //imageId에 해당하는 url 가져오기
+      const image = await this.imageRepository.findOne({where: {imageId}});
+      
+      //이미지가 삭제되었는지 확인
+      if(!image)
+        throw new Error('ImageRepository/deleteImage: 이미지가 존재하지 않습니다.(SoftDelete)');
+
+      //imageId에 해당하는 레코드 softDelete(remove)
+      await this.imageRepository.softRemove(image);
+
+      return image;
     } catch (e) {
       console.error(e);
       throw new Error('ImageRepository/deleteImage');
