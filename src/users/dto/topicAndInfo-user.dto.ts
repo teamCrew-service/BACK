@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AddUserInfoDto } from './addUserInfo-user.dto';
-import { TopicDto } from 'src/topic/dto/topic.dto';
+import { AddUserInfoDto } from '@src/users/dto/addUserInfo-user.dto';
+import { TopicDto } from '@src/topic/dto/topic.dto';
 
 export class TopicAndInfoDto {
   @ApiProperty({

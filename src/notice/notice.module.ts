@@ -1,12 +1,11 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { NoticeController } from './notice.controller';
-import { NoticeService } from './notice.service';
-import { NoticeRepository } from './notice.repository';
+import { NoticeController } from '@src/notice/notice.controller';
+import { NoticeService } from '@src/notice/notice.service';
+import { NoticeRepository } from '@src/notice/notice.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Notice } from './entities/notice.entity';
-import { CrewModule } from 'src/crew/crew.module';
-import { VoteFormModule } from 'src/voteform/voteform.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { Notice } from '@src/notice/entities/notice.entity';
+import { CrewModule } from '@src/crew/crew.module';
+import { VoteFormModule } from '@src/voteform/voteform.module';
 
 @Module({
   imports: [

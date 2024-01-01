@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 // import { Crew } from 'src/crew/entities/crew.entity';
-import { HomeRepository } from './home.repository';
-import { ScheduleService } from 'src/schedule/schedule.service';
+import { HomeRepository } from '@src/home/home.repository';
+import { ScheduleService } from '@src/schedule/schedule.service';
 
 @Injectable()
 export class HomeService {

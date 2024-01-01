@@ -1,4 +1,4 @@
-import { Crew } from 'src/crew/entities/crew.entity';
+import { Crew } from '@src/crew/entities/crew.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Signup } from './signup.entity';
+import { Signup } from '@src/signup/entities/signup.entity';
 
 @Entity('signupform')
 export class Signupform {

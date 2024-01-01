@@ -1,4 +1,4 @@
-import { Users } from 'src/users/entities/user.entity';
+import { Users } from '@src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -8,8 +8,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Signupform } from './signupForm.entity';
-import { Crew } from 'src/crew/entities/crew.entity';
+import { Signupform } from '@src/signup/entities/signupForm.entity';
+import { Crew } from '@src/crew/entities/crew.entity';
 
 @Entity('signup')
 export class Signup {

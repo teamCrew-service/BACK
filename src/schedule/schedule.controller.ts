@@ -10,9 +10,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ScheduleService } from './schedule.service';
-import { CreateScheduleDto } from './dto/createSchedule.dto';
-import { EditScheduleDto } from './dto/editSchedule.dto';
+import { ScheduleService } from '@src/schedule/schedule.service';
+import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
+import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -20,9 +20,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { ParticipantService } from 'src/participant/participant.service';
-import { CrewService } from 'src/crew/crew.service';
-import { MemberService } from 'src/member/member.service';
+import { ParticipantService } from '@src/participant/participant.service';
+import { CrewService } from '@src/crew/crew.service';
+import { MemberService } from '@src/member/member.service';
 
 @Controller('schedule')
 @ApiTags('Schedule API')

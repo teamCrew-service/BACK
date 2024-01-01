@@ -1,11 +1,11 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { LikeController } from './like.controller';
-import { LikeService } from './like.service';
+import { LikeController } from '@src/like/like.controller';
+import { LikeService } from '@src/like/like.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Like } from './entities/like.entity';
-import { LikeRepository } from './like.repository';
-import { UsersModule } from 'src/users/users.module';
-import { CrewModule } from 'src/crew/crew.module';
+import { Like } from '@src/like/entities/like.entity';
+import { LikeRepository } from '@src/like/like.repository';
+import { UsersModule } from '@src/users/users.module';
+import { CrewModule } from '@src/crew/crew.module';
 
 @Module({
   imports: [

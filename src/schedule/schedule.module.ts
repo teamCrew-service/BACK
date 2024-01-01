@@ -1,12 +1,12 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { ScheduleController } from './schedule.controller';
-import { ScheduleService } from './schedule.service';
+import { ScheduleController } from '@src/schedule/schedule.controller';
+import { ScheduleService } from '@src/schedule/schedule.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Schedule } from './entities/schedule.entity';
-import { ScheduleRepository } from './schedule.repository';
-import { CrewModule } from 'src/crew/crew.module';
-import { ParticipantModule } from 'src/participant/participant.module';
-import { MemberModule } from 'src/member/member.module';
+import { Schedule } from '@src/schedule/entities/schedule.entity';
+import { ScheduleRepository } from '@src/schedule/schedule.repository';
+import { CrewModule } from '@src/crew/crew.module';
+import { ParticipantModule } from '@src/participant/participant.module';
+import { MemberModule } from '@src/member/member.module';
 
 @Module({
   imports: [

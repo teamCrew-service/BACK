@@ -1,11 +1,11 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { ImageService } from './image.service';
-import { ImageRepository } from './image.repository';
+import { ImageService } from '@src/image/image.service';
+import { ImageRepository } from '@src/image/image.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Image } from './entities/image.entity';
-import { ImageController } from './image.controller';
-import { CrewModule } from 'src/crew/crew.module';
-import { MemberModule } from 'src/member/member.module';
+import { Image } from '@src/image/entities/image.entity';
+import { ImageController } from '@src/image/image.controller';
+import { CrewModule } from '@src/crew/crew.module';
+import { MemberModule } from '@src/member/member.module';
 
 @Module({
   imports: [

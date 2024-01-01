@@ -9,9 +9,9 @@ import {
   Put,
   Res,
 } from '@nestjs/common';
-import { SignupService } from './signup.service';
+import { SignupService } from '@src/signup/signup.service';
 // import { CreateSignupFormDto } from './dto/create-signupForm.dto';
-import { SubmitSignupDto } from './dto/submit-signup.dto';
+import { SubmitSignupDto } from '@src/signup/dto/submit-signup.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -19,12 +19,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { CrewService } from 'src/crew/crew.service';
-import { ConfirmSingupDto } from './dto/confirm-singup.dto';
-import { MemberService } from 'src/member/member.service';
-import { LeavecrewService } from 'src/leavecrew/leavecrew.service';
-import { EditSignupDto } from './dto/editSubmit-signup.dto';
-import { ImageService } from 'src/image/image.service';
+import { CrewService } from '@src/crew/crew.service';
+import { ConfirmSingupDto } from '@src/signup/dto/confirm-singup.dto';
+import { MemberService } from '@src/member/member.service';
+import { LeavecrewService } from '@src/leavecrew/leavecrew.service';
+import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
+import { ImageService } from '@src/image/image.service';
 
 @Controller()
 @ApiTags('signup API')

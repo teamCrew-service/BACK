@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateCrewDto } from './createCrew.dto';
-import { CreateSignupFormDto } from 'src/signup/dto/create-signupForm.dto';
+import { CreateCrewDto } from '@src/crew/dto/createCrew.dto';
+import { CreateSignupFormDto } from '@src/signup/dto/create-signupForm.dto';
 
 export class JoinCreateCrewDto {
   @ApiProperty({

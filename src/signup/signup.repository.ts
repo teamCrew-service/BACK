@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Signup } from './entities/signup.entity';
+import { Signup } from '@src/signup/entities/signup.entity';
 import { Repository } from 'typeorm';
-import { ConfirmSingupDto } from './dto/confirm-singup.dto';
-import { EditSignupDto } from './dto/editSubmit-signup.dto';
+import { ConfirmSingupDto } from '@src/signup/dto/confirm-singup.dto';
+import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
 
 @Injectable()
 export class SignupRepository {

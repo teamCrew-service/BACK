@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Topic } from './entities/topic.entity';
+import { Topic } from '@src/topic/entities/topic.entity';
 import { Repository } from 'typeorm';
-import { TopicDto } from './dto/topic.dto';
-import { EditTopicDto } from './dto/editTopic.dto';
-import { type } from 'os';
+import { TopicDto } from '@src/topic/dto/topic.dto';
+import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
 
 @Injectable()
 export class TopicRepository {

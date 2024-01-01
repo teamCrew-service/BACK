@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { VoteRepository } from './vote.repository';
-import { VotingDto } from './dto/voting.dto';
-import { EditVotingDto } from './dto/editVoting.dto';
+import { VoteRepository } from '@src/vote/vote.repository';
+import { VotingDto } from '@src/vote/dto/voting.dto';
+import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
 
 @Injectable()
 export class VoteService {

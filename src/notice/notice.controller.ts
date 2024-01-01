@@ -15,11 +15,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { NoticeService } from './notice.service';
-import { CreateNoticeDto } from './dto/createNotice.dto';
-import { CrewService } from 'src/crew/crew.service';
-import { EditNoticeDto } from './dto/editNotice.dto';
-import { VoteFormService } from 'src/voteform/voteform.service';
+import { NoticeService } from '@src/notice/notice.service';
+import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
+import { CrewService } from '@src/crew/crew.service';
+import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
+import { VoteFormService } from '@src/voteform/voteform.service';
 
 @Controller('notice')
 @ApiTags('Notice API')

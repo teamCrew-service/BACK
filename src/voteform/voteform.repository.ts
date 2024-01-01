@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { VoteForm } from './entities/voteform.entity';
-import { CreateVoteFormDto } from './dto/createVoteForm.dto';
-import { EditVoteFormDto } from './dto/editVoteForm.dto';
+import { VoteForm } from '@src/voteform/entities/voteform.entity';
+import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
+import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
 
 @Injectable()
 export class VoteFormRepository {

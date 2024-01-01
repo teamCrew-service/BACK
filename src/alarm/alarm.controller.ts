@@ -1,5 +1,5 @@
 import { Controller, HttpStatus, Param, Post, Res } from '@nestjs/common';
-import { AlarmService } from './alarm.service';
+import { AlarmService } from '@src/alarm/alarm.service';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -7,7 +7,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CrewService } from 'src/crew/crew.service';
+import { CrewService } from '@src/crew/crew.service';
 
 @Controller('alarm')
 @ApiTags('Alarm API')

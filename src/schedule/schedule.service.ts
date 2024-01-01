@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { ScheduleRepository } from './schedule.repository';
-import { CreateScheduleDto } from './dto/createSchedule.dto';
-import { EditScheduleDto } from './dto/editSchedule.dto';
+import { ScheduleRepository } from '@src/schedule/schedule.repository';
+import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
+import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()

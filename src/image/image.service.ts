@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ImageRepository } from './image.repository';
-import { SaveImageDto } from './dto/saveImage.dto';
+import { ImageRepository } from '@src/image/image.repository';
+import { SaveImageDto } from '@src/image/dto/saveImage.dto';
 import * as AWS from 'aws-sdk';
 import axios from 'axios';
 

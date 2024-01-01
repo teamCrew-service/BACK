@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EditUserInfoDto } from './editUserInfo-user.dto';
-import { EditTopicDto } from 'src/topic/dto/editTopic.dto';
+import { EditUserInfoDto } from '@src/users/dto/editUserInfo-user.dto';
+import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
 import { IsOptional } from 'class-validator';
 
 export class EditTopicAndInfoDto {

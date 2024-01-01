@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
-import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto/createMessage.dto';
+import { MessagesService } from '@src/chat/messages.service';
+import { CreateMessageDto } from '@src/chat/dto/createMessage.dto';
 
 @Controller('message')
 export class MessageController {

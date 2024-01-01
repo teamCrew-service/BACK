@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Schedule } from './entities/schedule.entity';
-import { CreateScheduleDto } from './dto/createSchedule.dto';
-import { EditScheduleDto } from './dto/editSchedule.dto';
+import { Schedule } from '@src/schedule/entities/schedule.entity';
+import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
+import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
 import { Repository, EntityManager } from 'typeorm';
 
 @Injectable()

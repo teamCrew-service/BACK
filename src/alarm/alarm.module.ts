@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { AlarmService } from './alarm.service';
-import { AlarmRepository } from './alarm.repository';
+import { AlarmService } from '@src/alarm/alarm.service';
+import { AlarmRepository } from '@src/alarm/alarm.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Alarm } from './entities/alarm.entity';
-import { AlarmController } from './alarm.controller';
-import { CrewModule } from 'src/crew/crew.module';
+import { Alarm } from '@src/alarm/entities/alarm.entity';
+import { AlarmController } from '@src/alarm/alarm.controller';
+import { CrewModule } from '@src/crew/crew.module';
 
 @Module({
   imports: [

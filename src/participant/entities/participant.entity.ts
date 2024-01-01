@@ -1,6 +1,6 @@
-import { Crew } from 'src/crew/entities/crew.entity';
-import { Schedule } from 'src/schedule/entities/schedule.entity';
-import { Users } from 'src/users/entities/user.entity';
+import { Crew } from '@src/crew/entities/crew.entity';
+import { Schedule } from '@src/schedule/entities/schedule.entity';
+import { Users } from '@src/users/entities/user.entity';
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('participant')

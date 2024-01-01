@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Param, Res, HttpStatus } from '@nestjs/common';
-import { ReportService } from './report.service';
+import { ReportService } from '@src/report/report.service';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -7,7 +7,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateReportDto } from './dto/createReport.dto';
+import { CreateReportDto } from '@src/report/dto/createReport.dto';
 
 @Controller('report')
 @ApiTags('Report API')

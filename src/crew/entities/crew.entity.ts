@@ -1,5 +1,5 @@
-import { Users } from 'src/users/entities/user.entity';
-import { Schedule } from 'src/schedule/entities/schedule.entity';
+import { Users } from '@src/users/entities/user.entity';
+import { Schedule } from '@src/schedule/entities/schedule.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,18 +11,18 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Signupform } from 'src/signup/entities/signupForm.entity';
-import { Signup } from 'src/signup/entities/signup.entity';
-import { Member } from 'src/member/entities/member.entity';
-import { Like } from 'src/like/entities/like.entity';
-import { Notice } from 'src/notice/entities/notice.entity';
-import { VoteForm } from 'src/voteform/entities/voteform.entity';
-import { Vote } from 'src/vote/entities/vote.entity';
-import { Participant } from 'src/participant/entities/participant.entity';
-import { Image } from 'src/image/entities/image.entity';
-import { Report } from 'src/report/entities/report.entity';
-import { Leavecrew } from 'src/leavecrew/entities/leavecrew.entity';
-import { Alarm } from 'src/alarm/entities/alarm.entity';
+import { Signupform } from '@src/signup/entities/signupForm.entity';
+import { Signup } from '@src/signup/entities/signup.entity';
+import { Member } from '@src/member/entities/member.entity';
+import { Like } from '@src/like/entities/like.entity';
+import { Notice } from '@src/notice/entities/notice.entity';
+import { VoteForm } from '@src/voteform/entities/voteform.entity';
+import { Vote } from '@src/vote/entities/vote.entity';
+import { Participant } from '@src/participant/entities/participant.entity';
+import { Image } from '@src/image/entities/image.entity';
+import { Report } from '@src/report/entities/report.entity';
+import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
+import { Alarm } from '@src/alarm/entities/alarm.entity';
 
 @Entity('crew')
 export class Crew {

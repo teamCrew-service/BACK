@@ -4,32 +4,32 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
+import { UsersModule } from '@src/users/users.module';
+import { AuthModule } from '@src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '@src/app.controller';
+import { AppService } from '@src/app.service';
 import { ConfigModule } from '@nestjs/config';
-import { SignupModule } from './signup/signup.module';
-import { HomeModule } from './home/home.module';
-import { CrewModule } from './crew/crew.module';
-import { scheduleModule } from './schedule/schedule.module';
-import { AuthMiddleWare } from './middleware/auth.middleware';
-import { MemberModule } from './member/member.module';
+import { SignupModule } from '@src/signup/signup.module';
+import { HomeModule } from '@src/home/home.module';
+import { CrewModule } from '@src/crew/crew.module';
+import { scheduleModule } from '@src/schedule/schedule.module';
+import { AuthMiddleWare } from '@src/middleware/auth.middleware';
+import { MemberModule } from '@src/member/member.module';
 import { JwtService } from '@nestjs/jwt';
-import { LoginMiddleware } from './middleware/login.middleware';
-import { LikeModule } from './like/like.module';
-import { TopicModule } from './topic/topic.module';
-import { NoticeModule } from './notice/notice.module';
-import { VoteFormModule } from './voteform/voteform.module';
-import { VoteModule } from './vote/vote.module';
-import { ParticipantModule } from './participant/participant.module';
+import { LoginMiddleware } from '@src/middleware/login.middleware';
+import { LikeModule } from '@src/like/like.module';
+import { TopicModule } from '@src/topic/topic.module';
+import { NoticeModule } from '@src/notice/notice.module';
+import { VoteFormModule } from '@src/voteform/voteform.module';
+import { VoteModule } from '@src/vote/vote.module';
+import { ParticipantModule } from '@src/participant/participant.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ImageModule } from './image/image.module';
-import { ReportModule } from './report/report.module';
+import { ImageModule } from '@src/image/image.module';
+import { ReportModule } from '@src/report/report.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ChatModule } from './chat/chat.module';
-import { AlarmModule } from './alarm/alarm.module';
+import { ChatModule } from '@src/chat/chat.module';
+import { AlarmModule } from '@src/alarm/alarm.module';
 
 @Module({
   imports: [
@@ -47,7 +47,6 @@ import { AlarmModule } from './alarm/alarm.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      timezone: 'Asia/Seoul',
       // synchronize: true,
       synchronize: false,
     }),

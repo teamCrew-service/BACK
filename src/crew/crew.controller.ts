@@ -11,8 +11,8 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { CrewService } from './crew.service';
-import { EditCrewDto } from './dto/editCrew.dto';
+import { CrewService } from '@src/crew/crew.service';
+import { EditCrewDto } from '@src/crew/dto/editCrew.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -23,25 +23,25 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { SignupService } from 'src/signup/signup.service';
-import { MemberService } from 'src/member/member.service';
-import { ScheduleService } from 'src/schedule/schedule.service';
-import { JoinCreateCrewDto } from './dto/joinCreateCrew.dto';
-import { NoticeService } from 'src/notice/notice.service';
-import { VoteFormService } from 'src/voteform/voteform.service';
-import { LikeService } from 'src/like/like.service';
-import { ImageService } from 'src/image/image.service';
+import { SignupService } from '@src/signup/signup.service';
+import { MemberService } from '@src/member/member.service';
+import { ScheduleService } from '@src/schedule/schedule.service';
+import { JoinCreateCrewDto } from '@src/crew/dto/joinCreateCrew.dto';
+import { NoticeService } from '@src/notice/notice.service';
+import { VoteFormService } from '@src/voteform/voteform.service';
+import { LikeService } from '@src/like/like.service';
+import { ImageService } from '@src/image/image.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { multerConfigThumbnail } from 'src/crew/multerConfig';
-import { multerConfigImage } from 'src/crew/multerConfig';
-import { multerConfig } from 'src/crew/multerConfig';
-import { TopicService } from 'src/topic/topic.service';
-import { DelegateDto } from './dto/delegate.dto';
+import { multerConfigThumbnail } from '@src/crew/multerConfig';
+import { multerConfigImage } from '@src/crew/multerConfig';
+import { multerConfig } from '@src/crew/multerConfig';
+import { TopicService } from '@src/topic/topic.service';
+import { DelegateDto } from '@src/crew/dto/delegate.dto';
 import { IsOptional } from 'class-validator';
-import { ParticipantService } from 'src/participant/participant.service';
-import { VoteService } from 'src/vote/vote.service';
-import { AlarmService } from 'src/alarm/alarm.service';
-import { UsersService } from 'src/users/users.service';
+import { ParticipantService } from '@src/participant/participant.service';
+import { VoteService } from '@src/vote/vote.service';
+import { AlarmService } from '@src/alarm/alarm.service';
+import { UsersService } from '@src/users/users.service';
 
 export class CrewFilesUploadDto {
   @ApiProperty()

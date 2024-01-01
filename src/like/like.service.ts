@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LikeRepository } from './like.repository';
+import { LikeRepository } from '@src/like/like.repository';
 
 @Injectable()
 export class LikeService {

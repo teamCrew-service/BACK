@@ -1,11 +1,11 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { HomeController } from './home.controller';
-import { HomeService } from './home.service';
+import { HomeController } from '@src/home/home.controller';
+import { HomeService } from '@src/home/home.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Crew } from 'src/crew/entities/crew.entity';
-import { HomeRepository } from './home.repository';
-import { CrewModule } from 'src/crew/crew.module';
-import { scheduleModule } from 'src/schedule/schedule.module';
+import { Crew } from '@src/crew/entities/crew.entity';
+import { HomeRepository } from '@src/home/home.repository';
+import { CrewModule } from '@src/crew/crew.module';
+import { scheduleModule } from '@src/schedule/schedule.module';
 
 @Module({
   imports: [

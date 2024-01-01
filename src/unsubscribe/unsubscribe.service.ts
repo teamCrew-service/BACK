@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UnsubscribeRepository } from './unsubscribe.repository';
-import { UsersRepository } from 'src/users/users.repository';
+import { UnsubscribeRepository } from '@src/unsubscribe/unsubscribe.repository';
+import { UsersRepository } from '@src/users/users.repository';
 import { Cron } from '@nestjs/schedule';
-import { TopicRepository } from 'src/topic/topic.repository';
+import { TopicRepository } from '@src/topic/topic.repository';
 
 @Injectable()
 export class UnsubscribeService {

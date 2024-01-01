@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { NoticeRepository } from './notice.repository';
-import { CreateNoticeDto } from './dto/createNotice.dto';
-import { EditNoticeDto } from './dto/editNotice.dto';
+import { NoticeRepository } from '@src/notice/notice.repository';
+import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
+import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()

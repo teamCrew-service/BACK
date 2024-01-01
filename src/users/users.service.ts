@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
-import { TopicDto } from '../topic/dto/topic.dto';
-import { TopicService } from 'src/topic/topic.service';
-import { EditTopicDto } from 'src/topic/dto/editTopic.dto';
-import { AddUserInfoDto } from './dto/addUserInfo-user.dto';
-import { EditUserInfoDto } from './dto/editUserInfo-user.dto';
+import { UsersRepository } from '@src/users/users.repository';
+import { TopicDto } from '@src/topic/dto/topic.dto';
+import { TopicService } from '@src/topic/topic.service';
+import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
+import { AddUserInfoDto } from '@src/users/dto/addUserInfo-user.dto';
+import { EditUserInfoDto } from '@src/users/dto/editUserInfo-user.dto';
 
 @Injectable()
 export class UsersService {

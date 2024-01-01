@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Unsubscribe } from './entities/unsubscribe.entity';
+import { Unsubscribe } from '@src/unsubscribe/entities/unsubscribe.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { UnsubscribeService } from './unsubscribe.service';
+import { UnsubscribeService } from '@src/unsubscribe/unsubscribe.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UnsubscribeRepository } from './unsubscribe.repository';
-import { UsersModule } from 'src/users/users.module';
-import { Unsubscribe } from './entities/unsubscribe.entity';
-import { TopicModule } from 'src/topic/topic.module';
+import { UnsubscribeRepository } from '@src/unsubscribe/unsubscribe.repository';
+import { UsersModule } from '@src/users/users.module';
+import { Unsubscribe } from '@src/unsubscribe/entities/unsubscribe.entity';
+import { TopicModule } from '@src/topic/topic.module';
 
 @Module({
   imports: [

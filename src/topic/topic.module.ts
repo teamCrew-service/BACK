@@ -1,9 +1,9 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { TopicService } from './topic.service';
-import { TopicRepository } from 'src/topic/topic.repository';
+import { TopicService } from '@src/topic/topic.service';
+import { TopicRepository } from '@src/topic/topic.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Topic } from './entities/topic.entity';
-import { UsersModule } from 'src/users/users.module';
+import { Topic } from '@src/topic/entities/topic.entity';
+import { UsersModule } from '@src/users/users.module';
 
 @Module({
   imports: [

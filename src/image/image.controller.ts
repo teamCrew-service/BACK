@@ -21,11 +21,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ImageService } from './image.service';
-import { SaveImageDto } from './dto/saveImage.dto';
-import { CrewService } from 'src/crew/crew.service';
-import { MemberService } from 'src/member/member.service';
-import { multerConfig } from 'src/crew/multerConfig';
+import { ImageService } from '@src/image/image.service';
+import { SaveImageDto } from '@src/image/dto/saveImage.dto';
+import { CrewService } from '@src/crew/crew.service';
+import { MemberService } from '@src/member/member.service';
+import { multerConfig } from '@src/crew/multerConfig';
 import { FilesInterceptor } from '@nestjs/platform-express';
 export class ImageFilesUploadDto {
   @ApiProperty()

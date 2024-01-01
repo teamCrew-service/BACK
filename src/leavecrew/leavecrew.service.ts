@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LeavecrewRepository } from './leavecrew.repository';
+import { LeavecrewRepository } from '@src/leavecrew/leavecrew.repository';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()

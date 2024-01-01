@@ -13,10 +13,10 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { GoogleAuthGuard } from 'src/auth/guard/google-auth.guard';
-import { KakaoAuthGuard } from 'src/auth/guard/kakao-auth.guard';
-import { NaverAuthGuard } from 'src/auth/guard/naver-auth.guard';
-import { UsersService } from './users.service';
+import { GoogleAuthGuard } from '@src/auth/guard/google-auth.guard';
+import { KakaoAuthGuard } from '@src/auth/guard/kakao-auth.guard';
+import { NaverAuthGuard } from '@src/auth/guard/naver-auth.guard';
+import { UsersService } from '@src/users/users.service';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -26,19 +26,19 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { CrewService } from 'src/crew/crew.service';
-import { TestLoginDto } from './dto/testLogin-user.dto';
-import { AuthService } from 'src/auth/auth.service';
-import { CheckNicknameDto } from './dto/checkNickname-user.dto';
-import { TopicAndInfoDto } from './dto/topicAndInfo-user.dto';
-import { LikeService } from 'src/like/like.service';
-import { MemberService } from 'src/member/member.service';
-import { EditTopicAndInfoDto } from './dto/editTopicAndInfo-user.dto';
-import { SignupService } from 'src/signup/signup.service';
-import { UnsubscribeService } from 'src/unsubscribe/unsubscribe.service';
-import { ScheduleService } from 'src/schedule/schedule.service';
+import { CrewService } from '@src/crew/crew.service';
+import { TestLoginDto } from '@src/users/dto/testLogin-user.dto';
+import { AuthService } from '@src/auth/auth.service';
+import { CheckNicknameDto } from '@src/users/dto/checkNickname-user.dto';
+import { TopicAndInfoDto } from '@src/users/dto/topicAndInfo-user.dto';
+import { LikeService } from '@src/like/like.service';
+import { MemberService } from '@src/member/member.service';
+import { EditTopicAndInfoDto } from '@src/users/dto/editTopicAndInfo-user.dto';
+import { SignupService } from '@src/signup/signup.service';
+import { UnsubscribeService } from '@src/unsubscribe/unsubscribe.service';
+import { ScheduleService } from '@src/schedule/schedule.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from 'src/crew/multerConfig';
+import { multerConfig } from '@src/crew/multerConfig';
 import { IsOptional } from 'class-validator';
 export class UserFirstUploadDto {
   @ApiProperty()

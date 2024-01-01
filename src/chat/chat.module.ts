@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ChatGateway } from './chat.gateway';
+import { ChatGateway } from '@src/chat/chat.gateway';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Message, MessageSchema } from './schemas/message.schema';
-import { MessagesService } from './messages.service';
-import { MessageController } from './message.controller';
+import { Message, MessageSchema } from '@src/chat/schemas/message.schema';
+import { MessagesService } from '@src/chat/messages.service';
+import { MessageController } from '@src/chat/message.controller';
 
 @Module({
   imports: [

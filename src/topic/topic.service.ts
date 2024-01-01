@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TopicRepository } from 'src/topic/topic.repository';
-import { TopicDto } from './dto/topic.dto';
-import { EditTopicDto } from './dto/editTopic.dto';
+import { TopicRepository } from '@src/topic/topic.repository';
+import { TopicDto } from '@src/topic/dto/topic.dto';
+import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
 
 @Injectable()
 export class TopicService {

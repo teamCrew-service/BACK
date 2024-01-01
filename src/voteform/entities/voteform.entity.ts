@@ -1,6 +1,6 @@
-import { Crew } from 'src/crew/entities/crew.entity';
-import { Users } from 'src/users/entities/user.entity';
-import { Vote } from 'src/vote/entities/vote.entity';
+import { Crew } from '@src/crew/entities/crew.entity';
+import { Users } from '@src/users/entities/user.entity';
+import { Vote } from '@src/vote/entities/vote.entity';
 import {
   Column,
   CreateDateColumn,

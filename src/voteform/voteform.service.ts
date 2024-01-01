@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { VoteFormRepository } from './voteform.repository';
-import { CreateVoteFormDto } from './dto/createVoteForm.dto';
-import { EditVoteFormDto } from './dto/editVoteForm.dto';
+import { VoteFormRepository } from '@src/voteform/voteform.repository';
+import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
+import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
 import { Cron } from '@nestjs/schedule';
 
 @Injectable()

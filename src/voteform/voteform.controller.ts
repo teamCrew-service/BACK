@@ -9,7 +9,7 @@ import {
   Put,
   Res,
 } from '@nestjs/common';
-import { VoteFormService } from './voteform.service';
+import { VoteFormService } from '@src/voteform/voteform.service';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -17,10 +17,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateVoteFormDto } from './dto/createVoteForm.dto';
-import { CrewService } from 'src/crew/crew.service';
-import { MemberService } from 'src/member/member.service';
-import { EditVoteFormDto } from './dto/editVoteForm.dto';
+import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
+import { CrewService } from '@src/crew/crew.service';
+import { MemberService } from '@src/member/member.service';
+import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
 
 @Controller('voteform')
 @ApiTags('VoteForm API')

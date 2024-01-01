@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Vote } from './entities/vote.entity';
-import { VotingDto } from './dto/voting.dto';
-import { EditVotingDto } from './dto/editVoting.dto';
+import { Vote } from '@src/vote/entities/vote.entity';
+import { VotingDto } from '@src/vote/dto/voting.dto';
+import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
 
 @Injectable()
 export class VoteRepository {

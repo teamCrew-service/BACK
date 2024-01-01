@@ -1,8 +1,8 @@
-import { Crew } from 'src/crew/entities/crew.entity';
-import { Schedule } from 'src/schedule/entities/schedule.entity';
-import { Signup } from 'src/signup/entities/signup.entity';
-import { Member } from 'src/member/entities/member.entity';
-import { Topic } from '../../topic/entities/topic.entity';
+import { Crew } from '@src/crew/entities/crew.entity';
+import { Schedule } from '@src/schedule/entities/schedule.entity';
+import { Signup } from '@src/signup/entities/signup.entity';
+import { Member } from '@src/member/entities/member.entity';
+import { Topic } from '@src/topic/entities/topic.entity';
 import {
   Column,
   Entity,
@@ -11,16 +11,16 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Like } from 'src/like/entities/like.entity';
-import { Notice } from 'src/notice/entities/notice.entity';
-import { VoteForm } from 'src/voteform/entities/voteform.entity';
-import { Vote } from 'src/vote/entities/vote.entity';
-import { Participant } from 'src/participant/entities/participant.entity';
-import { Image } from 'src/image/entities/image.entity';
-import { Report } from 'src/report/entities/report.entity';
-import { Unsubscribe } from 'src/unsubscribe/entities/unsubscribe.entity';
-import { Leavecrew } from 'src/leavecrew/entities/leavecrew.entity';
-import { Alarm } from 'src/alarm/entities/alarm.entity';
+import { Like } from '@src/like/entities/like.entity';
+import { Notice } from '@src/notice/entities/notice.entity';
+import { VoteForm } from '@src/voteform/entities/voteform.entity';
+import { Vote } from '@src/vote/entities/vote.entity';
+import { Participant } from '@src/participant/entities/participant.entity';
+import { Image } from '@src/image/entities/image.entity';
+import { Report } from '@src/report/entities/report.entity';
+import { Unsubscribe } from '@src/unsubscribe/entities/unsubscribe.entity';
+import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
+import { Alarm } from '@src/alarm/entities/alarm.entity';
 
 @Entity('users')
 export class Users {

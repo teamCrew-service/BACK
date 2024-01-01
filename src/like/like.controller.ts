@@ -12,7 +12,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { LikeService } from './like.service';
+import { LikeService } from '@src/like/like.service';
 
 @Controller('like')
 @ApiTags('Like API')

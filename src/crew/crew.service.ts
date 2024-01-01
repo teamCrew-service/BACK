@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CrewRepository } from './crew.repository';
-import { CreateCrewDto } from './dto/createCrew.dto';
-import { EditCrewDto } from './dto/editCrew.dto';
+import { CrewRepository } from '@src/crew/crew.repository';
+import { CreateCrewDto } from '@src/crew/dto/createCrew.dto';
+import { EditCrewDto } from '@src/crew/dto/editCrew.dto';
 import axios from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path';

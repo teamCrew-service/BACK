@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ReportRepository } from './report.repository';
-import { CreateReportDto } from './dto/createReport.dto';
+import { ReportRepository } from '@src/report/report.repository';
+import { CreateReportDto } from '@src/report/dto/createReport.dto';
 
 @Injectable()
 export class ReportService {

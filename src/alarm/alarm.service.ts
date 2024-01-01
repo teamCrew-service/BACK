@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AlarmRepository } from './alarm.repository';
+import { AlarmRepository } from '@src/alarm/alarm.repository';
 
 @Injectable()
 export class AlarmService {

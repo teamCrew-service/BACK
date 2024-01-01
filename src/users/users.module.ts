@@ -1,17 +1,17 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { UsersRepository } from './users.repository';
+import { UsersController } from '@src/users/users.controller';
+import { UsersService } from '@src/users/users.service';
+import { UsersRepository } from '@src/users/users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from './entities/user.entity';
-import { AuthModule } from 'src/auth/auth.module';
-import { CrewModule } from 'src/crew/crew.module';
-import { TopicModule } from 'src/topic/topic.module';
-import { LikeModule } from 'src/like/like.module';
-import { MemberModule } from 'src/member/member.module';
-import { SignupModule } from 'src/signup/signup.module';
-import { UnsubscribeModule } from 'src/unsubscribe/unsubscribe.module';
-import { scheduleModule } from 'src/schedule/schedule.module';
+import { Users } from '@src/users/entities/user.entity';
+import { AuthModule } from '@src/auth/auth.module';
+import { CrewModule } from '@src/crew/crew.module';
+import { TopicModule } from '@src/topic/topic.module';
+import { LikeModule } from '@src/like/like.module';
+import { MemberModule } from '@src/member/member.module';
+import { SignupModule } from '@src/signup/signup.module';
+import { UnsubscribeModule } from '@src/unsubscribe/unsubscribe.module';
+import { scheduleModule } from '@src/schedule/schedule.module';
 
 @Module({
   imports: [

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { SignupFormRepository } from './signupForm.repository';
-import { SignupRepository } from './signup.repository';
-import { ConfirmSingupDto } from './dto/confirm-singup.dto';
-import { MemberRepository } from 'src/member/member.repository';
-import { EditSignupDto } from './dto/editSubmit-signup.dto';
+import { SignupFormRepository } from '@src/signup/signupForm.repository';
+import { SignupRepository } from '@src/signup/signup.repository';
+import { ConfirmSingupDto } from '@src/signup/dto/confirm-singup.dto';
+import { MemberRepository } from '@src/member/member.repository';
+import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
 
 @Injectable()
 export class SignupService {

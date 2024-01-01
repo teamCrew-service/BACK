@@ -6,14 +6,14 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { HomeService } from './home.service';
+import { HomeService } from '@src/home/home.service';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger/dist';
-import { ScheduleService } from 'src/schedule/schedule.service';
+import { ScheduleService } from '@src/schedule/schedule.service';
 
 @Controller('home')
 @ApiTags('Home API')
