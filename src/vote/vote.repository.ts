@@ -46,7 +46,7 @@ export class VoteRepository {
   }
 
   /* 투표 확인하기 */
-  async findAllVote(crewId: number, voteFormId: number): Promise<Object[]> {
+  async findAllVote(crewId: number, voteFormId: number): Promise<Vote[]> {
     try {
       return await this.voteRepository
         .createQueryBuilder('vote')
@@ -74,7 +74,7 @@ export class VoteRepository {
   async findAllAnonymousVote(
     crewId: number,
     voteFormId: number,
-  ): Promise<Object[]> {
+  ): Promise<Vote[]> {
     try {
       return await this.voteRepository
         .createQueryBuilder('vote')

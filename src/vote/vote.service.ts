@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { VoteRepository } from '@src/vote/vote.repository';
 import { VotingDto } from '@src/vote/dto/voting.dto';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
+import { Vote } from './entities/vote.entity';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class VoteService {
@@ -13,7 +15,7 @@ export class VoteService {
     crewId: number,
     voteFormId: number,
     votingDto: VotingDto,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       return await this.voteRepository.voting(
         userId,
@@ -28,10 +30,9 @@ export class VoteService {
   }
 
   /* 투표 확인하기 */
-  async findAllVote(crewId: number, voteFormId: number): Promise<any> {
+  async findAllVote(crewId: number, voteFormId: number): Promise<Vote[]> {
     try {
-      const vote = await this.voteRepository.findAllVote(crewId, voteFormId);
-      return vote;
+      return await this.voteRepository.findAllVote(crewId, voteFormId);
     } catch (e) {
       console.error(e);
       throw new Error('VoteService/findAllVote');
@@ -39,13 +40,12 @@ export class VoteService {
   }
 
   /* 익명 투표 확인하기 */
-  async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
+  async findAllAnonymousVote(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<Vote[]> {
     try {
-      const vote = await this.voteRepository.findAllAnonymousVote(
-        crewId,
-        voteFormId,
-      );
-      return vote;
+      return await this.voteRepository.findAllAnonymousVote(crewId, voteFormId);
     } catch (e) {
       console.error(e);
       throw new Error('VoteService/findAllAnonymousVote');
@@ -58,15 +58,14 @@ export class VoteService {
     crewId: number,
     voteFormId: number,
     editVotingDto: EditVotingDto,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
-      const editedVote = await this.voteRepository.editVote(
+      return await this.voteRepository.editVote(
         userId,
         crewId,
         voteFormId,
         editVotingDto,
       );
-      return editedVote;
     } catch (e) {
       console.error(e);
       throw new Error('VoteService/editVote');
@@ -74,10 +73,9 @@ export class VoteService {
   }
 
   /* crew 삭제에 따라 투표 삭제하기 */
-  async deleteVoteByCrew(crewId: number): Promise<any> {
+  async deleteVoteByCrew(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteVote = await this.voteRepository.deleteVoteByCrew(crewId);
-      return deleteVote;
+      return await this.voteRepository.deleteVoteByCrew(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('VoteService/deleteVoteByCrew');

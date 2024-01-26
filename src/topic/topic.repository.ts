@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from '@src/topic/entities/topic.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { TopicDto } from '@src/topic/dto/topic.dto';
 import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
 
@@ -12,7 +12,7 @@ export class TopicRepository {
   ) {}
 
   /* 관심사 선택 */
-  async addTopic(topicDto: TopicDto, userId: number): Promise<any> {
+  async addTopic(topicDto: TopicDto, userId: number): Promise<Object> {
     try {
       const interestTopic = topicDto.interestTopic;
 
@@ -49,14 +49,13 @@ export class TopicRepository {
   }
 
   /* 관심사 조회 */
-  async findTopicById(userId: number): Promise<any> {
+  async findTopicById(userId: number): Promise<Topic[]> {
     try {
-      const topic = await this.topicRepository
+      return await this.topicRepository
         .createQueryBuilder('topic')
         .select(['userId', 'interestTopic'])
         .where('topic.userId = :userId', { userId })
         .getRawMany();
-      return topic;
     } catch (e) {
       console.error(e);
       throw new Error('TopicRepository/findTopicById');
@@ -64,7 +63,7 @@ export class TopicRepository {
   }
 
   /* 관심사 수정*/
-  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
+  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<Object> {
     try {
       const interestTopic = editTopicDto.interestTopic;
 
@@ -101,15 +100,14 @@ export class TopicRepository {
   }
 
   /* 탈퇴에 따라 topic 삭제 처리 */
-  async deleteTopic(userId: number): Promise<any> {
+  async deleteTopic(userId: number): Promise<DeleteResult> {
     try {
-      const deleteTopic = await this.topicRepository
+      return await this.topicRepository
         .createQueryBuilder('topic')
         .delete()
         .from(Topic)
         .where('topic.userId = :userId', { userId })
         .execute();
-      return deleteTopic;
     } catch (e) {
       console.error(e);
       throw new Error('TopicRepository/deleteTopic');

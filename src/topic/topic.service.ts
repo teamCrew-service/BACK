@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { TopicRepository } from '@src/topic/topic.repository';
 import { TopicDto } from '@src/topic/dto/topic.dto';
 import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
+import { Topic } from '@src/topic/entities/topic.entity';
 
 @Injectable()
 export class TopicService {
   constructor(private topicRepository: TopicRepository) {}
 
   /* 관심사 선택 */
-  async addTopic(topicDto: TopicDto, userId: number): Promise<any> {
+  async addTopic(topicDto: TopicDto, userId: number): Promise<Object> {
     try {
-      const addTopic = await this.topicRepository.addTopic(topicDto, userId);
-      return addTopic;
+      return await this.topicRepository.addTopic(topicDto, userId);
     } catch (e) {
       console.error(e);
       throw new Error('TopicService/addTopic');
@@ -19,10 +19,9 @@ export class TopicService {
   }
 
   /* 관심사 조회 */
-  async findTopicById(userId: number): Promise<any> {
+  async findTopicById(userId: number): Promise<Topic[]> {
     try {
-      const topic = await this.topicRepository.findTopicById(userId);
-      return topic;
+      return await this.topicRepository.findTopicById(userId);
     } catch (e) {
       console.error(e);
       throw new Error('TopicService/findTopicById');

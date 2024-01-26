@@ -3,6 +3,8 @@ import { UnsubscribeRepository } from '@src/unsubscribe/unsubscribe.repository';
 import { UsersRepository } from '@src/users/users.repository';
 import { Cron } from '@nestjs/schedule';
 import { TopicRepository } from '@src/topic/topic.repository';
+import { Unsubscribe } from './entities/unsubscribe.entity';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class UnsubscribeService {
@@ -17,7 +19,7 @@ export class UnsubscribeService {
     try {
       const toBeDeletedAccounts =
         await this.unsubscribeRepository.findAllUnsubscribe();
-      if (toBeDeletedAccounts > 0) {
+      if (toBeDeletedAccounts.length > 0) {
         const deleteAccounts = toBeDeletedAccounts.map((account) =>
           this.usersRepository.deleteAccount(account.userId),
         );
@@ -40,10 +42,9 @@ export class UnsubscribeService {
   }
 
   /* 탈퇴 대기 계정 조회*/
-  async findAllUnsubscribe(): Promise<any> {
+  async findAllUnsubscribe(): Promise<Unsubscribe[]> {
     try {
-      const toBeDeletedAccounts = await this.findAllUnsubscribe();
-      return toBeDeletedAccounts;
+      return await this.unsubscribeRepository.findAllUnsubscribe();
     } catch (e) {
       console.error(e);
       throw new Error('UnsubscribeService/findAllUnsubscribe');
@@ -51,11 +52,9 @@ export class UnsubscribeService {
   }
 
   /* 탈퇴 대기 계정 하나 조회 */
-  async findOneUnsubscribe(userId: any): Promise<any> {
+  async findOneUnsubscribe(userId: any): Promise<Unsubscribe> {
     try {
-      const toBeDeletedAccount =
-        await this.unsubscribeRepository.findOneUnsubscribe(userId);
-      return toBeDeletedAccount;
+      return await this.unsubscribeRepository.findOneUnsubscribe(userId);
     } catch (e) {
       console.error(e);
       throw new Error('UnsubscribeService/findOneUnsubscribe');
@@ -63,12 +62,9 @@ export class UnsubscribeService {
   }
 
   /* 탈퇴 대기 등록 */
-  async createUnsubscribe(userId: number): Promise<any> {
+  async createUnsubscribe(userId: number): Promise<Unsubscribe> {
     try {
-      const unsubscribe = await this.unsubscribeRepository.createUnsubscribe(
-        userId,
-      );
-      return unsubscribe;
+      return await this.unsubscribeRepository.createUnsubscribe(userId);
     } catch (e) {
       console.error(e);
       throw new Error('UnsubscribeService/createUnsubscribe');
@@ -76,12 +72,9 @@ export class UnsubscribeService {
   }
 
   /* 탈퇴 대기 취소 */
-  async deleteUnsubscribe(userId: number): Promise<any> {
+  async deleteUnsubscribe(userId: number): Promise<DeleteResult> {
     try {
-      const account = await this.unsubscribeRepository.deleteUnsubscribe(
-        userId,
-      );
-      return account;
+      return await this.unsubscribeRepository.deleteUnsubscribe(userId);
     } catch (e) {
       console.error(e);
       throw new Error('UnsubscribeService/deleteUnsubscribe');
