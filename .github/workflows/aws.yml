@@ -1,132 +1,131 @@
-name: Deploy with Docker
-# 내가 만드는 이름이다 뭐든 상관없다
+# name: Deploy with Docker
+# # 내가 만드는 이름이다 뭐든 상관없다
 
-on:
-  push:
-    branches: [main]
-    # 무슨 브랜치가 업데이트 될 때 Actions 를 작동시킬지 적는다.
-    # develop 브랜치로 개발하며 완료되면 main 에 머지해 Actions 를 작동시키면 조금 더 안전하겠지.
-    # 여러개 적어도 된다.
+# on:
+#   push:
+#     branches: [main]
+#     # 무슨 브랜치가 업데이트 될 때 Actions 를 작동시킬지 적는다.
+#     # develop 브랜치로 개발하며 완료되면 main 에 머지해 Actions 를 작동시키면 조금 더 안전하겠지.
+#     # 여러개 적어도 된다.
 
-env:
-  DOCKER_IMAGE: ghcr.io/kkerast/crew
-  VERSION: ${{ github.sha }}
-  NAME: superman
-  # Docker image 를 ghcr.io 에 올릴 때 우리의github이름/이미지이름 으로 저장한다. 이미지이름을 정해주면 된다.
-  # Docker image 의 이름을 superman 이라고 해놓은 것. 이름 뭐할지 정하면 된다.
+# env:
+#   DOCKER_IMAGE: ghcr.io/kkerast/crew
+#   VERSION: ${{ github.sha }}
+#   NAME: superman
+#   # Docker image 를 ghcr.io 에 올릴 때 우리의github이름/이미지이름 으로 저장한다. 이미지이름을 정해주면 된다.
+#   # Docker image 의 이름을 superman 이라고 해놓은 것. 이름 뭐할지 정하면 된다.
 
-jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Generate Environment Variables File for Production
-        run: |
-          echo "KAKAO_ID=$KAKAO_ID" >> .env
-          echo "NAVER_ID=$NAVER_ID" >> .env
-          echo "NAVER_SECRET=$NAVER_SECRET" >> .env
-          echo "GOOGLE_ID=$GOOGLE_ID" >> .env
-          echo "GOOGLE_SECRET=$GOOGLE_SECRET" >> .env
-          echo "JWT_SECRET=$JWT_SECRET" >> .env
-          echo "DB_HOST=$DB_HOST" >> .env
-          echo "DB_DATABASE=$DB_DATABASE" >> .env
-          echo "DB_PORT=$DB_PORT" >> .env
-          echo "DB_USERNAME=$DB_USERNAME" >> .env
-          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-          echo "REDIRECT_URI_AUTH=$REDIRECT_URI_AUTH" >> .env
-          echo "REDIRECT_URI_HOME=$REDIRECT_URI_HOME" >> .env
-        env:
-          KAKAO_ID: ${{ secrets.KAKAO_ID }}
-          NAVER_ID: ${{ secrets.NAVER_ID }}
-          NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
-          GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
-          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          REDIRECT_URI_AUTH: ${{ secrets.REDIRECT_URI_AUTH }}
-          REDIRECT_URI_HOME: ${{ secrets.REDIRECT_URI_HOME }}
+# jobs:
+#   build:
+#     name: Build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Generate Environment Variables File for Production
+#         run: |
+#           echo "KAKAO_ID=$KAKAO_ID" >> .env
+#           echo "NAVER_ID=$NAVER_ID" >> .env
+#           echo "NAVER_SECRET=$NAVER_SECRET" >> .env
+#           echo "GOOGLE_ID=$GOOGLE_ID" >> .env
+#           echo "GOOGLE_SECRET=$GOOGLE_SECRET" >> .env
+#           echo "JWT_SECRET=$JWT_SECRET" >> .env
+#           echo "DB_HOST=$DB_HOST" >> .env
+#           echo "DB_DATABASE=$DB_DATABASE" >> .env
+#           echo "DB_PORT=$DB_PORT" >> .env
+#           echo "DB_USERNAME=$DB_USERNAME" >> .env
+#           echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+#           echo "REDIRECT_URI_AUTH=$REDIRECT_URI_AUTH" >> .env
+#           echo "REDIRECT_URI_HOME=$REDIRECT_URI_HOME" >> .env
+#         env:
+#           KAKAO_ID: ${{ secrets.KAKAO_ID }}
+#           NAVER_ID: ${{ secrets.NAVER_ID }}
+#           NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
+#           GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
+#           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+#           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+#           DB_HOST: ${{ secrets.DB_HOST }}
+#           DB_DATABASE: ${{ secrets.DB_DATABASE }}
+#           DB_PORT: ${{ secrets.DB_PORT }}
+#           DB_USERNAME: ${{ secrets.DB_USERNAME }}
+#           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#           REDIRECT_URI_AUTH: ${{ secrets.REDIRECT_URI_AUTH }}
+#           REDIRECT_URI_HOME: ${{ secrets.REDIRECT_URI_HOME }}
 
-      - name: Checkout
-        uses: actions/checkout@v2
+#       - name: Checkout
+#         uses: actions/checkout@v2
 
-      - name: Setup docker buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
+#       - name: Setup docker buildx
+#         id: buildx
+#         uses: docker/setup-buildx-action@v1
 
-      - name: Cache docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ env.VERSION }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
-          # 우리가 방금 복사해서 setting secrets 에 붙여줬던 token 이다. 이름을 기억해 넣어주자.
-          # 우리의 ghcr.io 에 접근하기 위함이다.
+#       - name: Cache docker layers
+#         uses: actions/cache@v2
+#         with:
+#           path: /tmp/.buildx-cache
+#           key: ${{ runner.os }}-buildx-${{ env.VERSION }}
+#           restore-keys: |
+#             ${{ runner.os }}-buildx-
+#       - name: Login to ghcr
+#         uses: docker/login-action@v1
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.CR_PAT }}
+#           # 우리가 방금 복사해서 setting secrets 에 붙여줬던 token 이다. 이름을 기억해 넣어주자.
+#           # 우리의 ghcr.io 에 접근하기 위함이다.
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ env.DOCKER_IMAGE }}:latest
+#       - name: Build and push
+#         id: docker_build
+#         uses: docker/build-push-action@v2
+#         with:
+#           builder: ${{ steps.buildx.outputs.name }}
+#           push: true
+#           tags: ${{ env.DOCKER_IMAGE }}:latest
 
-  deploy:
-    needs: build
-    name: Deploy
-    runs-on: [self-hosted, label-development]
-    # label-superman 라는 이름으로 AWS EC2 가 Runner 를 작동시킬 때 사용했던 그 label
-    steps:
-      - name: Login to ghcr
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
+#   deploy:
+#     needs: build
+#     name: Deploy
+#     runs-on: [self-hosted, label-development]
+#     # label-superman 라는 이름으로 AWS EC2 가 Runner 를 작동시킬 때 사용했던 그 label
+#     steps:
+#       - name: Login to ghcr
+#         uses: docker/login-action@v1
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.CR_PAT }}
 
-      - name: Docker run
-        run: |
-          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest         
-          docker run -d -p 80:80 -p 3306:3306 \
-          -e KAKAO_ID=${{ secrets.KAKAO_ID }} \
-          -e NAVER_ID=${{ secrets.NAVER_ID }} \
-          -e NAVER_SECRET=${{ secrets.NAVER_SECRET }} \
-          -e GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
-          -e GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} \
-          -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-          -e DB_HOST=${{ secrets.DB_HOST }} \
-          -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
-          -e DB_PORT=${{ secrets.DB_PORT }} \
-          -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-          -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-          -e REDIRECT_URI_AUTH=${{ secrets.REDIRECT_URI_AUTH }} \
-          -e REDIRECT_URI_HOME=${{ secrets.REDIRECT_URI_HOME }} \
-          -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
-          -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
-          -e AWS_REGION=${{ secrets.AWS_REGION }} \
-          -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
-          -e MONGODB_URL=${{ secrets.MONGODB_URL }} \
-          -e CORS_ORIGIN=${{ secrets.CORS_ORIGIN }} \
-          --name superman --restart always ${{ env.DOCKER_IMAGE }}:latest
+#       - name: Docker run
+#         run: |
+#           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
+#           docker run -d -p 80:80 -p 3306:3306 \
+#           -e KAKAO_ID=${{ secrets.KAKAO_ID }} \
+#           -e NAVER_ID=${{ secrets.NAVER_ID }} \
+#           -e NAVER_SECRET=${{ secrets.NAVER_SECRET }} \
+#           -e GOOGLE_ID=${{ secrets.GOOGLE_ID }} \
+#           -e GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} \
+#           -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+#           -e DB_HOST=${{ secrets.DB_HOST }} \
+#           -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
+#           -e DB_PORT=${{ secrets.DB_PORT }} \
+#           -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+#           -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+#           -e REDIRECT_URI_AUTH=${{ secrets.REDIRECT_URI_AUTH }} \
+#           -e REDIRECT_URI_HOME=${{ secrets.REDIRECT_URI_HOME }} \
+#           -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
+#           -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
+#           -e AWS_REGION=${{ secrets.AWS_REGION }} \
+#           -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
+#           -e MONGODB_URL=${{ secrets.MONGODB_URL }} \
+#           -e CORS_ORIGIN=${{ secrets.CORS_ORIGIN }} \
+#           --name superman --restart always ${{ env.DOCKER_IMAGE }}:latest
 
+#           # docker run -d -p 80:80 -p 3306:3306 --name superman --restart always ${{ env.DOCKER_IMAGE }}:latest
 
-          # docker run -d -p 80:80 -p 3306:3306 --name superman --restart always ${{ env.DOCKER_IMAGE }}:latest
+#           # 첫 줄
+#           # 먼저 진행되고 있던 docker 를 stop(멈추고), rm 로 docker 컨테이너를 지우고, rmi 로 docker 이미지를 지운다.
+#           # 새롭게 build 된 docker 를 사용하기 위함이다.
 
-          # 첫 줄
-          # 먼저 진행되고 있던 docker 를 stop(멈추고), rm 로 docker 컨테이너를 지우고, rmi 로 docker 이미지를 지운다.
-          # 새롭게 build 된 docker 를 사용하기 위함이다.
-
-          # 두번째 줄
-          # -d : 백그라운드로
-          # -p : 포트 번호 80번에서 80번으로 접근
-          # --name : docker 이미지 이름을 superman 로 할거다. 이게 나중에 위에 적은거랑 같아야하는데 왜냐면 첫 줄이랑 같아야 나중에 지워지니까. 확인하자.
+#           # 두번째 줄
+#           # -d : 백그라운드로
+#           # -p : 포트 번호 80번에서 80번으로 접근
+#           # --name : docker 이미지 이름을 superman 로 할거다. 이게 나중에 위에 적은거랑 같아야하는데 왜냐면 첫 줄이랑 같아야 나중에 지워지니까. 확인하자.
