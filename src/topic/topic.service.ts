@@ -30,13 +30,9 @@ export class TopicService {
   }
 
   /* 관심사 수정 */
-  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<any> {
+  async editTopic(editTopicDto: EditTopicDto, userId: number): Promise<Object> {
     try {
-      const editTopic = await this.topicRepository.editTopic(
-        editTopicDto,
-        userId,
-      );
-      return editTopic;
+      return await this.topicRepository.editTopic(editTopicDto, userId);
     } catch (e) {
       console.error(e);
       throw new Error('TopicService/editTopic');

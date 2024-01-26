@@ -97,7 +97,7 @@ export class UsersController {
     status: 200,
     description: '카카오 소셜로그인을 통한 서비스 로그인',
   })
-  async kakaoLogin() {
+  async kakaoLogin(): Promise<void> {
     return;
   }
 
@@ -111,7 +111,7 @@ export class UsersController {
     status: 200,
     description: '카카오 소셜로그인을 통한 서비스 로그인',
   })
-  async kakaoCallback(@Req() req: any, @Res() res: Response) {
+  async kakaoCallback(@Req() req: any, @Res() res: Response): Promise<void> {
     // res.cookie('authorization', `Bearer ${req.user}`);
     try {
       const token = req.user.token;
@@ -148,7 +148,7 @@ export class UsersController {
     status: 200,
     description: '네이버 소셜로그인을 통한 서비스 로그인',
   })
-  async naverLogin() {
+  async naverLogin(): Promise<void> {
     return;
   }
 
@@ -162,7 +162,7 @@ export class UsersController {
     status: 200,
     description: '네이버 소셜로그인을 통한 서비스 로그인',
   })
-  async naverCallback(@Req() req: any, @Res() res: Response) {
+  async naverCallback(@Req() req: any, @Res() res: Response): Promise<void> {
     // res.cookie('authorization', `Bearer ${req.user}`);
     try {
       const token = req.user.token;
@@ -199,7 +199,7 @@ export class UsersController {
     status: 200,
     description: '구글 소셜로그인을 통한 서비스 로그인',
   })
-  async googleLogin() {
+  async googleLogin(): Promise<void> {
     return;
   }
 
@@ -213,7 +213,7 @@ export class UsersController {
     status: 200,
     description: '구글 소셜로그인을 통한 서비스 로그인',
   })
-  async googleCallback(@Req() req: any, @Res() res: Response) {
+  async googleCallback(@Req() req: any, @Res() res: Response): Promise<void> {
     try {
       const token = req.user.token;
       const userId = req.user.userId;
@@ -243,7 +243,7 @@ export class UsersController {
   async testLogin(
     @Body() testLoginDto: TestLoginDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     const email = testLoginDto.email;
     const provider = testLoginDto.provider;
     const user = await this.usersService.findUserByEmail(email, provider);
@@ -274,7 +274,7 @@ export class UsersController {
     @Body('topicAndInfoDto') topicAndInfoDto: any,
     @UploadedFiles() files,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
       const { userId } = res.locals.user;
@@ -307,7 +307,7 @@ export class UsersController {
   async checkNickname(
     @Body() checkNicknameDto: CheckNicknameDto,
     @Res() res: any,
-  ) {
+  ): Promise<Object> {
     try {
       const newNickname = checkNicknameDto.nickname;
       const exNickname = await this.usersService.checkNickname(newNickname);
@@ -338,7 +338,7 @@ export class UsersController {
     status: 200,
     description: '로그아웃 완료',
   })
-  async logout(@Res() res: Response): Promise<any> {
+  async logout(@Res() res: Response): Promise<Object> {
     res.clearCookie('authorization');
     return res.status(HttpStatus.OK).json({ message: '로그아웃 성공' });
   }
@@ -389,7 +389,7 @@ export class UsersController {
     },
   })
   @ApiBearerAuth('accessToken')
-  async mypage(@Res() res: Response): Promise<any> {
+  async mypage(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       // user 정보
@@ -448,8 +448,8 @@ export class UsersController {
   async editMypage(
     @Body('editTopicAndInfoDto') editTopicAndInfoDto: any,
     @UploadedFiles() files,
-    @Res() res: any,
-  ): Promise<any> {
+    @Res() res: Response,
+  ): Promise<Object> {
     try {
       const { editUserInfoDto, editTopicDto } = JSON.parse(editTopicAndInfoDto);
       const { userId } = res.locals.user;
@@ -516,7 +516,7 @@ export class UsersController {
     },
   })
   @ApiBearerAuth('accessToken')
-  async findLikedCrew(@Res() res: any): Promise<any> {
+  async findLikedCrew(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       const likedCrew = await this.likeService.findLikedCrew(userId);
@@ -567,7 +567,7 @@ export class UsersController {
     },
   })
   @ApiBearerAuth('accessToken')
-  async findJoinedCrew(@Res() res: any): Promise<any> {
+  async findJoinedCrew(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       // user가 참여한 모임
@@ -633,7 +633,7 @@ export class UsersController {
     },
   })
   @ApiBearerAuth('accessToken')
-  async findMyCrew(@Res() res: any): Promise<any> {
+  async findMyCrew(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       const myCrew = await this.crewService.findMyCrew(userId);
@@ -687,7 +687,7 @@ export class UsersController {
     },
   })
   @ApiBearerAuth('accessToken')
-  async waitingCrew(@Res() res: any): Promise<any> {
+  async waitingCrew(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       const allSignup = await this.signupService.findMyAllSignup(userId);
@@ -711,7 +711,7 @@ export class UsersController {
         }
       }
 
-      return res.status(HttpStatus.OK).json(waitingCrew);
+      return res.status(HttpStatus.OK).json({ waitingCrew });
     } catch (e) {
       console.error(e);
       throw new Error('UsersController/waitingCrew');
@@ -729,7 +729,7 @@ export class UsersController {
     description: '탈퇴 대기 성공',
   })
   @ApiBearerAuth('accesssToken')
-  async unsubscribe(@Res() res: any): Promise<any> {
+  async unsubscribe(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       const crewList = await this.crewService.findMyCrew(userId);
@@ -762,7 +762,7 @@ export class UsersController {
     description: '탈퇴 취소 성공',
   })
   @ApiBearerAuth('accesssToken')
-  async deleteUnsubscribe(@Res() res: any): Promise<any> {
+  async deleteUnsubscribe(@Res() res: Response): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       const toBeDeletedAccount =

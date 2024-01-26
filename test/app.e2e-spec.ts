@@ -20,10 +20,13 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
+  // home 부분 테스트
+  // it('/home/map (GET)', async () => {
+  //   const response = await request(app.getHttpServer())
+  //     .get('/home/map')
+  //     .expect(200)
+  //     .expect('Content-Type', /json/);
+
+  //   expect(response.body).toBeDefined();
+  // });
 });
