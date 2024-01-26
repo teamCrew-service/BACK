@@ -15,13 +15,12 @@ export class VoteService {
     votingDto: VotingDto,
   ): Promise<any> {
     try {
-      const vote = await this.voteRepository.voting(
+      return await this.voteRepository.voting(
         userId,
         crewId,
         voteFormId,
         votingDto,
       );
-      return vote;
     } catch (e) {
       console.error(e);
       throw new Error('VoteService/voting');

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { VoteForm } from '@src/voteform/entities/voteform.entity';
 import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
 import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
@@ -17,7 +17,7 @@ export class VoteFormRepository {
     userId: number,
     crewId: number,
     createVoteFormDto: CreateVoteFormDto,
-  ): Promise<any> {
+  ): Promise<VoteForm> {
     try {
       const voteForm = new VoteForm();
       voteForm.userId = userId;
@@ -41,7 +41,7 @@ export class VoteFormRepository {
   }
 
   /* 투표 공지 전체 목록 조회 */
-  async findAllVoteForm(crewId: number, userId: number): Promise<any> {
+  async findAllVoteForm(crewId: number, userId: number): Promise<Object[]> {
     try {
       const voteForm = await this.voteFormRepository
         .createQueryBuilder('voteform')
@@ -68,7 +68,10 @@ export class VoteFormRepository {
   }
 
   /* 투표 공지 상세 조회 */
-  async findVoteFormDetail(crewId: number, voteFormId: number): Promise<any> {
+  async findVoteFormDetail(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<VoteForm> {
     try {
       const voteForm = await this.voteFormRepository
         .createQueryBuilder('voteform')
@@ -99,7 +102,7 @@ export class VoteFormRepository {
   async findVoteFormForAnonymous(
     crewId: number,
     voteFormId: number,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const voteForm = await this.voteFormRepository
         .createQueryBuilder('voteform')
@@ -119,7 +122,7 @@ export class VoteFormRepository {
     crewId: number,
     voteFormId: number,
     editVoteFormDto: EditVoteFormDto,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
       const {
         voteFormTitle,
@@ -134,7 +137,7 @@ export class VoteFormRepository {
         voteFormOption5,
       } = editVoteFormDto;
 
-      const editedVoteForm = await this.voteFormRepository.update(
+      return await this.voteFormRepository.update(
         { crewId, voteFormId },
         {
           voteFormTitle,
@@ -149,8 +152,6 @@ export class VoteFormRepository {
           voteFormOption5,
         },
       );
-
-      return editedVoteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormRepository/editVoteForm');
@@ -158,21 +159,23 @@ export class VoteFormRepository {
   }
 
   /* 투표 공지 삭제 */
-  async deleteVoteForm(crewId: number, voteFormId: number): Promise<any> {
+  async deleteVoteForm(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<UpdateResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const deleteVoteForm = await this.voteFormRepository
+      return await this.voteFormRepository
         .createQueryBuilder('voteform')
         .update(VoteForm)
         .set({ deletedAt: today })
         .where('crewId = :crewId', { crewId })
         .andWhere('voteFormId = :voteFormId', { voteFormId })
         .execute();
-      return deleteVoteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormRepository/deleteVoteForm');
@@ -180,7 +183,7 @@ export class VoteFormRepository {
   }
 
   /* 오늘 날짜 기준보다 날짜가 지난 투표를 찾아 IsDone을 true로 전환 */
-  async updateVoteIsDone(): Promise<any> {
+  async updateVoteIsDone(): Promise<void> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
@@ -203,7 +206,7 @@ export class VoteFormRepository {
   }
 
   /* 위임에 따라 투표 위임하기 */
-  async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
+  async delegateVoteForm(delegator: number, crewId: number): Promise<void> {
     try {
       await this.voteFormRepository
         .createQueryBuilder('voteform')
@@ -219,20 +222,19 @@ export class VoteFormRepository {
   }
 
   /* crew 삭제에 따른 voteForm 삭제 */
-  async deleteVoteFormByCrew(crewId: number): Promise<any> {
+  async deleteVoteFormByCrew(crewId: number): Promise<UpdateResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const deleteVoteForm = await this.voteFormRepository
+      return await this.voteFormRepository
         .createQueryBuilder('voteform')
         .update(VoteForm)
         .set({ deletedAt: today })
         .where('crewId = :crewId', { crewId })
         .execute();
-      return deleteVoteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormRepository/deleteVoteFormByCrew');

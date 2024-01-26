@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Vote } from '@src/vote/entities/vote.entity';
 import { VotingDto } from '@src/vote/dto/voting.dto';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
@@ -17,7 +17,7 @@ export class VoteRepository {
     crewId: number,
     voteFormId: number,
     votingDto: VotingDto,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const voteCotent = votingDto.vote;
       if (voteCotent.includes(',')) {
@@ -46,9 +46,9 @@ export class VoteRepository {
   }
 
   /* 투표 확인하기 */
-  async findAllVote(crewId: number, voteFormId: number): Promise<any> {
+  async findAllVote(crewId: number, voteFormId: number): Promise<Object[]> {
     try {
-      const vote = await this.voteRepository
+      return await this.voteRepository
         .createQueryBuilder('vote')
         .leftJoin('vote.userId', 'users')
         .where('vote.crewId = :crewId', { crewId })
@@ -64,7 +64,6 @@ export class VoteRepository {
         ])
         .groupBy('vote.voteId')
         .getRawMany();
-      return vote;
     } catch (e) {
       console.error(e);
       throw new Error('VoteRepository/findAllVote');
@@ -72,16 +71,18 @@ export class VoteRepository {
   }
 
   /* 익명 투표 확인하기 */
-  async findAllAnonymousVote(crewId: number, voteFormId: number): Promise<any> {
+  async findAllAnonymousVote(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<Object[]> {
     try {
-      const vote = await this.voteRepository
+      return await this.voteRepository
         .createQueryBuilder('vote')
         .where('crewId = :crewId', { crewId })
         .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
         .select(['voteId', 'crewId', 'voteFormId', 'vote'])
         .groupBy('voteId')
         .getRawMany();
-      return vote;
     } catch (e) {
       console.error(e);
       throw new Error('VoteRepository/findAllAnonymousVote');
@@ -93,17 +94,15 @@ export class VoteRepository {
     crewId: number,
     userId: number,
     voteFormId: number,
-  ): Promise<any> {
+  ): Promise<Object[]> {
     try {
-      const votes = await this.voteRepository
+      return await this.voteRepository
         .createQueryBuilder('vote')
         .select(['userId', 'vote'])
         .where('vote.crewId = :crewId', { crewId })
         .andWhere('vote.voteFormId = :voteFormId', { voteFormId })
         .andWhere('vote.userId = :userId', { userId })
         .getRawMany();
-
-      return votes;
     } catch (e) {
       console.error(e);
       throw new Error('VoteRepository/findUserVote');
@@ -116,11 +115,15 @@ export class VoteRepository {
     crewId: number,
     voteFormId: number,
     editVotingDto: EditVotingDto,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
+      const queryRunner =
+        this.voteRepository.manager.connection.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       // 전 투표 결과 삭제
-      const exVotes = await this.findUserVote(userId, crewId, voteFormId);
-      await this.voteRepository.delete(exVotes);
+      const deleteQuery = `DELETE FROM vote WHERE crewId = ? AND voteFormId = ? AND userId = ?`;
+      await queryRunner.query(deleteQuery, [crewId, voteFormId, userId]);
 
       // 새로운 투표 결과 저장
       const voteContent = editVotingDto.vote;
@@ -143,15 +146,14 @@ export class VoteRepository {
   }
 
   /* crew 삭제에 따라 투표 삭제하기 */
-  async deleteVoteByCrew(crewId: number): Promise<any> {
+  async deleteVoteByCrew(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteVote = await this.voteRepository
+      return await this.voteRepository
         .createQueryBuilder('vote')
         .delete()
         .from(Vote)
         .where('crewId = :crewId', { crewId })
         .execute();
-      return deleteVote;
     } catch (e) {
       console.error(e);
       throw new Error('VoteRepository/deleteVoteByCrew');

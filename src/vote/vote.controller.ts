@@ -58,7 +58,7 @@ export class VoteController {
     @Param('voteFormId') voteFormId: number,
     @Body() votingDto: VotingDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -89,7 +89,7 @@ export class VoteController {
       }
 
       // 다중 투표
-      if (voteForm.multipleVotes === true || voteForm.multipleVotes === 1) {
+      if (voteForm.multipleVotes === true) {
         if (crew.userId === userId) {
           await this.voteService.voting(userId, crewId, voteFormId, votingDto);
           return res.status(HttpStatus.OK).json({ message: '투표 완료' });
@@ -111,10 +111,7 @@ export class VoteController {
       }
 
       // 단일 투표 검사
-      if (
-        (voteForm.multipleVotes === false || voteForm.multipleVotes === 0) &&
-        votingDto.vote.includes(',')
-      ) {
+      if (voteForm.multipleVotes === false && votingDto.vote.includes(',')) {
         return res
           .status(HttpStatus.BAD_REQUEST)
           .json({ message: '단일 투표만 가능합니다.' });
@@ -192,7 +189,7 @@ export class VoteController {
     @Param('crewId') crewId: number,
     @Param('voteFormId') voteFormId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -212,7 +209,7 @@ export class VoteController {
       );
 
       // 익명 투표
-      if (voteForm.anonymousVote === true || voteForm.anonymousVote === 1) {
+      if (voteForm.anonymousVote === true) {
         if (crew.userId === userId) {
           const vote = await this.voteService.findAllAnonymousVote(
             crewId,
@@ -235,7 +232,7 @@ export class VoteController {
       }
 
       // 공개 투표
-      if (voteForm.anonymousVote === false || voteForm.anonymousVote === 0) {
+      if (voteForm.anonymousVote === false) {
         if (crew.userId === userId) {
           const vote = await this.voteService.findAllVote(crewId, voteFormId);
           return res.status(HttpStatus.OK).json({ voteForm, vote });
@@ -282,7 +279,7 @@ export class VoteController {
     @Param('voteFormId') voteFormId: number,
     @Body() editVotingDto: EditVotingDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;

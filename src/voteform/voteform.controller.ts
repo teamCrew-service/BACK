@@ -51,7 +51,7 @@ export class VoteformController {
     @Param('crewId') crewId: number,
     @Body() createVoteFormDto: CreateVoteFormDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -124,7 +124,7 @@ export class VoteformController {
     @Param('crewId') crewId: number,
     @Param('voteFormId') voteFormId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -190,7 +190,7 @@ export class VoteformController {
     @Param('crewId') crewId: number,
     @Param('voteFormId') voteFormId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -208,7 +208,7 @@ export class VoteformController {
         voteFormId,
         editVoteFormDto,
       );
-      if (editedVoteForm.length < 1) {
+      if (!editedVoteForm) {
         return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .json({ message: '투표 공지 수정 실패' });
@@ -245,7 +245,7 @@ export class VoteformController {
     @Param('crewId') crewId: number,
     @Param('voteFormId') voteFormId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -268,7 +268,7 @@ export class VoteformController {
         crewId,
         voteFormId,
       );
-      if (deletedVoteForm.length < 1) {
+      if (!deletedVoteForm) {
         return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .json({ message: '투표 공지 삭제 실패' });

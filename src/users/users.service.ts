@@ -89,7 +89,7 @@ export class UsersService {
   }
 
   // userId로 topic 정보 받기
-  async findTopicById(userId: number): Promise<Array<object>> {
+  async findTopicById(userId: number): Promise<Object[]> {
     try {
       return await this.topicService.findTopicById(userId);
     } catch (e) {

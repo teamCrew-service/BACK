@@ -3,6 +3,8 @@ import { VoteFormRepository } from '@src/voteform/voteform.repository';
 import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
 import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
 import { Cron } from '@nestjs/schedule';
+import { VoteForm } from './entities/voteform.entity';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class VoteFormService {
@@ -23,14 +25,13 @@ export class VoteFormService {
     userId: number,
     crewId: number,
     createVoteFormDto: CreateVoteFormDto,
-  ): Promise<any> {
+  ): Promise<VoteForm> {
     try {
-      const voteForm = await this.voteFormRespository.createVoteForm(
+      return await this.voteFormRespository.createVoteForm(
         userId,
         crewId,
         createVoteFormDto,
       );
-      return voteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/createVoteForm');
@@ -38,13 +39,12 @@ export class VoteFormService {
   }
 
   /* 투표 공지 전체 목록 조회 */
-  async findAllVoteForm(crewId: number, userId: number): Promise<any> {
+  async findAllVoteForm(
+    crewId: number,
+    userId: number,
+  ): Promise<Array<Object>> {
     try {
-      const voteForm = await this.voteFormRespository.findAllVoteForm(
-        crewId,
-        userId,
-      );
-      return voteForm;
+      return await this.voteFormRespository.findAllVoteForm(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/findAllVoteForm');
@@ -52,13 +52,15 @@ export class VoteFormService {
   }
 
   /* 투표 공지 상세 조회 */
-  async findVoteFormDetail(crewId: number, voteFormId: number): Promise<any> {
+  async findVoteFormDetail(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<VoteForm> {
     try {
-      const voteForm = await this.voteFormRespository.findVoteFormDetail(
+      return await this.voteFormRespository.findVoteFormDetail(
         crewId,
         voteFormId,
       );
-      return voteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/findVoteFormDetail');
@@ -69,13 +71,12 @@ export class VoteFormService {
   async findVoteFormForAnonymous(
     crewId: number,
     voteFormId: number,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
-      const voteForm = await this.voteFormRespository.findVoteFormForAnonymous(
+      return await this.voteFormRespository.findVoteFormForAnonymous(
         crewId,
         voteFormId,
       );
-      return voteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/findVoteFormForAnonymous');
@@ -87,14 +88,13 @@ export class VoteFormService {
     crewId: number,
     voteFormId: number,
     editVoteFormDto: EditVoteFormDto,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
-      const editedVoteForm = await this.voteFormRespository.editVoteForm(
+      return await this.voteFormRespository.editVoteForm(
         crewId,
         voteFormId,
         editVoteFormDto,
       );
-      return editedVoteForm;
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/editVoteForm');
@@ -102,13 +102,12 @@ export class VoteFormService {
   }
 
   /* 투표 공지 삭제 */
-  async deleteVoteForm(crewId: number, voteFormId: number): Promise<any> {
+  async deleteVoteForm(
+    crewId: number,
+    voteFormId: number,
+  ): Promise<UpdateResult> {
     try {
-      const editedVoteForm = await this.voteFormRespository.deleteVoteForm(
-        crewId,
-        voteFormId,
-      );
-      return editedVoteForm;
+      return await this.voteFormRespository.deleteVoteForm(crewId, voteFormId);
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/deleteVoteForm');
@@ -116,7 +115,7 @@ export class VoteFormService {
   }
 
   /* 위임에 따라 투표 위임하기 */
-  async delegateVoteForm(delegator: number, crewId: number): Promise<any> {
+  async delegateVoteForm(delegator: number, crewId: number): Promise<string> {
     try {
       await this.voteFormRespository.delegateVoteForm(delegator, crewId);
       return '투표 공지 위임 완료';
@@ -127,11 +126,9 @@ export class VoteFormService {
   }
 
   /* crew 삭제에 따른 voteForm 삭제 */
-  async deleteVoteFormByCrew(crewId: number): Promise<any> {
+  async deleteVoteFormByCrew(crewId: number): Promise<UpdateResult> {
     try {
-      const deleteVoteForm =
-        await this.voteFormRespository.deleteVoteFormByCrew(crewId);
-      return deleteVoteForm;
+      return await this.voteFormRespository.deleteVoteFormByCrew(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('VoteFormService/createVoteForm');
