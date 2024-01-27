@@ -36,7 +36,7 @@ export class AlarmController {
   async checkAlarm(
     @Res() res: any,
     @Param('crewId') crewId: number,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findCrewDetail(crewId);

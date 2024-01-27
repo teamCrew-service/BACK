@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Users } from '@src/users/entities/user.entity';
 import { UsersService } from '@src/users/users.service';
 import * as jwt from 'jsonwebtoken';
 
@@ -7,7 +8,7 @@ export class AuthService {
   constructor(private usersService: UsersService) {}
 
   /* user 정보 확인 */
-  async validateUser(email: string, provider: string): Promise<any> {
+  async validateUser(email: string, provider: string): Promise<Users | null> {
     const exUser = await this.usersService.findUserByEmail(email, provider);
     if (!exUser) {
       return null;
@@ -16,7 +17,7 @@ export class AuthService {
   }
 
   /* token 설정 */
-  async getToken(userId: any): Promise<any> {
+  async getToken(userId: any): Promise<string> {
     // 토큰 만료 시간
     const tokenExpiry = 3600;
     // token 생성
@@ -27,7 +28,7 @@ export class AuthService {
   }
 
   /* newUser 생성 */
-  async create({ email, nickname, provider }): Promise<any> {
+  async create({ email, nickname, provider }): Promise<Users> {
     const user = await this.usersService.create({
       email,
       nickname,

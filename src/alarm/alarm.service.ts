@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AlarmRepository } from '@src/alarm/alarm.repository';
+import { Alarm } from '@src/alarm/entities/alarm.entity';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class AlarmService {
@@ -10,14 +12,13 @@ export class AlarmService {
     crewId: number,
     delegator: number,
     nickname: string,
-  ): Promise<any> {
+  ): Promise<Alarm> {
     try {
-      const alarm = await this.alarmRepository.createAlarm(
+      return await this.alarmRepository.createAlarm(
         crewId,
         delegator,
         nickname,
       );
-      return alarm;
     } catch (e) {
       console.error(e);
       throw new Error('AlarmService/createAlarm');
@@ -25,10 +26,9 @@ export class AlarmService {
   }
 
   /* 알림 조회 */
-  async findOneAlarm(crewId: number, userId: number): Promise<any> {
+  async findOneAlarm(crewId: number, userId: number): Promise<Alarm> {
     try {
-      const alarm = await this.alarmRepository.findOneAlarm(crewId, userId);
-      return alarm;
+      return await this.alarmRepository.findOneAlarm(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('AlarmService/findOneAlarm');
@@ -36,10 +36,9 @@ export class AlarmService {
   }
 
   /* 알림 확인 */
-  async checkAlarm(crewId: number, userId: number): Promise<any> {
+  async checkAlarm(crewId: number, userId: number): Promise<UpdateResult> {
     try {
-      const checkAlarm = await this.alarmRepository.checkAlarm(crewId, userId);
-      return checkAlarm;
+      return await this.alarmRepository.checkAlarm(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('AlarmService/checkAlarm');
