@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crew } from '@src/crew/entities/crew.entity';
 import { Repository } from 'typeorm';
+import GetCrew from '@src/home/interface/getCrew';
 
 @Injectable()
 export class HomeRepository {
@@ -11,9 +12,9 @@ export class HomeRepository {
   ) {}
 
   // 내 주변 모임 찾기
-  async getCrew(userId: number): Promise<any> {
+  async getCrew(userId: number): Promise<GetCrew[]> {
     try {
-      const crew = await this.mapRepository
+      return await this.mapRepository
         .createQueryBuilder('crew')
         .leftJoin('member', 'member', 'member.crewId = crew.crewId')
         .leftJoin(
@@ -23,17 +24,17 @@ export class HomeRepository {
           { userId },
         )
         .select([
-          'crew.crewId',
-          'crew.category',
-          'crew.crewType',
-          'crew.crewTitle',
-          'crew.crewContent',
-          'crew.thumbnail',
-          'crew.crewDDay',
-          'crew.crewAddress',
-          'crew.crewMaxMember',
-          'crew.latitude',
-          'crew.longtitude',
+          'crew.crewId AS crewId',
+          'crew.category AS category',
+          'crew.crewType AS crewType',
+          'crew.crewTitle AS crewTitle',
+          'crew.crewContent AS crewContent',
+          'crew.thumbnail AS thumbnail',
+          'crew.crewDDay AS crewDDay',
+          'crew.crewAddress AS crewAddress',
+          'crew.crewMaxMember AS crewMaxMember',
+          'crew.latitude AS latitude',
+          'crew.longtitude AS longtitude',
           'COUNT(DISTINCT member.userId) AS crewAttendedMember',
           'COUNT(like.userId) > 0 AS likeCheck',
         ])
@@ -42,8 +43,6 @@ export class HomeRepository {
         .andWhere('crew.deletedAt IS NULL')
         .groupBy('crew.crewId')
         .getRawMany();
-
-      return crew;
     } catch (e) {
       console.error(e);
       throw new Error('HomeRepository/getCrew');
@@ -54,9 +53,9 @@ export class HomeRepository {
   async findCrewByCategoryAndMap(
     category: string,
     userId: number,
-  ): Promise<any> {
+  ): Promise<GetCrew[]> {
     try {
-      const crew = await this.mapRepository
+      return await this.mapRepository
         .createQueryBuilder('crew')
         .select([
           'crew.crewId',
@@ -86,8 +85,6 @@ export class HomeRepository {
         .andWhere('(member.userId != :userId OR member.userId IS NULL)')
         .andWhere('crew.deletedAt IS NULL')
         .getRawMany();
-
-      return crew;
     } catch (e) {
       console.error(e);
       throw new Error('HomeRepository/findCrewByCategoryAndMap');
@@ -95,9 +92,12 @@ export class HomeRepository {
   }
 
   // 카테고리별 모임 찾기
-  async findCrewByCategory(category: string, userId: number): Promise<any> {
+  async findCrewByCategory(
+    category: string,
+    userId: number,
+  ): Promise<GetCrew[]> {
     try {
-      const crew = await this.mapRepository
+      return await this.mapRepository
         .createQueryBuilder('crew')
         .select([
           'crew.crewId',
@@ -126,8 +126,6 @@ export class HomeRepository {
         .andWhere('crew.deletedAt IS NULL')
         .orderBy('like.userId', 'DESC')
         .getRawMany();
-
-      return crew;
     } catch (e) {
       console.error(e);
       throw new Error('HomeRepository/findCrewByCategory');

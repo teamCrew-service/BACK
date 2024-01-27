@@ -199,13 +199,13 @@ export class HomeController {
       /* 장기 모임은 crewDDay가 null로 들어간다. 
       따라서 제일 최근 일정이 crewDDay이므로 제일 최근 일정으로 crewDDay를 조회에서 보내준다.*/
       const promises = exCrew.map(async (item) => {
-        if (item.crew_crewDDay === null) {
-          const crewId = parseInt(item.crew_crewId);
+        if (item.crewDDay === null) {
+          const crewId = item.crewId;
           const schedule = await this.scheduleService.findScheduleCloseToToday(
             crewId,
           );
           if (schedule) {
-            item.crew_crewDDay = schedule.scheduleDDay;
+            item.crewDDay = schedule.scheduleDDay;
           }
         }
         return item;
@@ -265,13 +265,13 @@ export class HomeController {
       /* 장기 모임은 crewDDay가 null로 들어간다. 
       따라서 제일 최근 일정이 crewDDay이므로 제일 최근 일정으로 crewDDay를 조회에서 보내준다.*/
       const promises = exCrew.map(async (item) => {
-        if (item.crew_crewDDay === null) {
-          const crewId = parseInt(item.crew_crewId);
+        if (item.crewDDay === null) {
+          const crewId = item.crewId;
           const schedule = await this.scheduleService.findScheduleCloseToToday(
             crewId,
           );
           if (schedule) {
-            item.crew_crewDDay = schedule.scheduleDDay;
+            item.crewDDay = schedule.scheduleDDay;
           }
         }
         return item;
@@ -329,13 +329,13 @@ export class HomeController {
       /* 장기 모임은 crewDDay가 null로 들어간다. 
       따라서 제일 최근 일정이 crewDDay이므로 제일 최근 일정으로 crewDDay를 조회에서 보내준다.*/
       const promises = exCrew.map(async (item) => {
-        if (item.crew_crewDDay === null) {
-          const crewId = parseInt(item.crew_crewId);
+        if (item.crewDDay === null) {
+          const crewId = item.crewId;
           const schedule = await this.scheduleService.findScheduleCloseToToday(
             crewId,
           );
           if (schedule) {
-            item.crew_crewDDay = schedule.scheduleDDay;
+            item.crewDDay = schedule.scheduleDDay;
           }
         }
         return item;
