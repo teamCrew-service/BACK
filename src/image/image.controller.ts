@@ -87,7 +87,7 @@ export class ImageController {
       // 저장된 이미지 조회
       const exImages = await this.imageService.findMyImages(crewId, userId);
       for (let i = 0; i < member.length; i++) {
-        if (crew.userId === userId || member[i].userId === userId) {
+        if (crew[i].userId === userId || member[i].userId === userId) {
           // 이미지는 최대 5개까지만 저장 가능합니다.
           if (exImages.length === 5) {
             return res
@@ -164,7 +164,7 @@ export class ImageController {
       const member = await this.memberService.findAllMember(crewId);
       // 권한 확인
       for (let i = 0; i < member.length; i++) {
-        if (crew.userId === userId || member[i].userId === userId) {
+        if (crew[i].userId === userId || member[i].userId === userId) {
           const image = await this.imageService.findCrewImages(crewId);
           return res.status(HttpStatus.OK).json(image);
         }

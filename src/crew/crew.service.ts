@@ -5,16 +5,18 @@ import { EditCrewDto } from '@src/crew/dto/editCrew.dto';
 import axios from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
+import { Crew } from '@src/crew/entities/crew.entity';
+import CrewDetail from '@src/crew/interface/crewDetail';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class CrewService {
   constructor(private crewRepository: CrewRepository) {}
 
   /* 권한 검사를 위한 crew 조회 */
-  async findCrewForAuth(crewId: number): Promise<any> {
+  async findCrewForAuth(crewId: number): Promise<Crew> {
     try {
-      const crew = await this.crewRepository.findCrewForAuth(crewId);
-      return crew;
+      return await this.crewRepository.findCrewForAuth(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findCrewForAuth');
@@ -22,10 +24,9 @@ export class CrewService {
   }
 
   /* 관심사 별 모임 찾기 */
-  async findByCategory(category: string): Promise<any> {
+  async findByCategory(category: string): Promise<Crew[]> {
     try {
-      const crewList = await this.crewRepository.findByCategory(category);
-      return crewList;
+      return await this.crewRepository.findByCategory(category);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findByCategory');
@@ -33,10 +34,12 @@ export class CrewService {
   }
 
   /* 모임 생성 */
-  async createCrew(createCrewDto: CreateCrewDto, userId: number): Promise<any> {
+  async createCrew(
+    createCrewDto: CreateCrewDto,
+    userId: number,
+  ): Promise<Crew> {
     try {
-      const crew = await this.crewRepository.createCrew(createCrewDto, userId);
-      return crew;
+      return await this.crewRepository.createCrew(createCrewDto, userId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/createCrew');
@@ -44,7 +47,7 @@ export class CrewService {
   }
 
   /*thumbnail을 aws3에 업로드하고 그 url을 받아온다.*/
-  async thumbnailUpload(createCrewDto: CreateCrewDto): Promise<any> {
+  async thumbnailUpload(createCrewDto: CreateCrewDto): Promise<string> {
     try {
       //console.log(createCrewDto.thumbnail);
       const url = createCrewDto.thumbnail;
@@ -85,10 +88,9 @@ export class CrewService {
   }
 
   /* 모임 글 상세 조회(참여 전) */
-  async findCrewDetail(crewId: number): Promise<any> {
+  async findCrewDetail(crewId: number): Promise<CrewDetail> {
     try {
-      const crew = await this.crewRepository.findCrewDetail(crewId);
-      return crew;
+      return await this.crewRepository.findCrewDetail(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findCrewDetail');
@@ -96,10 +98,12 @@ export class CrewService {
   }
 
   /* 모임 글 수정 */
-  async editCrew(crewId: number, editCrewDto: EditCrewDto): Promise<any> {
+  async editCrew(
+    crewId: number,
+    editCrewDto: EditCrewDto,
+  ): Promise<UpdateResult> {
     try {
-      const crew = await this.crewRepository.editCrew(crewId, editCrewDto);
-      return crew;
+      return await this.crewRepository.editCrew(crewId, editCrewDto);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/editCrew');
@@ -107,10 +111,9 @@ export class CrewService {
   }
 
   /* 모임 글 삭제 */
-  async deleteCrew(crewId: number): Promise<any> {
+  async deleteCrew(crewId: number): Promise<UpdateResult> {
     try {
-      const crew = await this.crewRepository.deleteCrew(crewId);
-      return crew;
+      return await this.crewRepository.deleteCrew(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/deleteCrew');
@@ -118,10 +121,9 @@ export class CrewService {
   }
 
   /* crewId를 이용해 조회하기 */
-  async findByCrewId(crewId: number): Promise<any> {
+  async findByCrewId(crewId: number): Promise<CrewDetail> {
     try {
-      const crew = await this.crewRepository.findByCrewId(crewId);
-      return crew;
+      return await this.crewRepository.findByCrewId(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findByCrewId');
@@ -129,10 +131,9 @@ export class CrewService {
   }
 
   /* 대기중인 모임을 위한 조회 */
-  async findWaitingPermission(crewId: number): Promise<any> {
+  async findWaitingPermission(crewId: number): Promise<CrewDetail> {
     try {
-      const crew = await this.crewRepository.findWaitingPermission(crewId);
-      return crew;
+      return await this.crewRepository.findWaitingPermission(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findWaitingPermission');
@@ -140,10 +141,9 @@ export class CrewService {
   }
 
   /* userId를 이용해 내가 생성한 모임 조회하기 */
-  async findMyCrew(userId: number): Promise<any> {
+  async findMyCrew(userId: number): Promise<Crew[]> {
     try {
-      const myCrew = await this.crewRepository.findMyCrew(userId);
-      return myCrew;
+      return await this.crewRepository.findMyCrew(userId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findMyCrew');
@@ -151,10 +151,9 @@ export class CrewService {
   }
 
   /* crewId로 Detail하게 조회하기 */
-  async findCrewDetailByCrewId(crewId: number): Promise<any> {
+  async findCrewDetailByCrewId(crewId: number): Promise<CrewDetail> {
     try {
-      const crew = await this.crewRepository.findCrewDetailByCrewId(crewId);
-      return crew;
+      return await this.crewRepository.findCrewDetailByCrewId(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findCrewDetailByCrewId');
@@ -162,10 +161,9 @@ export class CrewService {
   }
 
   /* myCrew를 하나만 조회하기 */
-  async findOneCrew(crewId: number, userId: number): Promise<any> {
+  async findOneCrew(crewId: number, userId: number): Promise<Crew> {
     try {
-      const crew = await this.crewRepository.findOneCrew(crewId, userId);
-      return crew;
+      return await this.crewRepository.findOneCrew(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/findOneCrew');
@@ -177,14 +175,9 @@ export class CrewService {
     delegator: number,
     crewId: number,
     userId: number,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
-      const delegateCrew = await this.crewRepository.delegateCrew(
-        delegator,
-        crewId,
-        userId,
-      );
-      return delegateCrew;
+      return await this.crewRepository.delegateCrew(delegator, crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/delegateCrew');
@@ -192,10 +185,12 @@ export class CrewService {
   }
 
   /* Thumbnail 수정하기 */
-  async editThumbnail(crewId: number, thumbnail: string): Promise<any> {
+  async editThumbnail(
+    crewId: number,
+    thumbnail: string,
+  ): Promise<UpdateResult> {
     try {
-      const crew = await this.crewRepository.editThumbnail(crewId, thumbnail);
-      return crew;
+      return await this.crewRepository.editThumbnail(crewId, thumbnail);
     } catch (e) {
       console.error(e);
       throw new Error('CrewService/editThumbnail');

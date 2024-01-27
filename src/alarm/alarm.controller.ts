@@ -41,7 +41,7 @@ export class AlarmController {
       const { userId } = res.locals.user;
       const crew = await this.crewService.findCrewDetail(crewId);
 
-      if (crew.crew_crewId === null) {
+      if (crew.crewId === null) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });

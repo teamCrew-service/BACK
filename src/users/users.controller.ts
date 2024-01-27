@@ -639,13 +639,13 @@ export class UsersController {
       const myCrew = await this.crewService.findMyCrew(userId);
 
       for (let i = 0; i < myCrew.length; i++) {
-        if (myCrew[i].crew_crewDDay === null) {
-          const crewId = parseInt(myCrew[i].crew_crewId);
+        if (myCrew[i].crewDDay === null) {
+          const crewId = myCrew[i].crewId;
           const schedule = await this.scheduleService.findScheduleCloseToToday(
             crewId,
           );
           if (schedule) {
-            myCrew[i].crew_crewDDay = schedule.scheduleDDay;
+            myCrew[i].crewDDay = schedule.scheduleDDay;
           }
         }
       }

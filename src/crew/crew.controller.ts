@@ -110,7 +110,7 @@ export class CrewController {
     @UploadedFiles() files,
     @Body('JoinCreateCrewDto') joinCreateCrewDto: any,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     //console.log(joinCreateCrewDto);
     //joinCreateCrewDto = JSON.parse(joinCreateCrewDto);
     const { createCrewDto, createSignupFormDto } =
@@ -127,7 +127,7 @@ export class CrewController {
     const newCrew = await this.crewService.createCrew(createCrewDto, userId);
 
     // 새로운 모임 생성할 때 crewSignup이 true일 경우 signupForm을 생성해준다.
-    if (newCrew.crewSignup === true || newCrew.crewSignup === 1) {
+    if (newCrew.crewSignup === true) {
       await this.signupService.createSignupForm(
         newCrew.crewId,
         createSignupFormDto,
@@ -160,7 +160,6 @@ export class CrewController {
         url: `${files.location}`,
       })),
     );
-    return files.map((file) => ({ url: `/uploads/${file.filename}` }));
   }
 
   /* 모임 상세 조회*/
@@ -402,13 +401,13 @@ export class CrewController {
   async findCrewDetail(
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const user = res.locals.user ? res.locals.user : null;
       const userId = user !== null ? user.userId : 0;
       const crew = await this.crewService.findCrewDetail(crewId);
 
-      if (crew.crew_crewId === null) {
+      if (crew.crewId === null) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 모임입니다.' });
@@ -427,7 +426,7 @@ export class CrewController {
       const today: any = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const startDate: any = new Date(crew.crew_createdAt);
+      const startDate: any = new Date(crew.createdAt);
       const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
       const createdCrewPeriod: number = Math.floor(
         (today - startDate) / oneDayInMilliseconds,
@@ -550,7 +549,7 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Body() editCrewDto: EditCrewDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
@@ -610,7 +609,7 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @UploadedFiles() files,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
@@ -673,7 +672,7 @@ export class CrewController {
   async deleteCrew(
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
@@ -738,7 +737,7 @@ export class CrewController {
     @Param('crewId') crewId: number,
     @Body() delegateDto: DelegateDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 토큰을 통해 userId 확인
       const { userId } = res.locals.user;
