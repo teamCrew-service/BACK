@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Image } from '@src/image/entities/image.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { SaveImageDto } from '@src/image/dto/saveImage.dto';
 
 @Injectable()
@@ -11,15 +11,14 @@ export class ImageRepository {
   ) {}
 
   /* 나의 image 조회 */
-  async findMyImages(crewId: number, userId: number): Promise<any> {
+  async findMyImages(crewId: number, userId: number): Promise<Image[]> {
     try {
-      const exImages = await this.imageRepository
+      return await this.imageRepository
         .createQueryBuilder('image')
-        .select(['imageId', 'image'])
+        .select(['imageId', 'image', 'userId'])
         .where('image.crewId = :crewId', { crewId })
         .andWhere('image.userId = :userId', { userId })
         .getRawMany();
-      return exImages;
     } catch (e) {
       console.error(e);
       throw new Error('ImageRepository/findMyImages');
@@ -27,9 +26,9 @@ export class ImageRepository {
   }
 
   /* image 조회 */
-  async findCrewImages(crewId: number): Promise<any> {
+  async findCrewImages(crewId: number): Promise<Image[]> {
     try {
-      const image = await this.imageRepository
+      return await this.imageRepository
         .createQueryBuilder('image')
         .select([
           'image.imageId AS imageId',
@@ -41,8 +40,6 @@ export class ImageRepository {
         .andWhere('image.deletedAt IS NULL')
         .orderBy('image.createdAt', 'DESC')
         .getRawMany();
-
-      return image;
     } catch (e) {
       console.error(e);
       throw new Error('ImageRepository/findCrewImages');
@@ -54,7 +51,7 @@ export class ImageRepository {
     saveImageDto: SaveImageDto,
     crewId: number,
     userId: number,
-  ): Promise<any> {
+  ): Promise<Image> {
     try {
       const image = new Image();
       image.userId = userId;
@@ -69,13 +66,12 @@ export class ImageRepository {
   }
 
   /* image 삭제 */
-  async deleteImage(imageId: number): Promise<any> {
+  async deleteImage(imageId: number): Promise<UpdateResult> {
     try {
-      const deleteImage = await this.imageRepository.update(
+      return await this.imageRepository.update(
         { imageId },
         { deletedAt: new Date() },
       );
-      return deleteImage;
     } catch (e) {
       console.error(e);
       throw new Error('ImageRepository/deleteImage');
@@ -83,20 +79,19 @@ export class ImageRepository {
   }
 
   /* crew 삭제로 인한 image 삭제 */
-  async deleteImageByCrew(crewId: number): Promise<any> {
+  async deleteImageByCrew(crewId: number): Promise<UpdateResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const deleteImage = await this.imageRepository
+      return await this.imageRepository
         .createQueryBuilder('image')
         .update(Image)
         .set({ deletedAt: today })
         .where('crewId = :crewId', { crewId })
         .execute();
-      return deleteImage;
     } catch (e) {
       console.error(e);
       throw new Error('ImageRepository/deleteImageByCrew');
@@ -104,21 +99,23 @@ export class ImageRepository {
   }
 
   /* 탈퇴 시 user에 해당하는 부분 image 삭제 */
-  async deleteImageExitCrew(crewId: number, userId: number): Promise<any> {
+  async deleteImageExitCrew(
+    crewId: number,
+    userId: number,
+  ): Promise<UpdateResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const deleteImage = await this.imageRepository
+      return await this.imageRepository
         .createQueryBuilder('image')
         .update(Image)
         .set({ deletedAt: today })
         .where('crewId = :crewId', { crewId })
         .andWhere('userId = :userId', { userId })
         .execute();
-      return deleteImage;
     } catch (e) {
       console.error(e);
       throw new Error('ImageRepository/deleteImageExitCrew');

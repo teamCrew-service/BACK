@@ -202,18 +202,22 @@ export class ImageController {
       // 본인 image 조회
       const myImage = await this.imageService.findMyImages(crewId, userId);
       // 권한 확인
-      if (myImage.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '이미지 삭제 권한이 없습니다.' });
-      } else {
-        const deleteImage = await this.imageService.deleteImage(imageId);
-        if (!deleteImage) {
+      for (let i = 0; i < myImage.length; i++) {
+        if (myImage[i].userId !== userId) {
           return res
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .json({ message: '이미지 삭제 실패' });
+            .status(HttpStatus.UNAUTHORIZED)
+            .json({ message: '이미지 삭제 권한이 없습니다.' });
+        } else {
+          const deleteImage = await this.imageService.deleteImage(imageId);
+          if (!deleteImage) {
+            return res
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .json({ message: '이미지 삭제 실패' });
+          }
+          return res
+            .status(HttpStatus.OK)
+            .json({ message: '이미지 삭제 성공' });
         }
-        return res.status(HttpStatus.OK).json({ message: '이미지 삭제 성공' });
       }
     } catch (e) {
       console.error(e);

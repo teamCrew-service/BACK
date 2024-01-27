@@ -3,16 +3,17 @@ import { ImageRepository } from '@src/image/image.repository';
 import { SaveImageDto } from '@src/image/dto/saveImage.dto';
 import * as AWS from 'aws-sdk';
 import axios from 'axios';
+import { Image } from '@src/image/entities/image.entity';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class ImageService {
   constructor(private imageRepository: ImageRepository) {}
 
   /* 나의 image 조회 */
-  async findMyImages(crewId: number, userId: number): Promise<any> {
+  async findMyImages(crewId: number, userId: number): Promise<Image[]> {
     try {
-      const exImages = await this.imageRepository.findMyImages(crewId, userId);
-      return exImages;
+      return await this.imageRepository.findMyImages(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('ImageService/findMyImages');
@@ -20,10 +21,9 @@ export class ImageService {
   }
 
   /* image 조회 */
-  async findCrewImages(crewId: number): Promise<any> {
+  async findCrewImages(crewId: number): Promise<Image[]> {
     try {
-      const image = await this.imageRepository.findCrewImages(crewId);
-      return image;
+      return await this.imageRepository.findCrewImages(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('ImageService/findCrewImages');
@@ -35,14 +35,9 @@ export class ImageService {
     saveImageDto: SaveImageDto,
     crewId: number,
     userId: number,
-  ): Promise<any> {
+  ): Promise<Image> {
     try {
-      const newImage = await this.imageRepository.saveImage(
-        saveImageDto,
-        crewId,
-        userId,
-      );
-      return newImage;
+      return await this.imageRepository.saveImage(saveImageDto, crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('ImageService/saveImage');
@@ -50,10 +45,9 @@ export class ImageService {
   }
 
   /* image 삭제 */
-  async deleteImage(imageId: number): Promise<any> {
+  async deleteImage(imageId: number): Promise<UpdateResult> {
     try {
-      const deleteImage = await this.imageRepository.deleteImage(imageId);
-      return deleteImage;
+      return await this.imageRepository.deleteImage(imageId);
     } catch (e) {
       console.error(e);
       throw new Error('ImageService/deleteImage');
@@ -97,10 +91,9 @@ export class ImageService {
   }
 
   /* crew 삭제로 인한 image 삭제 */
-  async deleteImageByCrew(crewId: number): Promise<any> {
+  async deleteImageByCrew(crewId: number): Promise<UpdateResult> {
     try {
-      const deleteImage = await this.imageRepository.deleteImageByCrew(crewId);
-      return deleteImage;
+      return await this.imageRepository.deleteImageByCrew(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('ImageService/deleteImageByCrew');
@@ -108,13 +101,12 @@ export class ImageService {
   }
 
   /* 탈퇴 시 user에 해당하는 부분 image 삭제 */
-  async deleteImageExitCrew(crewId: number, userId: number): Promise<any> {
+  async deleteImageExitCrew(
+    crewId: number,
+    userId: number,
+  ): Promise<UpdateResult> {
     try {
-      const deleteImage = await this.imageRepository.deleteImageExitCrew(
-        crewId,
-        userId,
-      );
-      return deleteImage;
+      return await this.imageRepository.deleteImageExitCrew(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('ImageService/deleteImageExitCrew');
