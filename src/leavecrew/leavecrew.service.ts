@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LeavecrewRepository } from '@src/leavecrew/leavecrew.repository';
 import { Cron } from '@nestjs/schedule';
+import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
 
 @Injectable()
 export class LeavecrewService {
@@ -17,13 +18,9 @@ export class LeavecrewService {
   }
 
   /* crew 탈퇴 등록하기 */
-  async createLeaveCrew(crewId: number, userId: number): Promise<any> {
+  async createLeaveCrew(crewId: number, userId: number): Promise<Leavecrew> {
     try {
-      const leaveUser = await this.leavecrewRepository.createLeaveCrew(
-        crewId,
-        userId,
-      );
-      return leaveUser;
+      return await this.leavecrewRepository.createLeaveCrew(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('LeavecrewService/createLeaveCrew');
@@ -31,13 +28,9 @@ export class LeavecrewService {
   }
 
   /* crew 탈퇴자 조회하기 */
-  async findOneLeaveUser(crewId: number, userId: number): Promise<any> {
+  async findOneLeaveUser(crewId: number, userId: number): Promise<Leavecrew> {
     try {
-      const leaveUser = await this.leavecrewRepository.findOneLeaveUser(
-        crewId,
-        userId,
-      );
-      return leaveUser;
+      return await this.leavecrewRepository.findOneLeaveUser(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('LeavecrewService/findOneLeaveUser');

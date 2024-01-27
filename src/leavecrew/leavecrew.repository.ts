@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class LeavecrewRepository {
@@ -11,20 +11,19 @@ export class LeavecrewRepository {
   ) {}
 
   /* 등록한 탈퇴 명단 삭제해주기 */
-  async findAllLeaveCrew(): Promise<any> {
+  async findAllLeaveCrew(): Promise<DeleteResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const toBeLeaveCrew = await this.leavecrewRepository
+      return await this.leavecrewRepository
         .createQueryBuilder('leavecrew')
         .delete()
         .from(Leavecrew)
         .where('leavecrew.leaveDay = :today', { today })
         .execute();
-      return toBeLeaveCrew;
     } catch (e) {
       console.error(e);
       throw new Error('LeavecrewRepository/findAllLeaveCrew');
@@ -32,7 +31,7 @@ export class LeavecrewRepository {
   }
 
   /* crew 탈퇴 등록하기 */
-  async createLeaveCrew(crewId: number, userId: number): Promise<any> {
+  async createLeaveCrew(crewId: number, userId: number): Promise<Leavecrew> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
@@ -49,7 +48,7 @@ export class LeavecrewRepository {
       leaveUser.userId = userId;
       leaveUser.leaveDay = sevenDaysLater;
       await this.leavecrewRepository.save(leaveUser);
-      return;
+      return leaveUser;
     } catch (e) {
       console.error(e);
       throw new Error('LeavecrewRepository/createLeaveCrew');
@@ -57,16 +56,14 @@ export class LeavecrewRepository {
   }
 
   /* crew 탈퇴자 조회하기 */
-  async findOneLeaveUser(crewId: number, userId: number): Promise<any> {
+  async findOneLeaveUser(crewId: number, userId: number): Promise<Leavecrew> {
     try {
-      const leaveUser = await this.leavecrewRepository
+      return await this.leavecrewRepository
         .createQueryBuilder('leavecrew')
         .select(['crewId', 'leaveDay'])
         .where('leavecrew.userId = :userId', { userId })
         .andWhere('leavecrew.crewId = :crewId', { crewId })
         .getRawOne();
-
-      return leaveUser;
     } catch (e) {
       console.error(e);
       throw new Error('LeavecrewRepository/findOneLeaveUser');
