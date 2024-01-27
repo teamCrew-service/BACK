@@ -3,6 +3,8 @@ import { NoticeRepository } from '@src/notice/notice.repository';
 import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
 import { Cron } from '@nestjs/schedule';
+import { Notice } from '@src/notice/entities/notice.entity';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class NoticeService {
@@ -24,14 +26,13 @@ export class NoticeService {
     userId: number,
     crewId: number,
     createNoticeDto: CreateNoticeDto,
-  ): Promise<any> {
+  ): Promise<Notice> {
     try {
-      const notice = await this.noticeRepository.createNotice(
+      return await this.noticeRepository.createNotice(
         userId,
         crewId,
         createNoticeDto,
       );
-      return notice;
     } catch (e) {
       console.error(e);
       throw new Error('NoticeService/createNotice');
@@ -39,10 +40,9 @@ export class NoticeService {
   }
 
   /* 공지 전체 조회 */
-  async findAllNotice(crewId: number): Promise<any> {
+  async findAllNotice(crewId: number): Promise<Notice[]> {
     try {
-      const notice = await this.noticeRepository.findAllNotice(crewId);
-      return notice;
+      return await this.noticeRepository.findAllNotice(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('NoticeService/findAllNotice');
@@ -50,13 +50,9 @@ export class NoticeService {
   }
 
   /* 공지 상세 조회 */
-  async findNoticeDetail(crewId: number, noticeId: number): Promise<any> {
+  async findNoticeDetail(crewId: number, noticeId: number): Promise<Notice> {
     try {
-      const notice = await this.noticeRepository.findNoticeDetail(
-        crewId,
-        noticeId,
-      );
-      return notice;
+      return await this.noticeRepository.findNoticeDetail(crewId, noticeId);
     } catch (e) {
       console.error(e);
       throw new Error('NoticeService/findNoticeDetail');
@@ -68,14 +64,13 @@ export class NoticeService {
     crewId: number,
     noticeId: number,
     editNoticeDto: EditNoticeDto,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
-      const editNotice = await this.noticeRepository.editNotice(
+      return await this.noticeRepository.editNotice(
         crewId,
         noticeId,
         editNoticeDto,
       );
-      return editNotice;
     } catch (e) {
       console.error(e);
       throw new Error('NoticeService/editNotice');
@@ -83,13 +78,9 @@ export class NoticeService {
   }
 
   /* 공지 삭제 */
-  async deleteNotice(crewId: number, noticeId: number): Promise<any> {
+  async deleteNotice(crewId: number, noticeId: number): Promise<UpdateResult> {
     try {
-      const deletedNotice = await this.noticeRepository.deleteNotice(
-        crewId,
-        noticeId,
-      );
-      return deletedNotice;
+      return await this.noticeRepository.deleteNotice(crewId, noticeId);
     } catch (e) {
       console.error(e);
       throw new Error('NoticeService/deleteNotice');
@@ -97,7 +88,7 @@ export class NoticeService {
   }
 
   /* 위임에 따라 완료되지 않은 공지 userId를 위임자 userId로 수정 */
-  async delegateNotice(delegator: number, crewId: number): Promise<any> {
+  async delegateNotice(delegator: number, crewId: number): Promise<string> {
     try {
       await this.noticeRepository.delegateNotice(delegator, crewId);
       return '공지 위임 완료';
@@ -108,12 +99,9 @@ export class NoticeService {
   }
 
   /* crew 삭제에 따른 notice 삭제 */
-  async deleteNoticeByCrew(crewId: number): Promise<any> {
+  async deleteNoticeByCrew(crewId: number): Promise<UpdateResult> {
     try {
-      const deleteNotice = await this.noticeRepository.deleteNoticeByCrew(
-        crewId,
-      );
-      return deleteNotice;
+      return await this.noticeRepository.deleteNoticeByCrew(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('NoticeService/deleteNoticeByCrew');

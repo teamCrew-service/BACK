@@ -354,7 +354,7 @@ export class ScheduleController {
               scheduleId,
               userId,
             );
-          if (canceledParticipant.length < 1) {
+          if (!canceledParticipant) {
             return res
               .status(HttpStatus.INTERNAL_SERVER_ERROR)
               .json({ message: '일정 참가 취소 실패' });

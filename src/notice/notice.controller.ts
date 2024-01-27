@@ -20,6 +20,7 @@ import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
 import { CrewService } from '@src/crew/crew.service';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
 import { VoteFormService } from '@src/voteform/voteform.service';
+import { Notice } from '@src/notice/entities/notice.entity';
 
 @Controller('notice')
 @ApiTags('Notice API')
@@ -45,7 +46,7 @@ export class NoticeController {
     @Param('crewId') crewId: number,
     @Body() createNoticeDto: CreateNoticeDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Notice> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -110,7 +111,7 @@ export class NoticeController {
   async findAllNotice(
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -155,7 +156,7 @@ export class NoticeController {
     @Param('crewId') crewId: number,
     @Param('noticeId') noticeId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 공지 상세 조회
       const notice = await this.noticeService.findNoticeDetail(
@@ -192,7 +193,7 @@ export class NoticeController {
     @Param('crewId') crewId: number,
     @Param('noticeId') noticeId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -245,7 +246,7 @@ export class NoticeController {
     @Param('crewId') crewId: number,
     @Param('noticeId') noticeId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -269,7 +270,7 @@ export class NoticeController {
         noticeId,
       );
 
-      if (deletedNotice.length < 1) {
+      if (!deletedNotice) {
         return res
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .json({ message: '공지 삭제를 실패했습니다.' });

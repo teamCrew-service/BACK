@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Notice } from '@src/notice/entities/notice.entity';
 import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
@@ -16,7 +16,7 @@ export class NoticeRepository {
     userId: number,
     crewId: number,
     createNoticeDto: CreateNoticeDto,
-  ): Promise<any> {
+  ): Promise<Notice> {
     try {
       const notice = new Notice();
       notice.userId = userId;
@@ -38,7 +38,7 @@ export class NoticeRepository {
   }
 
   /* 공지 전체 조회 */
-  async findAllNotice(crewId: number): Promise<any> {
+  async findAllNotice(crewId: number): Promise<Notice[]> {
     try {
       const notice = await this.noticeRepository
         .createQueryBuilder('notice')
@@ -67,7 +67,7 @@ export class NoticeRepository {
   }
 
   /* 공지 상세 조회 */
-  async findNoticeDetail(crewId: number, noticeId: number): Promise<any> {
+  async findNoticeDetail(crewId: number, noticeId: number): Promise<Notice> {
     try {
       const notice = await this.noticeRepository
         .createQueryBuilder('notice')
@@ -96,7 +96,7 @@ export class NoticeRepository {
     crewId: number,
     noticeId: number,
     editNoticeDto: EditNoticeDto,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
       const {
         noticeTitle,
@@ -108,7 +108,7 @@ export class NoticeRepository {
         noticeLongitude,
       } = editNoticeDto;
 
-      const editedNotice = await this.noticeRepository.update(
+      return await this.noticeRepository.update(
         { crewId, noticeId },
         {
           noticeTitle,
@@ -120,8 +120,6 @@ export class NoticeRepository {
           noticeLongitude,
         },
       );
-
-      return editedNotice;
     } catch (e) {
       console.error(e);
       throw new Error('NoticeRepository/editNotice');
@@ -129,22 +127,20 @@ export class NoticeRepository {
   }
 
   /* 공지 삭제 */
-  async deleteNotice(crewId: number, noticeId: number): Promise<any> {
+  async deleteNotice(crewId: number, noticeId: number): Promise<UpdateResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const deletedNotice = await this.noticeRepository
+      return await this.noticeRepository
         .createQueryBuilder('notice')
         .update(Notice)
         .set({ deletedAt: today })
         .where('notice.crewId = :crewId', { crewId })
         .andWhere('notice.noticeId = :noticeId', { noticeId })
         .execute();
-
-      return deletedNotice;
     } catch (e) {
       console.error(e);
       throw new Error('NoticeRepository/deleteNotice');
@@ -152,7 +148,7 @@ export class NoticeRepository {
   }
 
   /* 오늘 날짜 기준보다 날짜가 지난 공지를 찾아 IsDone을 true로 전환 */
-  async updateNoticeIsDone(): Promise<any> {
+  async updateNoticeIsDone(): Promise<void> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
@@ -175,7 +171,7 @@ export class NoticeRepository {
   }
 
   /* 위임에 따라 완료되지 않은 공지 userId를 위임자 userId로 수정 */
-  async delegateNotice(delegator: number, crewId: number): Promise<any> {
+  async delegateNotice(delegator: number, crewId: number): Promise<void> {
     try {
       await this.noticeRepository
         .createQueryBuilder('notice')
@@ -191,21 +187,19 @@ export class NoticeRepository {
   }
 
   /* crew 삭제에 따른 notice 삭제 */
-  async deleteNoticeByCrew(crewId: number): Promise<any> {
+  async deleteNoticeByCrew(crewId: number): Promise<UpdateResult> {
     try {
       const koreaTimezoneOffset = 9 * 60;
       const currentDate = new Date();
       const today = new Date(
         currentDate.getTime() + koreaTimezoneOffset * 60000,
       );
-      const deleteNotice = await this.noticeRepository
+      return await this.noticeRepository
         .createQueryBuilder('notice')
         .update(Notice)
         .set({ deletedAt: today })
         .where('crewId = :crewId', { crewId })
         .execute();
-
-      return deleteNotice;
     } catch (e) {
       console.error(e);
       throw new Error('NoticeRepository/deleteNoticeByCrew');
