@@ -95,7 +95,7 @@ export class VoteController {
           return res.status(HttpStatus.OK).json({ message: '투표 완료' });
         }
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId) {
+          if (member[i].userId === userId) {
             await this.voteService.voting(
               userId,
               crewId,
@@ -122,7 +122,7 @@ export class VoteController {
         return res.status(HttpStatus.OK).json({ message: '투표 완료' });
       }
       for (let i = 0; i < member.length; i++) {
-        if (member[i].member_userId === userId) {
+        if (member[i].userId === userId) {
           await this.voteService.voting(userId, crewId, voteFormId, votingDto);
           return res.status(HttpStatus.OK).json({ message: '투표 완료' });
         }
@@ -218,7 +218,7 @@ export class VoteController {
           return res.status(HttpStatus.OK).json({ voteForm, vote });
         }
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId || crew.userId === userId) {
+          if (member[i].userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllAnonymousVote(
               crewId,
               voteFormId,
@@ -238,7 +238,7 @@ export class VoteController {
           return res.status(HttpStatus.OK).json({ voteForm, vote });
         }
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId || crew.userId === userId) {
+          if (member[i].userId === userId || crew.userId === userId) {
             const vote = await this.voteService.findAllVote(crewId, voteFormId);
             return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
@@ -295,7 +295,7 @@ export class VoteController {
 
       // 권한 확인
       for (let i = 0; i < member.length; i++) {
-        if (member[i].member_userId === userId || crew.userId === userId) {
+        if (member[i].userId === userId || crew.userId === userId) {
           await this.voteService.editVote(
             userId,
             crewId,

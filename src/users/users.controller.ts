@@ -574,13 +574,13 @@ export class UsersController {
       const joinedCrew = await this.memberService.findJoinedCrew(userId);
 
       for (let i = 0; i < joinedCrew.length; i++) {
-        if (joinedCrew[i].crew_crewDDay === null) {
-          const crewId = parseInt(joinedCrew[i].crew_crewId);
+        if (joinedCrew[i].crewDDay === null) {
+          const crewId = joinedCrew[i].crewId;
           const schedule = await this.scheduleService.findScheduleCloseToToday(
             crewId,
           );
           if (schedule) {
-            joinedCrew[i].crew_crewDDay = schedule.scheduleDDay;
+            joinedCrew[i].crewDDay = schedule.scheduleDDay;
           }
         }
       }

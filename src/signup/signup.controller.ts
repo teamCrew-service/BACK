@@ -98,7 +98,7 @@ export class SignupController {
       // 멤버 숫자 확인, 가입 여부 확인
       if (crew.crewMaxMember === member.length) {
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId) {
+          if (member[i].userId === userId) {
             return res
               .status(HttpStatus.BAD_REQUEST)
               .json({ message: '모임에 이미 가입했습니다.' });
@@ -204,7 +204,7 @@ export class SignupController {
       // 멤버 숫자 확인, 가입 여부 확인
       if (crew.crewMaxMember === member.length) {
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId) {
+          if (member[i].userId === userId) {
             return res
               .status(HttpStatus.BAD_REQUEST)
               .json({ message: '모임에 이미 가입했습니다.' });
@@ -518,7 +518,7 @@ export class SignupController {
         // 멤버 조회
         const member = await this.memberService.findAllMember(crewId);
         for (let i = 0; i < member.length; i++) {
-          if (member[i].member_userId === userId) {
+          if (member[i].userId === userId) {
             await this.signupService.exitCrew(crewId, userId);
             await this.imageService.deleteImageExitCrew(crewId, userId);
             await this.leavecrewService.createLeaveCrew(crewId, userId);

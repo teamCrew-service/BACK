@@ -298,7 +298,7 @@ export class ScheduleController {
 
       // 일정에 참가, member가 아닐 경우 참가 불가
       for (let i = 0; i < member.length; i++) {
-        if (userId === member[i].member_userId) {
+        if (userId === member[i].userId) {
           await this.participantService.participateSchedule(
             userId,
             crewId,

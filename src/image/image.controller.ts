@@ -86,34 +86,38 @@ export class ImageController {
       const member = await this.memberService.findAllMember(crewId);
       // 저장된 이미지 조회
       const exImages = await this.imageService.findMyImages(crewId, userId);
-      if (crew.userId === userId || member.member_userId === userId) {
-        // 이미지는 최대 5개까지만 저장 가능합니다.
-        if (exImages.length === 5) {
-          return res
-            .status(HttpStatus.BAD_REQUEST)
-            .json({ message: '이미지 저장은 최대 5개까지 가능합니다.' });
-        }
-        const saveImageDto = JSON.parse(body);
+      for (let i = 0; i < member.length; i++) {
+        if (crew.userId === userId || member[i].userId === userId) {
+          // 이미지는 최대 5개까지만 저장 가능합니다.
+          if (exImages.length === 5) {
+            return res
+              .status(HttpStatus.BAD_REQUEST)
+              .json({ message: '이미지 저장은 최대 5개까지 가능합니다.' });
+          }
+          const saveImageDto = JSON.parse(body);
 
-        // 새로운 이미지 저장
-        files.forEach((file) => {
-          saveImageDto.image = file.location;
-          const newImage = this.imageService.saveImage(
-            saveImageDto,
-            crewId,
-            userId,
-          );
-        });
-        // const newImage = await this.imageService.saveImage(
-        //   saveImageDto,
-        //   crewId,
-        //   userId,
-        // );
-        return res.status(HttpStatus.OK).json({ message: '이미지 저장 성공' });
-      } else {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '이미지 저장 권한이 없습니다.' });
+          // 새로운 이미지 저장
+          files.forEach((file) => {
+            saveImageDto.image = file.location;
+            const newImage = this.imageService.saveImage(
+              saveImageDto,
+              crewId,
+              userId,
+            );
+          });
+          // const newImage = await this.imageService.saveImage(
+          //   saveImageDto,
+          //   crewId,
+          //   userId,
+          // );
+          return res
+            .status(HttpStatus.OK)
+            .json({ message: '이미지 저장 성공' });
+        } else {
+          return res
+            .status(HttpStatus.UNAUTHORIZED)
+            .json({ message: '이미지 저장 권한이 없습니다.' });
+        }
       }
     } catch (e) {
       console.error(e);
@@ -159,9 +163,11 @@ export class ImageController {
       const crew = await this.crewService.findByCrewId(crewId);
       const member = await this.memberService.findAllMember(crewId);
       // 권한 확인
-      if (crew.userId === userId || member.member_userId === userId) {
-        const image = await this.imageService.findCrewImages(crewId);
-        return res.status(HttpStatus.OK).json(image);
+      for (let i = 0; i < member.length; i++) {
+        if (crew.userId === userId || member[i].userId === userId) {
+          const image = await this.imageService.findCrewImages(crewId);
+          return res.status(HttpStatus.OK).json(image);
+        }
       }
     } catch (e) {
       console.error(e);

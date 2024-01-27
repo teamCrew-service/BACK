@@ -486,7 +486,7 @@ export class CrewController {
       }
       for (let i = 0; i < member.length; i++) {
         // member일 경우
-        if (userId === member[i].member_userId) {
+        if (userId === member[i].userId) {
           return res.status(HttpStatus.OK).json({
             createdCrewPeriod,
             crew,
@@ -764,7 +764,7 @@ export class CrewController {
       // member 확인, 확인 후 member일 경우에 위임 실행
       const member = await this.memberService.findAllMember(crewId);
       for (let i = 0; i < member.length; i++) {
-        if (parseInt(member[i].member_userId) === delegator) {
+        if (member[i].userId === delegator) {
           await this.crewService.delegateCrew(delegator, crewId, userId);
           await this.memberService.delegateMember(delegator, crewId, userId);
           await this.noticeService.delegateNotice(delegator, crewId);
