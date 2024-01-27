@@ -16,7 +16,7 @@ export class ReportRepository {
     createReportDto: CreateReportDto,
     userId: number,
     crewId: number,
-  ): Promise<any> {
+  ): Promise<Report> {
     try {
       const report = new Report();
       report.userId = userId;

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ReportRepository } from '@src/report/report.repository';
 import { CreateReportDto } from '@src/report/dto/createReport.dto';
+import { Report } from '@src/report/entities/report.entity';
 
 @Injectable()
 export class ReportService {
@@ -11,14 +12,13 @@ export class ReportService {
     createReportDto: CreateReportDto,
     userId: number,
     crewId: number,
-  ): Promise<any> {
+  ): Promise<Report> {
     try {
-      const report = await this.reportRepository.createReport(
+      return await this.reportRepository.createReport(
         createReportDto,
         userId,
         crewId,
       );
-      return report;
     } catch (e) {
       console.error(e);
       throw new Error('ReportService/createReport');

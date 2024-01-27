@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Participant } from '@src/participant/entities/participant.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class ParticipantRepository {
@@ -15,7 +15,7 @@ export class ParticipantRepository {
     userId: number,
     crewId: number,
     scheduleId: number,
-  ): Promise<any> {
+  ): Promise<Participant> {
     try {
       const participant = new Participant();
       participant.userId = userId;
@@ -30,7 +30,10 @@ export class ParticipantRepository {
   }
 
   /* schedule에 참여한 인원 조회하기 */
-  async findAllParticipant(crewId: number, scheduleId: number): Promise<any> {
+  async findAllParticipant(
+    crewId: number,
+    scheduleId: number,
+  ): Promise<Participant[]> {
     try {
       const participant = await this.participantRepository
         .createQueryBuilder('participant')
@@ -38,9 +41,9 @@ export class ParticipantRepository {
         .andWhere('participant.scheduleId = :scheduleId', { scheduleId })
         .leftJoin('users', 'users', 'users.userId = participant.userId')
         .select([
-          'participant.participantId',
-          'participant.userId',
-          'users.profileImage',
+          'participant.participantId AS participantId',
+          'participant.userId AS userId',
+          'users.profileImage AS profileImage',
         ])
         .groupBy('participant.participantId')
         .getRawMany();
@@ -56,9 +59,9 @@ export class ParticipantRepository {
     crewId: number,
     scheduleId: number,
     userId: number,
-  ): Promise<any> {
+  ): Promise<DeleteResult> {
     try {
-      const canceledParticipant = await this.participantRepository
+      return await this.participantRepository
         .createQueryBuilder('participant')
         .delete()
         .from(Participant)
@@ -66,7 +69,6 @@ export class ParticipantRepository {
         .andWhere('scheduleId = :scheduleId', { scheduleId })
         .andWhere('userId = :userId', { userId })
         .execute();
-      return canceledParticipant;
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantRepository/cancelParticipate');
@@ -74,16 +76,14 @@ export class ParticipantRepository {
   }
 
   /* crew 삭제에 따른 participant delete */
-  async deleteParticipant(crewId: number): Promise<any> {
+  async deleteParticipant(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteParticipant = await this.participantRepository
+      return await this.participantRepository
         .createQueryBuilder('participant')
         .delete()
         .from(Participant)
         .where('crewId = :crewId', { crewId })
         .execute();
-
-      return deleteParticipant;
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantRepository/deleteParticipant');
@@ -94,16 +94,15 @@ export class ParticipantRepository {
   async deleteParticipantBySchedule(
     scheduleId: number,
     crewId: number,
-  ): Promise<any> {
+  ): Promise<DeleteResult> {
     try {
-      const deleteParticipant = await this.participantRepository
+      return await this.participantRepository
         .createQueryBuilder('participant')
         .delete()
         .from(Participant)
         .where('crewId = :crewId', { crewId })
         .andWhere('scheduleId = :scheduleId', { scheduleId })
         .execute();
-      return deleteParticipant;
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantRepository/deleteParticipantBySchedule');

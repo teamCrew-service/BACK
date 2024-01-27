@@ -289,7 +289,7 @@ export class ScheduleController {
 
       // 참가자 조회해서 참가 인원인지
       for (let i = 0; i < participant.length; i++) {
-        if (userId === participant[i].participant_userId) {
+        if (userId === participant[i].userId) {
           return res
             .status(HttpStatus.BAD_REQUEST)
             .json({ message: '이미 참여한 인원입니다.' });
@@ -347,7 +347,7 @@ export class ScheduleController {
 
       // 참가자 조회해서 참가 인원인지 확인 뒤 취소 처리
       for (let i = 0; i < participant.length; i++) {
-        if (userId === participant[i].participant_userId) {
+        if (userId === participant[i].userId) {
           const canceledParticipant =
             await this.participantService.cancelParticipate(
               crewId,

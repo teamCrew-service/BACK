@@ -30,7 +30,7 @@ export class ReportController {
     @Body() createReportDto: CreateReportDto,
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;

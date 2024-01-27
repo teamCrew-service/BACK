@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ParticipantRepository } from '@src/participant/participant.repository';
+import { Participant } from '@src/participant/entities/participant.entity';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class ParticipantService {
@@ -10,14 +12,13 @@ export class ParticipantService {
     userId: number,
     crewId: number,
     scheduleId: number,
-  ): Promise<any> {
+  ): Promise<Participant> {
     try {
-      const participant = await this.participantRepository.participateSchedule(
+      return await this.participantRepository.participateSchedule(
         userId,
         crewId,
         scheduleId,
       );
-      return participant;
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantService/participateSchedule');
@@ -25,7 +26,10 @@ export class ParticipantService {
   }
 
   /* schedule에 참여한 인원 조회하기 */
-  async findAllParticipant(crewId: number, scheduleId: number): Promise<any> {
+  async findAllParticipant(
+    crewId: number,
+    scheduleId: number,
+  ): Promise<Participant[]> {
     try {
       const participant = await this.participantRepository.findAllParticipant(
         crewId,
@@ -43,15 +47,13 @@ export class ParticipantService {
     crewId: number,
     scheduleId: number,
     userId: number,
-  ): Promise<any> {
+  ): Promise<DeleteResult> {
     try {
-      const canceledParticipant =
-        await this.participantRepository.cancelParticipate(
-          crewId,
-          scheduleId,
-          userId,
-        );
-      return canceledParticipant;
+      return await this.participantRepository.cancelParticipate(
+        crewId,
+        scheduleId,
+        userId,
+      );
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantService/cancelParticipate');
@@ -59,11 +61,9 @@ export class ParticipantService {
   }
 
   /* crew 삭제에 따른 participant delete */
-  async deleteParticipant(crewId: number): Promise<any> {
+  async deleteParticipant(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteParticipant =
-        await this.participantRepository.deleteParticipant(crewId);
-      return deleteParticipant;
+      return await this.participantRepository.deleteParticipant(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantService/deleteParticipant');
@@ -74,14 +74,12 @@ export class ParticipantService {
   async deleteParticipantBySchedule(
     scheduleId: number,
     crewId: number,
-  ): Promise<any> {
+  ): Promise<DeleteResult> {
     try {
-      const deleteParticipant =
-        await this.participantRepository.deleteParticipantBySchedule(
-          scheduleId,
-          crewId,
-        );
-      return deleteParticipant;
+      return await this.participantRepository.deleteParticipantBySchedule(
+        scheduleId,
+        crewId,
+      );
     } catch (e) {
       console.error(e);
       throw new Error('ParticipantService/deleteParticipantBySchedule');
