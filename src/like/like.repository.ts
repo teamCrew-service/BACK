@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like } from '@src/like/entities/like.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+import LikedCrew from '@src/like/interface/likedCrew';
 
 @Injectable()
 export class LikeRepository {
@@ -10,7 +11,7 @@ export class LikeRepository {
   ) {}
 
   /* 찜하기 */
-  async likeCrew(crewId: number, userId: number): Promise<any> {
+  async likeCrew(crewId: number, userId: number): Promise<Like> {
     try {
       const like = new Like();
       like.crewId = crewId;
@@ -24,16 +25,15 @@ export class LikeRepository {
   }
 
   /* 찜 취소하기 */
-  async cancelLikeCrew(crewId: number, userId: number): Promise<any> {
+  async cancelLikeCrew(crewId: number, userId: number): Promise<DeleteResult> {
     try {
-      const caceledLike = await this.likeRepository
+      return await this.likeRepository
         .createQueryBuilder('like')
         .delete()
         .from(Like)
         .where('like.crewId = :crewId', { crewId })
         .andWhere('like.userId = :userId', { userId })
         .execute();
-      return caceledLike;
     } catch (e) {
       console.error(e);
       throw new Error('LikeRepository/cancelLikeCrew');
@@ -41,30 +41,29 @@ export class LikeRepository {
   }
 
   /* 찜 조회하기 */
-  async findLikedCrew(userId: number): Promise<any> {
+  async findLikedCrew(userId: number): Promise<LikedCrew[]> {
     try {
-      const likedCrew = await this.likeRepository
+      return await this.likeRepository
         .createQueryBuilder('like')
         .leftJoin('crew', 'crew', 'crew.crewId = like.crewId')
         .leftJoin('member', 'member', 'member.crewId = like.crewId')
         .select([
-          'crew.crewId',
-          'crew.category',
-          'crew.crewType',
-          'crew.crewAddress',
-          'crew.crewTitle',
-          'crew.crewContent',
-          'crew.crewDDay',
-          'crew.crewMaxMember',
+          'crew.crewId AS crewId',
+          'crew.category AS category',
+          'crew.crewType AS crewType',
+          'crew.crewAddress AS crewAddress',
+          'crew.crewTitle AS crewTitle',
+          'crew.crewContent AS crewContent',
+          'crew.crewDDay AS crewDDay',
+          'crew.crewMaxMember AS crewMaxMember',
           'COUNT(member.crewId) AS crewAttendedMember',
-          'crew.thumbnail',
+          'crew.thumbnail AS thumbnail',
         ])
         .where('like.userId = :userId', { userId })
         .andWhere('crew.deletedAt IS NULL')
         .orderBy('crew.createdAt', 'DESC')
         .groupBy('like.likeId')
         .getRawMany();
-      return likedCrew;
     } catch (e) {
       console.error(e);
       throw new Error('LikeRepository/findLikedCrew');
@@ -72,14 +71,13 @@ export class LikeRepository {
   }
 
   /* crew를 찜한 횟수 확인 */
-  async countLikedCrew(crewId: number): Promise<any> {
+  async countLikedCrew(crewId: number): Promise<Like[]> {
     try {
-      const likedCrew = await this.likeRepository
+      return await this.likeRepository
         .createQueryBuilder('like')
         .select(['likeId', 'crewId'])
         .where('like.crewId = :crewId', { crewId })
         .getRawMany();
-      return likedCrew;
     } catch (e) {
       console.error(e);
       throw new Error('LikeRepository/countLikedCrew');
@@ -87,15 +85,14 @@ export class LikeRepository {
   }
 
   /* user가 crew를 찜했는지 확인하기 */
-  async confirmLiked(crewId: number, userId: number): Promise<any> {
+  async confirmLiked(crewId: number, userId: number): Promise<Like> {
     try {
-      const like = await this.likeRepository
+      return await this.likeRepository
         .createQueryBuilder('like')
         .select(['likeId', 'crewId', 'userId'])
         .where('like.crewId = :crewId', { crewId })
         .andWhere('like.userId = :userId', { userId })
         .getRawOne();
-      return like;
     } catch (e) {
       console.error(e);
       throw new Error('LikeRepository/confirmLiked');
@@ -103,15 +100,14 @@ export class LikeRepository {
   }
 
   /* 좋아요 삭제 */
-  async deleteLike(crewId: number): Promise<any> {
+  async deleteLike(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteLike = await this.likeRepository
+      return await this.likeRepository
         .createQueryBuilder('like')
         .delete()
         .from(Like)
         .where('crewId = :crewId', { crewId })
         .execute();
-      return deleteLike;
     } catch (e) {
       console.error(e);
       throw new Error('LikeRepository/deleteLike');

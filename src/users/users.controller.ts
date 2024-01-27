@@ -400,7 +400,7 @@ export class UsersController {
       const likedCrew = await this.likeService.findLikedCrew(userId);
       const crewList = [];
       for (let i = 0; i < likedCrew.length; i++) {
-        const crewId = likedCrew[i].crew_crewId;
+        const crewId = likedCrew[i].crewId;
         const crew = await this.crewService.findCrewDetailByCrewId(crewId);
         crewList.push(crew);
       }
