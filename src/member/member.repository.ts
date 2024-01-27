@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from '@src/member/entities/member.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+import JoinedCrew from '@src/member/interface/joinedCrew';
 
 @Injectable()
 export class MemberRepository {
@@ -10,7 +11,7 @@ export class MemberRepository {
   ) {}
 
   /* member 추가 */
-  async addMember(crewId: number, userId: number): Promise<any> {
+  async addMember(crewId: number, userId: number): Promise<Member> {
     try {
       const member = new Member();
       member.userId = userId;
@@ -24,22 +25,21 @@ export class MemberRepository {
   }
 
   /* member 조회 */
-  async findAllMember(crewId: number): Promise<any> {
+  async findAllMember(crewId: number): Promise<Member[]> {
     try {
-      const allMember = await this.memberRepository
+      return await this.memberRepository
         .createQueryBuilder('member')
         .leftJoin('users', 'users', 'users.userId = member.userId')
         .select([
-          'member.memberId',
-          'member.userId',
-          'users.nickname',
-          'users.location',
-          'users.profileImage',
+          'member.memberId AS memberId',
+          'member.userId AS userId',
+          'users.nickname AS nickname',
+          'users.location AS location',
+          'users.profileImage AS profileImage',
         ])
         .where('member.crewId = :crewId', { crewId })
         .groupBy('member.memberId')
         .getRawMany();
-      return allMember;
     } catch (e) {
       console.error(e);
       throw new Error('MemberRepository/findAllMember');
@@ -47,29 +47,28 @@ export class MemberRepository {
   }
 
   /* user가 member로 참여한 crewId 조회 */
-  async findJoinedCrew(userId: number): Promise<any> {
+  async findJoinedCrew(userId: number): Promise<JoinedCrew[]> {
     try {
-      const joinedCrew = await this.memberRepository
+      return await this.memberRepository
         .createQueryBuilder('member')
         .leftJoin('crew', 'crew', 'crew.crewId = member.crewId')
         .select([
-          'crew.crewId',
-          'crew.category',
-          'crew.crewType',
-          'crew.crewAddress',
-          'crew.crewTitle',
-          'crew.crewDDay',
-          'crew.crewContent',
-          'crew.crewMaxMember',
+          'crew.crewId AS crewId',
+          'crew.category AS category',
+          'crew.crewType AS crewType',
+          'crew.crewAddress AS crewAddress',
+          'crew.crewTitle AS crewTitle',
+          'crew.crewDDay AS crewDDay',
+          'crew.crewContent AS crewContent',
+          'crew.crewMaxMember AS crewMaxMember',
           'COUNT(member.crewId) AS crewAttendedMember',
-          'crew.thumbnail',
+          'crew.thumbnail AS thumbnail',
         ])
         .where('member.userId=:userId', { userId })
         .andWhere('crew.deletedAt IS NULL')
         .orderBy('crew.createdAt', 'DESC')
         .groupBy('member.memberId')
         .getRawMany();
-      return joinedCrew;
     } catch (e) {
       console.error(e);
       throw new Error('MemberRepository/findJoinedCrew');
@@ -77,16 +76,15 @@ export class MemberRepository {
   }
 
   /* 탈퇴하기 */
-  async exitCrew(crewId: number, userId: number): Promise<any> {
+  async exitCrew(crewId: number, userId: number): Promise<DeleteResult> {
     try {
-      const exitCrew = await this.memberRepository
+      return await this.memberRepository
         .createQueryBuilder('member')
         .delete()
         .from(Member)
         .where('crewId = :crewId', { crewId })
         .andWhere('userId = :userId', { userId })
         .execute();
-      return exitCrew;
     } catch (e) {
       console.error(e);
       throw new Error('MemberRepository/exitCrew');
@@ -94,15 +92,14 @@ export class MemberRepository {
   }
 
   /* member 삭제 */
-  async deleteMember(crewId: number): Promise<any> {
+  async deleteMember(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteMember = await this.memberRepository
+      return await this.memberRepository
         .createQueryBuilder('member')
         .delete()
         .from(Member)
         .where('crewId = :crewId', { crewId })
         .execute();
-      return deleteMember;
     } catch (e) {
       console.error(e);
       throw new Error('MemberRepository/deleteMember');

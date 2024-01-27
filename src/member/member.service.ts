@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { MemberRepository } from '@src/member/member.repository';
+import { Member } from '@src/member/entities/member.entity';
+import JoinedCrew from '@src/member/interface/joinedCrew';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class MemberService {
   constructor(private memberRepository: MemberRepository) {}
 
   /* (누구나 참여 가능) 모임 가입 */
-  async addMember(crewId: number, userId: number): Promise<any> {
+  async addMember(crewId: number, userId: number): Promise<Member> {
     try {
-      const signup = await this.memberRepository.addMember(crewId, userId);
-      return signup;
+      return await this.memberRepository.addMember(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('MemberService/addMember');
@@ -17,10 +19,9 @@ export class MemberService {
   }
 
   /* member 조회 */
-  async findAllMember(crewId: number): Promise<any> {
+  async findAllMember(crewId: number): Promise<Member[]> {
     try {
-      const member = await this.memberRepository.findAllMember(crewId);
-      return member;
+      return await this.memberRepository.findAllMember(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('MemberService/findAllMember');
@@ -28,10 +29,9 @@ export class MemberService {
   }
 
   /* user가 member로 참여한 crewId 조회 */
-  async findJoinedCrew(userId: number): Promise<any> {
+  async findJoinedCrew(userId: number): Promise<JoinedCrew[]> {
     try {
-      const joinedCrew = await this.memberRepository.findJoinedCrew(userId);
-      return joinedCrew;
+      return await this.memberRepository.findJoinedCrew(userId);
     } catch (e) {
       console.error(e);
       throw new Error('MemberService/findJoinedCrew');
@@ -43,7 +43,7 @@ export class MemberService {
     delegator: number,
     crewId: number,
     userId: number,
-  ): Promise<any> {
+  ): Promise<string> {
     try {
       await Promise.all([
         this.memberRepository.addMember(crewId, userId),
@@ -58,10 +58,9 @@ export class MemberService {
   }
 
   /* crew 탈퇴하기 */
-  async exitCrew(crewId: number, userId: number): Promise<any> {
+  async exitCrew(crewId: number, userId: number): Promise<DeleteResult> {
     try {
-      const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
-      return exitCrew;
+      return await this.memberRepository.exitCrew(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('MemberService/exitCrew');
@@ -69,10 +68,9 @@ export class MemberService {
   }
 
   /* member 삭제 */
-  async deleteMember(crewId: number): Promise<any> {
+  async deleteMember(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteMember = await this.memberRepository.deleteMember(crewId);
-      return deleteMember;
+      return await this.memberRepository.deleteMember(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('MemberService/deleteMember');
