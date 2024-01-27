@@ -3,6 +3,9 @@ import { ScheduleRepository } from '@src/schedule/schedule.repository';
 import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
 import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
 import { Cron } from '@nestjs/schedule';
+import MySchedule from 'src/schedule/interface/mySchedule';
+import { UpdateResult } from 'typeorm';
+import { Schedule } from '@src/schedule/entities/schedule.entity';
 
 @Injectable()
 export class ScheduleService {
@@ -19,7 +22,7 @@ export class ScheduleService {
   }
 
   // 일정 조회
-  async findSchedule(userId: number): Promise<any[]> {
+  async findSchedule(userId: number): Promise<MySchedule[]> {
     try {
       const rawData = await this.scheduleRepository.findSchedule(userId);
 
@@ -72,7 +75,7 @@ export class ScheduleService {
   }
 
   // 다가오는 일정, 참여 완료 일정 전체
-  async findParticipateSchedule(userId: number): Promise<any> {
+  async findParticipateSchedule(userId: number): Promise<MySchedule[]> {
     try {
       const rawData = await this.scheduleRepository.findParticipateSchedule(
         userId,
@@ -82,7 +85,7 @@ export class ScheduleService {
       const scheduleMap = new Map();
 
       for (const data of rawData) {
-        const scheduleKey = data.shceduleTitle + data.scheduleDDay;
+        const scheduleKey = data.scheduleTitle + data.scheduleDDay;
         let scheduleData = scheduleMap.get(scheduleKey);
 
         // 일정이 없을 경우
@@ -131,7 +134,7 @@ export class ScheduleService {
     createScheduleDto: CreateScheduleDto,
     userId: number,
     crewId: number,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const schedule = await this.scheduleRepository.createSchedule(
         createScheduleDto,
@@ -149,14 +152,13 @@ export class ScheduleService {
     crewId: number,
     scheduleId: number,
     editScheduleDto: EditScheduleDto,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
-      const updatedSchedule = await this.scheduleRepository.editSchedule(
+      return await this.scheduleRepository.editSchedule(
         editScheduleDto,
         crewId,
         scheduleId,
       );
-      return updatedSchedule;
     } catch (error) {
       console.error('Error while editing schedule:', error);
       throw new HttpException('일정 수정 실패', HttpStatus.BAD_REQUEST);
@@ -164,13 +166,15 @@ export class ScheduleService {
   }
 
   // 일절 상세 조회
-  async findScheduleDetail(scheduleId: number, crewId: number): Promise<any> {
+  async findScheduleDetail(
+    scheduleId: number,
+    crewId: number,
+  ): Promise<Schedule> {
     try {
-      const schedule = await this.scheduleRepository.findScheduleDetail(
+      return await this.scheduleRepository.findScheduleDetail(
         scheduleId,
         crewId,
       );
-      return schedule;
     } catch (error) {
       console.error('Error while finding schedule detail:', error);
       throw new HttpException(
@@ -181,7 +185,7 @@ export class ScheduleService {
   }
 
   // 일정 삭제
-  async deleteSchedule(scheduleId: number, crewId: number): Promise<any> {
+  async deleteSchedule(scheduleId: number, crewId: number): Promise<Object> {
     try {
       const schedule = await this.scheduleRepository.deleteSchedule(
         scheduleId,
@@ -195,13 +199,12 @@ export class ScheduleService {
   }
 
   /* crew 해당하는 schedule 조회 */
-  async findScheduleByCrew(crewId: number, userId: number): Promise<any> {
+  async findScheduleByCrew(
+    crewId: number,
+    userId: number,
+  ): Promise<Schedule[]> {
     try {
-      const schedule = await this.scheduleRepository.findScheduleByCrew(
-        crewId,
-        userId,
-      );
-      return schedule;
+      return await this.scheduleRepository.findScheduleByCrew(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('ScheduleService/findScheduleByCrew');
@@ -209,7 +212,7 @@ export class ScheduleService {
   }
 
   /* 위임에 따라 schedule 작성자 변경 */
-  async delegateSchedule(delegator: number, crewId: number): Promise<any> {
+  async delegateSchedule(delegator: number, crewId: number): Promise<string> {
     try {
       await this.scheduleRepository.delegateSchedule(delegator, crewId);
       return '일정 위임 완료';
@@ -220,12 +223,9 @@ export class ScheduleService {
   }
 
   /* 오늘 날짜에 가까운 schedule만 조회하기 */
-  async findScheduleCloseToToday(crewId: number): Promise<any> {
+  async findScheduleCloseToToday(crewId: number): Promise<Schedule> {
     try {
-      const schedule = await this.scheduleRepository.findScheduleCloseToToday(
-        crewId,
-      );
-      return schedule;
+      return await this.scheduleRepository.findScheduleCloseToToday(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('ScheduleService/findScheduleCloseToToday');
@@ -233,12 +233,9 @@ export class ScheduleService {
   }
 
   /* crew 삭제에 따른 schedule 삭제 */
-  async deleteScheduleByCrew(crewId: number): Promise<any> {
+  async deleteScheduleByCrew(crewId: number): Promise<UpdateResult> {
     try {
-      const deleteSchedule = await this.scheduleRepository.deleteScheduleByCrew(
-        crewId,
-      );
-      return deleteSchedule;
+      return await this.scheduleRepository.deleteScheduleByCrew(crewId);
     } catch (e) {
       console.error(e);
       throw new Error('ScheduleService/deleteScheduleByCrew');

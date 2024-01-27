@@ -50,7 +50,7 @@ export class ScheduleController {
     @Param('crewId') crewId: number,
     @Body() createscheduleDto: CreateScheduleDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -95,7 +95,7 @@ export class ScheduleController {
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,
     @Body() editscheduleDto: EditScheduleDto,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -166,14 +166,14 @@ export class ScheduleController {
     @Param('scheduleId') scheduleId: number,
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 일정 상세 조회
       const schedule = await this.scheduleService.findScheduleDetail(
         scheduleId,
         crewId,
       );
-      if (!schedule || schedule.schedule_scheduleId === null) {
+      if (!schedule || schedule.scheduleId === null) {
         return res
           .status(HttpStatus.NOT_FOUND)
           .json({ message: '존재하지 않는 일정입니다.' });
@@ -214,7 +214,7 @@ export class ScheduleController {
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object | Array<Object>> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -264,7 +264,7 @@ export class ScheduleController {
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -335,7 +335,7 @@ export class ScheduleController {
     @Param('crewId') crewId: number,
     @Param('scheduleId') scheduleId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -344,7 +344,6 @@ export class ScheduleController {
         crewId,
         scheduleId,
       );
-      console.log(participant);
 
       // 참가자 조회해서 참가 인원인지 확인 뒤 취소 처리
       for (let i = 0; i < participant.length; i++) {
