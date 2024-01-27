@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Signupform } from '@src/signup/entities/signupForm.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class SignupFormRepository {
@@ -14,7 +14,7 @@ export class SignupFormRepository {
   async createSignupForm(
     crewId: number,
     createSignupFormDto: any,
-  ): Promise<any> {
+  ): Promise<Signupform> {
     try {
       const signupForm = new Signupform();
       signupForm.crewId = crewId;
@@ -29,9 +29,9 @@ export class SignupFormRepository {
   }
 
   /* form 불러오기 */
-  async findOneSignupForm(signupFormId: number): Promise<any> {
+  async findOneSignupForm(signupFormId: number): Promise<Signupform> {
     try {
-      const signupForm = await this.signupFormRepository
+      return await this.signupFormRepository
         .createQueryBuilder('signupform')
         .select([
           'signupFormId',
@@ -42,8 +42,6 @@ export class SignupFormRepository {
         ])
         .where('signupform.signupFormId = :signupFormId', { signupFormId })
         .getRawOne();
-
-      return signupForm;
     } catch (e) {
       console.error(e);
       throw new Error('SignupFormRepository/findOneSignupForm');
@@ -51,16 +49,14 @@ export class SignupFormRepository {
   }
 
   /* crew 삭제에 따른 signupForm 삭제 */
-  async deleteSignupForm(crewId: number): Promise<any> {
+  async deleteSignupForm(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteSignupForm = await this.signupFormRepository
+      return await this.signupFormRepository
         .createQueryBuilder('signupform')
         .delete()
         .from(Signupform)
         .where('crewId = :crewId', { crewId })
         .execute();
-
-      return deleteSignupForm;
     } catch (e) {
       console.error(e);
       throw new Error('SignupFormRepository/deleteSignupForm');

@@ -20,11 +20,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger/dist';
 import { CrewService } from '@src/crew/crew.service';
-import { ConfirmSingupDto } from '@src/signup/dto/confirm-singup.dto';
+import { ConfirmSignupDto } from '@src/signup/dto/confirm-signup.dto';
 import { MemberService } from '@src/member/member.service';
 import { LeavecrewService } from '@src/leavecrew/leavecrew.service';
 import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
 import { ImageService } from '@src/image/image.service';
+import { Signup } from '@src/signup/entities/signup.entity';
 
 @Controller()
 @ApiTags('signup API')
@@ -73,7 +74,10 @@ export class SignupController {
     description: '모임 가입 완료',
   })
   @ApiBearerAuth('accessToken')
-  async signup(@Param('crewId') crewId: number, @Res() res: any): Promise<any> {
+  async signup(
+    @Param('crewId') crewId: number,
+    @Res() res: any,
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -137,7 +141,7 @@ export class SignupController {
     @Param('signupFormId')
     signupFormId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       const signupForm = await this.signupService.findOneSignupForm(
         signupFormId,
@@ -167,7 +171,7 @@ export class SignupController {
     @Param('signupFormId') signupFormId: number,
     @Body() submitSignupDto: SubmitSignupDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -264,7 +268,7 @@ export class SignupController {
   async findOneSubmitted(
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Signup> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -306,7 +310,7 @@ export class SignupController {
     @Body() editSignupDto: EditSignupDto,
     @Res() res: any,
     @Param('crewId') crewId: number,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -358,7 +362,7 @@ export class SignupController {
   async deleteMySubmitted(
     @Res() res: any,
     @Param('crewId') crewId: number,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -425,7 +429,7 @@ export class SignupController {
   async findAllSubmitted(
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;
@@ -463,20 +467,20 @@ export class SignupController {
     description: '모임 가입서 확인 완료',
   })
   @ApiBearerAuth('accessToken')
-  async confirmSingup(
-    @Param('signupId') singupId: number,
-    @Body() confirmSingupDto: ConfirmSingupDto,
+  async confirmsignup(
+    @Param('signupId') signupId: number,
+    @Body() confirmSignupDto: ConfirmSignupDto,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // 가입서 확인
-      await this.signupService.confirmSingup(singupId, confirmSingupDto);
+      await this.signupService.confirmsignup(signupId, confirmSignupDto);
       return res
         .status(HttpStatus.OK)
         .json({ message: '모임 가입서 확인 완료' });
     } catch (e) {
       console.error(e);
-      throw new Error('SignupController/confirmSingup');
+      throw new Error('SignupController/confirmsignup');
     }
   }
 
@@ -495,7 +499,7 @@ export class SignupController {
   async exitCrew(
     @Param('crewId') crewId: number,
     @Res() res: any,
-  ): Promise<any> {
+  ): Promise<Object> {
     try {
       // user 정보 확인
       const { userId } = res.locals.user;

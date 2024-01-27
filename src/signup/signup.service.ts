@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from '@src/signup/signupForm.repository';
 import { SignupRepository } from '@src/signup/signup.repository';
-import { ConfirmSingupDto } from '@src/signup/dto/confirm-singup.dto';
+import { ConfirmSignupDto } from '@src/signup/dto/confirm-signup.dto';
 import { MemberRepository } from '@src/member/member.repository';
 import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
+import { Signupform } from '@src/signup/entities/signupForm.entity';
+import { Signup } from '@src/signup/entities/signup.entity';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import Submitted from '@src/signup/interface/submitted';
+import AllSignup from './interface/AllSignup';
 
 @Injectable()
 export class SignupService {
@@ -17,13 +22,12 @@ export class SignupService {
   async createSignupForm(
     crewId: number,
     createSignupFormDto: any,
-  ): Promise<any> {
+  ): Promise<Signupform> {
     try {
-      const createSignupForm = await this.signupFormRepository.createSignupForm(
+      return await this.signupFormRepository.createSignupForm(
         crewId,
         createSignupFormDto,
       );
-      return createSignupForm;
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/createSignupForm');
@@ -31,12 +35,9 @@ export class SignupService {
   }
 
   /* form 불러오기 */
-  async findOneSignupForm(signupFormId: number): Promise<any> {
+  async findOneSignupForm(signupFormId: number): Promise<Signupform> {
     try {
-      const signupForm = await this.signupFormRepository.findOneSignupForm(
-        signupFormId,
-      );
-      return signupForm;
+      return await this.signupFormRepository.findOneSignupForm(signupFormId);
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/findOneSignupForm');
@@ -49,15 +50,14 @@ export class SignupService {
     crewId: number,
     signupFormId: number,
     submitSignupDto: any,
-  ): Promise<any> {
+  ): Promise<Signup> {
     try {
-      const submitSignup = await this.signupRespository.submitSignup(
+      return await this.signupRespository.submitSignup(
         userId,
         crewId,
         signupFormId,
         submitSignupDto,
       );
-      return submitSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/submitSignup');
@@ -65,10 +65,9 @@ export class SignupService {
   }
 
   /* 본인이 작성한 signup확인 */
-  async findMySignup(userId: number, crewId: number): Promise<any> {
+  async findMySignup(userId: number, crewId: number): Promise<Signup> {
     try {
-      const signup = await this.signupRespository.findMySignup(userId, crewId);
-      return signup;
+      return await this.signupRespository.findMySignup(userId, crewId);
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/findMySignup');
@@ -80,14 +79,13 @@ export class SignupService {
     editSignupDto: EditSignupDto,
     crewId: number,
     signupId: number,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
-      const editSignup = await this.signupRespository.editMySubmitted(
+      return await this.signupRespository.editMySubmitted(
         editSignupDto,
         crewId,
         signupId,
       );
-      return editSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/editMySubmitted');
@@ -95,13 +93,12 @@ export class SignupService {
   }
 
   /* 본인이 작성한 signup 삭제 */
-  async deleteMySubmitted(crewId: number, signupId: number): Promise<any> {
+  async deleteMySubmitted(
+    crewId: number,
+    signupId: number,
+  ): Promise<DeleteResult> {
     try {
-      const editSignup = await this.signupRespository.deleteMySubmitted(
-        crewId,
-        signupId,
-      );
-      return editSignup;
+      return await this.signupRespository.deleteMySubmitted(crewId, signupId);
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/deleteMySubmitted');
@@ -109,10 +106,9 @@ export class SignupService {
   }
 
   /* 본인이 작성한 signup 모두 조회 */
-  async findMyAllSignup(userId: number): Promise<any> {
+  async findMyAllSignup(userId: number): Promise<AllSignup[]> {
     try {
-      const allSignup = await this.signupRespository.findMyAllSignup(userId);
-      return allSignup;
+      return await this.signupRespository.findMyAllSignup(userId);
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/findMyAllSignup');
@@ -120,14 +116,15 @@ export class SignupService {
   }
 
   /* 제출한 가입서 조회 */
-  async findAllSubmitted(crewId: number): Promise<any> {
+  async findAllSubmitted(crewId: number): Promise<Submitted[]> {
     try {
       const findAllSubmitted = await this.signupRespository.findAllSubmitted(
         crewId,
       );
       findAllSubmitted.forEach((a) => {
-        if (a.interestTopics) {
-          a.interestTopics = a.interestTopics.split(',');
+        a.interestTopics = [];
+        if (a.topics) {
+          a.interestTopics = a.topics.split(',');
         }
       });
       return findAllSubmitted;
@@ -138,14 +135,14 @@ export class SignupService {
   }
 
   /* 모임 참여 (방장 승인 여부)API */
-  async confirmSingup(
+  async confirmsignup(
     signupId: number,
-    confirmSingupDto: ConfirmSingupDto,
-  ): Promise<any> {
+    confirmSignupDto: ConfirmSignupDto,
+  ): Promise<Signup | Object> {
     try {
-      const confirmedSignup = await this.signupRespository.confirmSingup(
+      const confirmedSignup = await this.signupRespository.confirmsignup(
         signupId,
-        confirmSingupDto,
+        confirmSignupDto,
       );
       if (confirmedSignup.permission === true) {
         const crewId = confirmedSignup.crewId;
@@ -158,15 +155,14 @@ export class SignupService {
       }
     } catch (e) {
       console.error(e);
-      throw new Error('SignupService/confirmSingup');
+      throw new Error('SignupService/confirmsignup');
     }
   }
 
   /* 탈퇴하기 */
-  async exitCrew(crewId: number, userId: number): Promise<any> {
+  async exitCrew(crewId: number, userId: number): Promise<DeleteResult> {
     try {
-      const exitCrew = await this.memberRepository.exitCrew(crewId, userId);
-      return exitCrew;
+      return await this.memberRepository.exitCrew(crewId, userId);
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/exitCrew');
@@ -174,14 +170,12 @@ export class SignupService {
   }
 
   /* crew 삭제에 따른 signup, signupForm 삭제 */
-  async deleteSignupAndSignupForm(crewId: number): Promise<any> {
+  async deleteSignupAndSignupForm(crewId: number): Promise<Array<Object>> {
     try {
-      const deleteSignup = await Promise.all([
+      return await Promise.all([
         this.signupRespository.deleteSignup(crewId),
         this.signupFormRepository.deleteSignupForm(crewId),
       ]);
-
-      return deleteSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupService/deleteSignupAndSignupForm');

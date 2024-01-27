@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty } from 'class-validator';
 
-export class ConfirmSingupDto {
+export class ConfirmSignupDto {
   //permission
   @ApiProperty({
     example: true,

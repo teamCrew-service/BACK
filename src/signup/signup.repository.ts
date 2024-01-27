@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Signup } from '@src/signup/entities/signup.entity';
-import { Repository } from 'typeorm';
-import { ConfirmSingupDto } from '@src/signup/dto/confirm-singup.dto';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { ConfirmSignupDto } from '@src/signup/dto/confirm-signup.dto';
 import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
+import Submitted from '@src/signup/interface/submitted';
+import AllSignup from '@src/signup/interface/AllSignup';
 
 @Injectable()
 export class SignupRepository {
@@ -17,7 +19,7 @@ export class SignupRepository {
     crewId: number,
     signupFormId: number,
     submitSignupDto: any,
-  ): Promise<any> {
+  ): Promise<Signup> {
     try {
       const submitSignup = new Signup();
       submitSignup.crewId = crewId;
@@ -34,15 +36,14 @@ export class SignupRepository {
   }
 
   /* 본인이 작성한 signup확인 */
-  async findMySignup(userId: number, crewId: number): Promise<any> {
+  async findMySignup(userId: number, crewId: number): Promise<Signup> {
     try {
-      const signup = await this.signupRepository
+      return await this.signupRepository
         .createQueryBuilder('signup')
         .select(['signupId', 'answer1', 'answer2', 'userId', 'permission'])
         .where('signup.userId = :userId', { userId })
         .andWhere('signup.crewId = :crewId', { crewId })
         .getRawOne();
-      return signup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupRepository/findMySignup');
@@ -54,19 +55,17 @@ export class SignupRepository {
     editSignupDto: EditSignupDto,
     crewId: number,
     signupId: number,
-  ): Promise<any> {
+  ): Promise<UpdateResult> {
     try {
       const { answer1, answer2 } = editSignupDto;
 
-      const editSignup = await this.signupRepository.update(
+      return await this.signupRepository.update(
         { crewId, signupId },
         {
           answer1,
           answer2,
         },
       );
-
-      return editSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupRepository/editMySubmitted');
@@ -74,16 +73,18 @@ export class SignupRepository {
   }
 
   /* 본인이 작성한 signup 삭제 */
-  async deleteMySubmitted(crewId: number, signupId: number): Promise<any> {
+  async deleteMySubmitted(
+    crewId: number,
+    signupId: number,
+  ): Promise<DeleteResult> {
     try {
-      const editSignup = await this.signupRepository
+      return await this.signupRepository
         .createQueryBuilder('signup')
         .delete()
         .from(Signup)
         .where('signup.crewId = :crewId', { crewId })
         .andWhere('signup.signupId = :signupId', { signupId })
         .execute();
-      return editSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupRepository/deleteMySubmitted');
@@ -91,16 +92,14 @@ export class SignupRepository {
   }
 
   /* 본인이 작성한 signup 모두 조회하기 */
-  async findMyAllSignup(userId: number): Promise<any> {
+  async findMyAllSignup(userId: number): Promise<AllSignup[]> {
     try {
-      const allSignup = await this.signupRepository
+      return await this.signupRepository
         .createQueryBuilder('signup')
         .select(['signupId', 'userId', 'crewId'])
         .where('signup.userId = :userId', { userId })
         .andWhere('signup.permission IS NULL')
         .getRawMany();
-
-      return allSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupRepository/findMyAllSignup');
@@ -108,7 +107,7 @@ export class SignupRepository {
   }
 
   /* 제출한 가입서 조회 */
-  async findAllSubmitted(crewId: number): Promise<any> {
+  async findAllSubmitted(crewId: number): Promise<Submitted[]> {
     try {
       const findAllSubmitted = await this.signupRepository
         .createQueryBuilder('signup')
@@ -129,7 +128,7 @@ export class SignupRepository {
           'signup.answer2 AS answer2',
           'signup.permission AS permission',
           'signup.createdAt AS createdAt',
-          'GROUP_CONCAT(topic.interestTopic) AS interestTopics',
+          'GROUP_CONCAT(topic.interestTopic) AS topics',
         ])
         .groupBy('signup.signupId')
         .orderBy('signup.createdAt', 'ASC')
@@ -142,10 +141,10 @@ export class SignupRepository {
   }
 
   /* 모임 참여 (방장 승인 여부)API */
-  async confirmSingup(
+  async confirmsignup(
     signupId: number,
-    confirmSingupDto: ConfirmSingupDto,
-  ): Promise<any> {
+    confirmSignupDto: ConfirmSignupDto,
+  ): Promise<Signup> {
     try {
       const signup = await this.signupRepository
         .createQueryBuilder('signup')
@@ -160,25 +159,24 @@ export class SignupRepository {
         ])
         .where('signup.signupId = :signupId', { signupId })
         .getRawOne();
-      signup.permission = confirmSingupDto.permission;
+      signup.permission = confirmSignupDto.permission;
       const confirmedSignup = await this.signupRepository.save(signup);
       return confirmedSignup;
     } catch (e) {
       console.error(e);
-      throw new Error('SignupRepository/confirmSingup');
+      throw new Error('SignupRepository/confirmsignup');
     }
   }
 
   /* crew 삭제에 따른 signup 삭제 */
-  async deleteSignup(crewId: number): Promise<any> {
+  async deleteSignup(crewId: number): Promise<DeleteResult> {
     try {
-      const deleteSignup = await this.signupRepository
+      return await this.signupRepository
         .createQueryBuilder('signup')
         .delete()
         .from(Signup)
         .where('crewId = :crewId', { crewId })
         .execute();
-      return deleteSignup;
     } catch (e) {
       console.error(e);
       throw new Error('SignupRepository/deleteSignup');
