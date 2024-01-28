@@ -1,22 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  LoggerService,
+} from '@nestjs/common';
 import { VoteFormRepository } from '@src/voteform/voteform.repository';
 import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
 import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
 import { Cron } from '@nestjs/schedule';
 import { VoteForm } from './entities/voteform.entity';
 import { UpdateResult } from 'typeorm';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class VoteFormService {
-  constructor(private readonly voteFormRespository: VoteFormRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly voteFormRespository: VoteFormRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   @Cron('0 0 * * * *')
   async voteFormCron() {
     try {
       await this.voteFormRespository.updateVoteIsDone();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/voteFormCron');
+      this.handleException('VoteFormService/voteFormCron', e);
     }
   }
 
@@ -33,8 +52,7 @@ export class VoteFormService {
         createVoteFormDto,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/createVoteForm');
+      this.handleException('VoteFormService/createVoteForm', e);
     }
   }
 
@@ -46,8 +64,7 @@ export class VoteFormService {
     try {
       return await this.voteFormRespository.findAllVoteForm(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/findAllVoteForm');
+      this.handleException('VoteFormService/findAllVoteForm', e);
     }
   }
 
@@ -62,8 +79,7 @@ export class VoteFormService {
         voteFormId,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/findVoteFormDetail');
+      this.handleException('VoteFormService/findVoteFormDetail', e);
     }
   }
 
@@ -78,8 +94,7 @@ export class VoteFormService {
         voteFormId,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/findVoteFormForAnonymous');
+      this.handleException('VoteFormService/findVoteFormForAnonymous', e);
     }
   }
 
@@ -96,8 +111,7 @@ export class VoteFormService {
         editVoteFormDto,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/editVoteForm');
+      this.handleException('VoteFormService/editVoteForm', e);
     }
   }
 
@@ -109,8 +123,7 @@ export class VoteFormService {
     try {
       return await this.voteFormRespository.deleteVoteForm(crewId, voteFormId);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/deleteVoteForm');
+      this.handleException('VoteFormService/deleteVoteForm', e);
     }
   }
 
@@ -120,8 +133,7 @@ export class VoteFormService {
       await this.voteFormRespository.delegateVoteForm(delegator, crewId);
       return '투표 공지 위임 완료';
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/delegateVoteForm');
+      this.handleException('VoteFormService/delegateVoteForm', e);
     }
   }
 
@@ -130,8 +142,7 @@ export class VoteFormService {
     try {
       return await this.voteFormRespository.deleteVoteFormByCrew(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormService/createVoteForm');
+      this.handleException('VoteFormService/deleteVoteFormByCrew', e);
     }
   }
 }

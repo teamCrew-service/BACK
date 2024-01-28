@@ -3,7 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
+  Inject,
+  LoggerService,
   Param,
   Post,
   Put,
@@ -21,11 +24,14 @@ import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
 import { CrewService } from '@src/crew/crew.service';
 import { MemberService } from '@src/member/member.service';
 import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('voteform')
 @ApiTags('VoteForm API')
 export class VoteformController {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly voteFormService: VoteFormService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -58,15 +64,17 @@ export class VoteformController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '투표 공지를 등록할 권한이 없습니다.' });
+        throw new HttpException(
+          '투표 공지를 등록할 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 투표 폼 생성
@@ -80,8 +88,11 @@ export class VoteformController {
         .status(HttpStatus.OK)
         .json({ message: '투표 공지를 등록했습니다.', voteFormId });
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormController/createVoteForm');
+      this.logger.error('VoteFormController/createVoteForm', e.message);
+      throw new HttpException(
+        'VoteFormController/createVoteForm',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -131,9 +142,10 @@ export class VoteformController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 모임장일 경우
       if (crew.userId === userId) {
@@ -155,12 +167,13 @@ export class VoteformController {
           return res.status(HttpStatus.OK).json(voteForm);
         }
       }
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: 'crew원이 아닙니다.' });
+      throw new HttpException('crew원이 아닙니다.', HttpStatus.UNAUTHORIZED);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormController/findVoteFormDetail');
+      this.logger.error('VoteFormController/findVoteFormDetail', e.message);
+      throw new HttpException(
+        'VoteFormController/findVoteFormDetail',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -198,9 +211,10 @@ export class VoteformController {
       const crew = await this.crewService.findByCrewId(crewId);
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '투표 공지 수정 권한이 없습니다.' });
+        throw new HttpException(
+          '투표 공지 수정 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
       // 투표 폼 수정
       const editedVoteForm = await this.voteFormService.editVoteForm(
@@ -215,8 +229,11 @@ export class VoteformController {
       }
       return res.status(HttpStatus.OK).json({ message: '투표 공지 수정 성공' });
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormController/editVoteForm');
+      this.logger.error('VoteFormController/editVoteForm', e.message);
+      throw new HttpException(
+        'VoteFormController/editVoteForm',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -252,15 +269,17 @@ export class VoteformController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '투표 공지 삭제 권한이 없습니다.' });
+        throw new HttpException(
+          '투표 공지 삭제 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 투표 폼 삭제
@@ -275,8 +294,11 @@ export class VoteformController {
       }
       return res.status(HttpStatus.OK).json({ message: '투표 공지 삭제 성공' });
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormController/deleteVoteForm');
+      this.logger.error('VoteFormController/deleteVoteForm', e.message);
+      throw new HttpException(
+        'VoteFormController/deleteVoteForm',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

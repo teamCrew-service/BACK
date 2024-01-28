@@ -30,6 +30,8 @@ import { ReportModule } from '@src/report/report.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatModule } from '@src/chat/chat.module';
 import { AlarmModule } from '@src/alarm/alarm.module';
+import { WinstonModule, utilities } from 'nest-winston';
+import * as winston from 'winston';
 
 @Module({
   imports: [
@@ -37,6 +39,20 @@ import { AlarmModule } from '@src/alarm/alarm.module';
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    // winston logger 설정
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.File({
+          level: 'info', // error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.json(),
+            utilities.format.nestLike('Survey-service', { prettyPrint: true }),
+          ),
+          filename: process.env.WINSTON_LOG_FILENAME,
+        }),
+      ],
     }),
     // db 설정
     TypeOrmModule.forRoot({

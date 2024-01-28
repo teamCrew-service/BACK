@@ -1,16 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { VoteForm } from '@src/voteform/entities/voteform.entity';
 import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
 import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class VoteFormRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(VoteForm)
     private voteFormRepository: Repository<VoteForm>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 투표 공지 등록 */
   async createVoteForm(
@@ -35,8 +47,7 @@ export class VoteFormRepository {
       await this.voteFormRepository.save(voteForm);
       return voteForm;
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/createVoteForm');
+      this.handleException('VoteFormRepository/createVoteForm', e);
     }
   }
 
@@ -62,8 +73,7 @@ export class VoteFormRepository {
         .getRawMany();
       return voteForm;
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/findAllVoteForm');
+      this.handleException('VoteFormRepository/findAllVoteForm', e);
     }
   }
 
@@ -93,8 +103,7 @@ export class VoteFormRepository {
         .getRawOne();
       return voteForm;
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/findVoteFormDetail');
+      this.handleException('VoteFormRepository/findVoteFormDetail', e);
     }
   }
 
@@ -112,8 +121,7 @@ export class VoteFormRepository {
         .getRawOne();
       return voteForm;
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/findVoteFormForAnonymous');
+      this.handleException('VoteFormRepository/findVoteFormForAnonymous', e);
     }
   }
 
@@ -153,8 +161,7 @@ export class VoteFormRepository {
         },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/editVoteForm');
+      this.handleException('VoteFormRepository/editVoteForm', e);
     }
   }
 
@@ -177,8 +184,7 @@ export class VoteFormRepository {
         .andWhere('voteFormId = :voteFormId', { voteFormId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/deleteVoteForm');
+      this.handleException('VoteFormRepository/deleteVoteForm', e);
     }
   }
 
@@ -200,8 +206,7 @@ export class VoteFormRepository {
         })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/updateVoteIsDone');
+      this.handleException('VoteFormRepository/updateVoteIsDone', e);
     }
   }
 
@@ -216,8 +221,7 @@ export class VoteFormRepository {
         .andWhere('deletedAt IS NULL')
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/delegateVoteForm');
+      this.handleException('VoteFormRepository/delegateVoteForm', e);
     }
   }
 
@@ -236,8 +240,7 @@ export class VoteFormRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteFormRepository/deleteVoteFormByCrew');
+      this.handleException('VoteFormRepository/deleteVoteFormByCrew', e);
     }
   }
 }
