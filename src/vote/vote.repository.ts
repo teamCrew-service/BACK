@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Vote } from '@src/vote/entities/vote.entity';
 import { VotingDto } from '@src/vote/dto/voting.dto';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class VoteRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Vote) private voteRepository: Repository<Vote>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 투표하기 */
   async voting(
@@ -40,8 +52,7 @@ export class VoteRepository {
       }
       return { message: '투표가 성공적으로 저장되었습니다.' };
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteRepository/voting');
+      this.handleException('VoteRepository/voting', e);
     }
   }
 
@@ -65,8 +76,7 @@ export class VoteRepository {
         .groupBy('vote.voteId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteRepository/findAllVote');
+      this.handleException('VoteRepository/findAllVote', e);
     }
   }
 
@@ -84,8 +94,7 @@ export class VoteRepository {
         .groupBy('voteId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteRepository/findAllAnonymousVote');
+      this.handleException('VoteRepository/findAllAnonymousVote', e);
     }
   }
 
@@ -104,8 +113,7 @@ export class VoteRepository {
         .andWhere('vote.userId = :userId', { userId })
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteRepository/findUserVote');
+      this.handleException('VoteRepository/findUserVote', e);
     }
   }
 
@@ -140,8 +148,7 @@ export class VoteRepository {
       }
       return { message: '수정한 투표를 성공적으로 저장했습니다.' };
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteRepository/editVote');
+      this.handleException('VoteRepository/editVote', e);
     }
   }
 
@@ -155,8 +162,7 @@ export class VoteRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteRepository/deleteVoteByCrew');
+      this.handleException('VoteRepository/deleteVoteByCrew', e);
     }
   }
 }

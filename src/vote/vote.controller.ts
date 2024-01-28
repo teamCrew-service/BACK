@@ -7,6 +7,9 @@ import {
   HttpStatus,
   Get,
   Put,
+  Inject,
+  LoggerService,
+  HttpException,
 } from '@nestjs/common';
 import { VoteService } from '@src/vote/vote.service';
 import {
@@ -21,11 +24,14 @@ import { CrewService } from '@src/crew/crew.service';
 import { MemberService } from '@src/member/member.service';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
 import { VoteFormService } from '@src/voteform/voteform.service';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('vote')
 @ApiTags('Vote API')
 export class VoteController {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly voteService: VoteService,
     private readonly voteFormService: VoteFormService,
     private readonly crewService: CrewService,
@@ -65,9 +71,10 @@ export class VoteController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
@@ -82,9 +89,10 @@ export class VoteController {
       // 투표했는지 확인하기
       for (let i = 0; i < vote.length; i++) {
         if (vote[i].userId === userId) {
-          return res
-            .status(HttpStatus.NOT_ACCEPTABLE)
-            .json({ message: '이미 투표를 완료했습니다.' });
+          throw new HttpException(
+            '이미 투표를 완료했습니다.',
+            HttpStatus.NOT_ACCEPTABLE,
+          );
         }
       }
 
@@ -105,16 +113,18 @@ export class VoteController {
             return res.status(HttpStatus.OK).json({ message: '투표 완료' });
           }
         }
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: 'crew 원만 투표가 가능합니다.' });
+        throw new HttpException(
+          'crew 원만 투표가 가능합니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 단일 투표 검사
       if (voteForm.multipleVotes === false && votingDto.vote.includes(',')) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '단일 투표만 가능합니다.' });
+        throw new HttpException(
+          '단일 투표만 가능합니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       // 단일 투표
       if (crew.userId === userId) {
@@ -127,12 +137,16 @@ export class VoteController {
           return res.status(HttpStatus.OK).json({ message: '투표 완료' });
         }
       }
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: 'crew 원만 투표가 가능합니다.' });
+      throw new HttpException(
+        'crew 원만 투표가 가능합니다.',
+        HttpStatus.UNAUTHORIZED,
+      );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteController/voting');
+      this.logger.error('VoteController/voting', e.message);
+      throw new HttpException(
+        'VoteController/voting',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -196,9 +210,10 @@ export class VoteController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
@@ -226,9 +241,10 @@ export class VoteController {
             return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
         }
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: 'crew원만 이용할 수 있습니다.' });
+        throw new HttpException(
+          'crew원만 이용할 수 있습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 공개 투표
@@ -243,13 +259,17 @@ export class VoteController {
             return res.status(HttpStatus.OK).json({ voteForm, vote });
           }
         }
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: 'crew원만 이용할 수 있습니다.' });
+        throw new HttpException(
+          'crew원만 이용할 수 있습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteController/findVote');
+      this.logger.error('VoteController/findVote', e.message);
+      throw new HttpException(
+        'VoteController/findVote',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -286,9 +306,10 @@ export class VoteController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
@@ -305,12 +326,16 @@ export class VoteController {
           return res.status(HttpStatus.OK).json({ message: '투표 수정 완료' });
         }
       }
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: 'crew원만 이용할 수 있습니다.' });
+      throw new HttpException(
+        'crew원만 이용할 수 있습니다.',
+        HttpStatus.UNAUTHORIZED,
+      );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteController/editVote');
+      this.logger.error('VoteController/editVote', e.message);
+      throw new HttpException(
+        'VoteController/editVote',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

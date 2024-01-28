@@ -1,13 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { VoteRepository } from '@src/vote/vote.repository';
 import { VotingDto } from '@src/vote/dto/voting.dto';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
 import { Vote } from './entities/vote.entity';
 import { DeleteResult } from 'typeorm';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class VoteService {
-  constructor(private readonly voteRepository: VoteRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly voteRepository: VoteRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 투표하기 */
   async voting(
@@ -24,8 +38,7 @@ export class VoteService {
         votingDto,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteService/voting');
+      this.handleException('VoteService/voting', e);
     }
   }
 
@@ -34,8 +47,7 @@ export class VoteService {
     try {
       return await this.voteRepository.findAllVote(crewId, voteFormId);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteService/findAllVote');
+      this.handleException('VoteService/findAllVote', e);
     }
   }
 
@@ -47,8 +59,7 @@ export class VoteService {
     try {
       return await this.voteRepository.findAllAnonymousVote(crewId, voteFormId);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteService/findAllAnonymousVote');
+      this.handleException('VoteService/findAllAnonymousVote', e);
     }
   }
 
@@ -67,8 +78,7 @@ export class VoteService {
         editVotingDto,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteService/editVote');
+      this.handleException('VoteService/editVote', e);
     }
   }
 
@@ -77,8 +87,7 @@ export class VoteService {
     try {
       return await this.voteRepository.deleteVoteByCrew(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('VoteService/deleteVoteByCrew');
+      this.handleException('VoteService/deleteVoteByCrew', e);
     }
   }
 }
