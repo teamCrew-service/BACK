@@ -1,14 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from '@src/member/entities/member.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import JoinedCrew from '@src/member/interface/joinedCrew';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class MemberRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* member 추가 */
   async addMember(crewId: number, userId: number): Promise<Member> {
@@ -19,8 +31,7 @@ export class MemberRepository {
       const addMember = await this.memberRepository.save(member);
       return addMember;
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberRepository/addMember');
+      this.handleException('MemberRepository/addMember', e);
     }
   }
 
@@ -41,8 +52,7 @@ export class MemberRepository {
         .groupBy('member.memberId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberRepository/findAllMember');
+      this.handleException('MemberRepository/findAllMember', e);
     }
   }
 
@@ -70,8 +80,7 @@ export class MemberRepository {
         .groupBy('member.memberId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberRepository/findJoinedCrew');
+      this.handleException('MemberRepository/findJoinedCrew', e);
     }
   }
 
@@ -86,8 +95,7 @@ export class MemberRepository {
         .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberRepository/exitCrew');
+      this.handleException('MemberRepository/exitCrew', e);
     }
   }
 
@@ -101,8 +109,7 @@ export class MemberRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberRepository/deleteMember');
+      this.handleException('MemberRepository/deleteMember', e);
     }
   }
 }

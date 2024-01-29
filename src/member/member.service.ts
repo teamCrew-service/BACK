@@ -1,20 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { MemberRepository } from '@src/member/member.repository';
 import { Member } from '@src/member/entities/member.entity';
 import JoinedCrew from '@src/member/interface/joinedCrew';
 import { DeleteResult } from 'typeorm';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class MemberService {
-  constructor(private memberRepository: MemberRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private memberRepository: MemberRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* (누구나 참여 가능) 모임 가입 */
   async addMember(crewId: number, userId: number): Promise<Member> {
     try {
       return await this.memberRepository.addMember(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberService/addMember');
+      this.handleException('MemberService/addMember', e);
     }
   }
 
@@ -23,8 +36,7 @@ export class MemberService {
     try {
       return await this.memberRepository.findAllMember(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberService/findAllMember');
+      this.handleException('MemberService/findAllMember', e);
     }
   }
 
@@ -33,8 +45,7 @@ export class MemberService {
     try {
       return await this.memberRepository.findJoinedCrew(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberService/findJoinedCrew');
+      this.handleException('MemberService/findJoinedCrew', e);
     }
   }
 
@@ -52,8 +63,7 @@ export class MemberService {
 
       return 'member 테이블 위임 완료';
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberService/delegateMember');
+      this.handleException('MemberService/delegateMember', e);
     }
   }
 
@@ -62,8 +72,7 @@ export class MemberService {
     try {
       return await this.memberRepository.exitCrew(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberService/exitCrew');
+      this.handleException('MemberService/exitCrew', e);
     }
   }
 
@@ -72,8 +81,7 @@ export class MemberService {
     try {
       return await this.memberRepository.deleteMember(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('MemberService/deleteMember');
+      this.handleException('MemberService/deleteMember', e);
     }
   }
 }
