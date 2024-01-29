@@ -1,11 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  LoggerService,
+} from '@nestjs/common';
 import { ReportRepository } from '@src/report/report.repository';
 import { CreateReportDto } from '@src/report/dto/createReport.dto';
 import { Report } from '@src/report/entities/report.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class ReportService {
-  constructor(private readonly reportRepository: ReportRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly reportRepository: ReportRepository,
+  ) {}
 
   /* 신고하기 */
   async createReport(
@@ -20,8 +31,11 @@ export class ReportService {
         crewId,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('ReportService/createReport');
+      this.logger.error('ReportService/createReport', e.message);
+      throw new HttpException(
+        'ReportService/createReport',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

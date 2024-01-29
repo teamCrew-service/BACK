@@ -1,12 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  LoggerService,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Report } from '@src/report/entities/report.entity';
 import { Repository } from 'typeorm';
 import { CreateReportDto } from '@src/report/dto/createReport.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class ReportRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
   ) {}
@@ -25,8 +34,11 @@ export class ReportRepository {
       await this.reportRepository.save(report);
       return report;
     } catch (e) {
-      console.error(e);
-      throw new Error('ReportRepository/createReport');
+      this.logger.error('ReportRepository/createReport', e.message);
+      throw new HttpException(
+        'ReportRepository/createReport',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

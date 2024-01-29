@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Param, Res, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Res,
+  HttpStatus,
+  Inject,
+  LoggerService,
+  HttpException,
+} from '@nestjs/common';
 import { ReportService } from '@src/report/report.service';
 import {
   ApiBearerAuth,
@@ -8,11 +18,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateReportDto } from '@src/report/dto/createReport.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('report')
 @ApiTags('Report API')
 export class ReportController {
-  constructor(private readonly reportService: ReportService) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly reportService: ReportService,
+  ) {}
 
   /* 신고하기 */
   @Post(':crewId')
@@ -38,8 +53,11 @@ export class ReportController {
       await this.reportService.createReport(createReportDto, userId, crewId);
       return res.status(HttpStatus.OK).json({ message: '신고하기 성공' });
     } catch (e) {
-      console.error(e);
-      throw new Error('ReportController/createReport');
+      this.logger.error('ReportController/createReport', e.message);
+      throw new HttpException(
+        'ReportController/createReport',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
