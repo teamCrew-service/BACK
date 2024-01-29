@@ -8,6 +8,9 @@ import {
   Put,
   Delete,
   Res,
+  Inject,
+  LoggerService,
+  HttpException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,11 +24,14 @@ import { CrewService } from '@src/crew/crew.service';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
 import { VoteFormService } from '@src/voteform/voteform.service';
 import { Notice } from '@src/notice/entities/notice.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('notice')
 @ApiTags('Notice API')
 export class NoticeController {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly noticeService: NoticeService,
     private readonly crewService: CrewService,
     private readonly voteFormService: VoteFormService,
@@ -55,9 +61,10 @@ export class NoticeController {
 
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '공지를 등록할 권한이 없습니다.' });
+        throw new HttpException(
+          '공지를 등록할 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 공지 생성
@@ -73,8 +80,11 @@ export class NoticeController {
         .status(HttpStatus.OK)
         .json({ message: '공지 등록 완료', noticeId });
     } catch (e) {
-      console.error(e);
-      throw new Error('noticeController/createNotice');
+      this.logger.error('noticeController/createNotice', e.message);
+      throw new HttpException(
+        'noticeController/createNotice',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -126,8 +136,11 @@ export class NoticeController {
       const allNotice = { notice, voteForm };
       return res.status(HttpStatus.OK).json(allNotice);
     } catch (e) {
-      console.error(e);
-      throw new Error('noticeController/findAllNotice');
+      this.logger.error('noticeController/findAllNotice', e.message);
+      throw new HttpException(
+        'noticeController/findAllNotice',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -165,15 +178,19 @@ export class NoticeController {
       );
       // 공지 조회 확인
       if (!notice) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '공지가 존재하지 않습니다.' });
+        throw new HttpException(
+          '공지가 존재하지 않습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       } else {
         return res.status(HttpStatus.OK).json(notice);
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('noticeController/findNoticeDetail');
+      this.logger.error('noticeController/findNoticeDetail', e.message);
+      throw new HttpException(
+        'noticeController/findNoticeDetail',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -200,15 +217,17 @@ export class NoticeController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 글입니다.' });
+        throw new HttpException(
+          '존재하지 않는 글입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '공지 수정 권한이 없습니다.' });
+        throw new HttpException(
+          '공지 수정 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 공지 수정
@@ -219,15 +238,19 @@ export class NoticeController {
       );
 
       if (!editedNotice) {
-        return res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ message: '공지 수정을 실패했습니다.' });
+        throw new HttpException(
+          '공지 수정을 실패했습니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       } else {
         return res.status(HttpStatus.OK).json({ message: '공지 수정 성공' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('noticeController/editNotice');
+      this.logger.error('noticeController/editNotice', e.message);
+      throw new HttpException(
+        'noticeController/editNotice',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -253,15 +276,17 @@ export class NoticeController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 글입니다.' });
+        throw new HttpException(
+          '존재하지 않는 글입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '공지 삭제 권한이 없습니다.' });
+        throw new HttpException(
+          '공지 삭제 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 모임 삭제
@@ -271,15 +296,19 @@ export class NoticeController {
       );
 
       if (!deletedNotice) {
-        return res
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .json({ message: '공지 삭제를 실패했습니다.' });
+        throw new HttpException(
+          '공지 삭제를 실패했습니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       } else {
         return res.status(HttpStatus.OK).json({ message: '공지 삭제 성공' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('noticeController/deleteNotice');
+      this.logger.error('noticeController/deleteNotice', e.message);
+      throw new HttpException(
+        'noticeController/deleteNotice',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

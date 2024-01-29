@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { Notice } from '@src/notice/entities/notice.entity';
 import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class NoticeRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Notice) private noticeRepository: Repository<Notice>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 공지 등록 */
   async createNotice(
@@ -32,8 +44,7 @@ export class NoticeRepository {
       const createdNotice = await this.noticeRepository.save(notice);
       return createdNotice;
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/createNotice');
+      this.handleException('NoticeRepository/createNotice', e);
     }
   }
 
@@ -61,8 +72,7 @@ export class NoticeRepository {
         .getRawMany();
       return notice;
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/findAllNotice');
+      this.handleException('NoticeRepository/findAllNotice', e);
     }
   }
 
@@ -86,8 +96,7 @@ export class NoticeRepository {
         .getRawOne();
       return notice;
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/findNoticeDetail');
+      this.handleException('NoticeRepository/findNoticeDetail', e);
     }
   }
 
@@ -121,8 +130,7 @@ export class NoticeRepository {
         },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/editNotice');
+      this.handleException('NoticeRepository/editNotice', e);
     }
   }
 
@@ -142,8 +150,7 @@ export class NoticeRepository {
         .andWhere('notice.noticeId = :noticeId', { noticeId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/deleteNotice');
+      this.handleException('NoticeRepository/deleteNotice', e);
     }
   }
 
@@ -165,8 +172,7 @@ export class NoticeRepository {
         })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/updateNoticeIsDone');
+      this.handleException('NoticeRepository/updateNoticeIsDone', e);
     }
   }
 
@@ -181,8 +187,7 @@ export class NoticeRepository {
         .andWhere('deletedAt IS NULL')
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/delegateNotice');
+      this.handleException('NoticeRepository/delegateNotice', e);
     }
   }
 
@@ -201,8 +206,7 @@ export class NoticeRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeRepository/deleteNoticeByCrew');
+      this.handleException('NoticeRepository/deleteNoticeByCrew', e);
     }
   }
 }

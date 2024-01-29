@@ -1,14 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { NoticeRepository } from '@src/notice/notice.repository';
 import { CreateNoticeDto } from '@src/notice/dto/createNotice.dto';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
 import { Cron } from '@nestjs/schedule';
 import { Notice } from '@src/notice/entities/notice.entity';
 import { UpdateResult } from 'typeorm';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class NoticeService {
-  constructor(private readonly noticeRepository: NoticeRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly noticeRepository: NoticeRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   @Cron('0 0 * * * *') // cron을 이용해 scheduling
   // method가 자정에 맞춰 계속 noticeIsDone 부분을 scheduling
@@ -16,8 +30,7 @@ export class NoticeService {
     try {
       await this.noticeRepository.updateNoticeIsDone();
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/noticeCron');
+      this.handleException('NoticeService/noticeCron', e);
     }
   }
 
@@ -34,8 +47,7 @@ export class NoticeService {
         createNoticeDto,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/createNotice');
+      this.handleException('NoticeService/createNotice', e);
     }
   }
 
@@ -44,8 +56,7 @@ export class NoticeService {
     try {
       return await this.noticeRepository.findAllNotice(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/findAllNotice');
+      this.handleException('NoticeService/findAllNotice', e);
     }
   }
 
@@ -54,8 +65,7 @@ export class NoticeService {
     try {
       return await this.noticeRepository.findNoticeDetail(crewId, noticeId);
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/findNoticeDetail');
+      this.handleException('NoticeService/findNoticeDetail', e);
     }
   }
 
@@ -72,8 +82,7 @@ export class NoticeService {
         editNoticeDto,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/editNotice');
+      this.handleException('NoticeService/editNotice', e);
     }
   }
 
@@ -82,8 +91,7 @@ export class NoticeService {
     try {
       return await this.noticeRepository.deleteNotice(crewId, noticeId);
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/deleteNotice');
+      this.handleException('NoticeService/deleteNotice', e);
     }
   }
 
@@ -93,8 +101,7 @@ export class NoticeService {
       await this.noticeRepository.delegateNotice(delegator, crewId);
       return '공지 위임 완료';
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/delegateNotice');
+      this.handleException('NoticeService/delegateNotice', e);
     }
   }
 
@@ -103,8 +110,7 @@ export class NoticeService {
     try {
       return await this.noticeRepository.deleteNoticeByCrew(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('NoticeService/deleteNoticeByCrew');
+      this.handleException('NoticeService/deleteNoticeByCrew', e);
     }
   }
 }
