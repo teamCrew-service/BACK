@@ -1,20 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { TopicRepository } from '@src/topic/topic.repository';
 import { TopicDto } from '@src/topic/dto/topic.dto';
 import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
 import { Topic } from '@src/topic/entities/topic.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class TopicService {
-  constructor(private topicRepository: TopicRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly topicRepository: TopicRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 관심사 선택 */
   async addTopic(topicDto: TopicDto, userId: number): Promise<Object> {
     try {
       return await this.topicRepository.addTopic(topicDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('TopicService/addTopic');
+      this.handleException('TopicService/addTopic', e);
     }
   }
 
@@ -23,8 +36,7 @@ export class TopicService {
     try {
       return await this.topicRepository.findTopicById(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('TopicService/findTopicById');
+      this.handleException('TopicService/findTopicById', e);
     }
   }
 
@@ -33,8 +45,7 @@ export class TopicService {
     try {
       return await this.topicRepository.editTopic(editTopicDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('TopicService/editTopic');
+      this.handleException('TopicService/editTopic', e);
     }
   }
 }
