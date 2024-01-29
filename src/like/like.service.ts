@@ -1,20 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { LikeRepository } from '@src/like/like.repository';
 import { Like } from '@src/like/entities/like.entity';
 import { DeleteResult } from 'typeorm';
 import LikedCrew from '@src/like/interface/likedCrew';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class LikeService {
-  constructor(private likeRepository: LikeRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private likeRepository: LikeRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 찜하기 */
   async likeCrew(crewId: number, userId: number): Promise<Like> {
     try {
       return await this.likeRepository.likeCrew(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('LikeService/likeCrew');
+      this.handleException('LikeService/likeCrew', e);
     }
   }
 
@@ -23,8 +36,7 @@ export class LikeService {
     try {
       return await this.likeRepository.cancelLikeCrew(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('LikeService/cancelLikeCrew');
+      this.handleException('LikeService/cancelLikeCrew', e);
     }
   }
 
@@ -33,8 +45,7 @@ export class LikeService {
     try {
       return await this.likeRepository.findLikedCrew(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('LikeService/findLikedCrew');
+      this.handleException('LikeService/findLikedCrew', e);
     }
   }
 
@@ -46,8 +57,7 @@ export class LikeService {
       const likeCount = likedCrew.length;
       return likeCount;
     } catch (e) {
-      console.error(e);
-      throw new Error('LikeService/countLikedCrew');
+      this.handleException('LikeService/countLikedCrew', e);
     }
   }
 
@@ -56,8 +66,7 @@ export class LikeService {
     try {
       return await this.likeRepository.confirmLiked(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('LikeService/confirmLiked');
+      this.handleException('LikeService/confirmLiked', e);
     }
   }
 
@@ -66,6 +75,7 @@ export class LikeService {
     try {
       return await this.likeRepository.deleteLike(crewId);
     } catch (e) {
+      this.handleException('LikeService/likeCrew', e);
       console.error(e);
       throw new Error('LikeService/deleteLike');
     }

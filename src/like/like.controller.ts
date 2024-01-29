@@ -1,7 +1,10 @@
 import {
   Controller,
   Delete,
+  HttpException,
   HttpStatus,
+  Inject,
+  LoggerService,
   Param,
   Post,
   Res,
@@ -13,11 +16,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { LikeService } from '@src/like/like.service';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('like')
 @ApiTags('Like API')
 export class LikeController {
-  constructor(private readonly likeService: LikeService) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly likeService: LikeService,
+  ) {}
 
   /* 찜하기 */
   @Post(':crewId')
@@ -40,18 +48,20 @@ export class LikeController {
       // 좋아요 확인
       const like = await this.likeService.confirmLiked(crewId, userId);
       if (like) {
-        return res
-          .status(HttpStatus.NOT_ACCEPTABLE)
-          .json({ message: '이미 찜한 crew입니다.' });
+        throw new HttpException(
+          '이미 찜한 crew입니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       // 없을 경우 좋아요 생성
       await this.likeService.likeCrew(crewId, userId);
       return res.status(HttpStatus.OK).json({ message: '찜하기 성공' });
     } catch (e) {
-      console.error(e);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: '찜하기 실패' });
+      this.logger.error('LikeController/likeCrew', e.message);
+      throw new HttpException(
+        'LikeController/likeCrew',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -79,14 +89,13 @@ export class LikeController {
         await this.likeService.cancelLikeCrew(crewId, userId);
         return res.status(HttpStatus.OK).json({ message: '찜 취소하기 성공' });
       }
-      return res
-        .status(HttpStatus.NOT_ACCEPTABLE)
-        .json({ message: '찜한 crew가 아닙니다.' });
+      throw new HttpException('찜한 crew가 아닙니다.', HttpStatus.BAD_REQUEST);
     } catch (e) {
-      console.error(e);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: '찜 취소하기 실패' });
+      this.logger.error('LikeController/cancelLikeCrew', e.message);
+      throw new HttpException(
+        'LikeController/cancelLikeCrew',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
