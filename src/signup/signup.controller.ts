@@ -3,7 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
+  Inject,
+  LoggerService,
   Param,
   Post,
   Put,
@@ -26,11 +29,14 @@ import { LeavecrewService } from '@src/leavecrew/leavecrew.service';
 import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
 import { ImageService } from '@src/image/image.service';
 import { Signup } from '@src/signup/entities/signup.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller()
 @ApiTags('signup API')
 export class SignupController {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly signupService: SignupService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -84,36 +90,40 @@ export class SignupController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 멤버 조회
       const member = await this.memberService.findAllMember(crewId);
       if (crew.userId === userId) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '모임의 방장입니다.' });
+        throw new HttpException('모임의 방장입니다.', HttpStatus.BAD_REQUEST);
       }
       // 멤버 숫자 확인, 가입 여부 확인
       if (crew.crewMaxMember === member.length) {
         for (let i = 0; i < member.length; i++) {
           if (member[i].userId === userId) {
-            return res
-              .status(HttpStatus.BAD_REQUEST)
-              .json({ message: '모임에 이미 가입했습니다.' });
+            throw new HttpException(
+              '모임에 이미 가입했습니다.',
+              HttpStatus.BAD_REQUEST,
+            );
           }
         }
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '모임 인원이 가득 찼습니다.' });
+        throw new HttpException(
+          '모임 인원이 가득 찼습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       await this.memberService.addMember(crewId, userId);
 
       return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/signup');
+      this.logger.error('SignupController/signup', e.message);
+      throw new HttpException(
+        'SignupController/signup',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -148,8 +158,11 @@ export class SignupController {
       );
       return res.status(HttpStatus.OK).json(signupForm);
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/findOneSignupForm');
+      this.logger.error('SignupController/findOneSignupForm', e.message);
+      throw new HttpException(
+        'SignupController/findOneSignupForm',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -178,15 +191,14 @@ export class SignupController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId === userId) {
-        return res
-          .status(HttpStatus.FORBIDDEN)
-          .json({ message: '모임장입니다.' });
+        throw new HttpException('모임장입니다.', HttpStatus.FORBIDDEN);
       }
       // 탈퇴 기록 확인
       const leaveUser = await this.leavecrewService.findOneLeaveUser(
@@ -194,9 +206,10 @@ export class SignupController {
         userId,
       );
       if (leaveUser) {
-        return res.status(HttpStatus.FORBIDDEN).json({
-          message: '탈퇴 기록이 있습니다. 7일 뒤에 다시 가입할 수 있습니다.',
-        });
+        throw new HttpException(
+          '탈퇴 기록이 있습니다. 7일 뒤에 다시 가입할 수 있습니다.',
+          HttpStatus.FORBIDDEN,
+        );
       }
 
       // 멤버 조회
@@ -205,14 +218,16 @@ export class SignupController {
       if (crew.crewMaxMember === member.length) {
         for (let i = 0; i < member.length; i++) {
           if (member[i].userId === userId) {
-            return res
-              .status(HttpStatus.BAD_REQUEST)
-              .json({ message: '모임에 이미 가입했습니다.' });
+            throw new HttpException(
+              '모임에 이미 가입했습니다.',
+              HttpStatus.BAD_REQUEST,
+            );
           }
         }
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '모임 인원이 가득 찼습니다.' });
+        throw new HttpException(
+          '모임 인원이 가득 찼습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       // 가입서 조회
@@ -221,9 +236,10 @@ export class SignupController {
         crewId,
       );
       if (submitedSignup) {
-        return res.status(HttpStatus.FORBIDDEN).json({
-          message: '이미 가입서를 작성했습니다. 모임장의 승인을 기다려주세요',
-        });
+        throw new HttpException(
+          '이미 가입서를 작성했습니다. 모임장의 승인을 기다려주세요',
+          HttpStatus.FORBIDDEN,
+        );
       }
       if (!submitSignupDto.answer1 || !submitSignupDto.answer2) {
         throw new Error('작성을 완료해주세요');
@@ -239,8 +255,11 @@ export class SignupController {
         .status(HttpStatus.CREATED)
         .json({ message: '모임 가입서 작성 완료' });
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/submitSignup');
+      this.logger.error('SignupController/submitSignup', e.message);
+      throw new HttpException(
+        'SignupController/submitSignup',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -275,22 +294,27 @@ export class SignupController {
       // 모임 정보 확인
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       // 제출한 가입서 조회
       const signup = await this.signupService.findMySignup(userId, crewId);
       if (!signup) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '제출한 가입서가 없습니다.' });
+        throw new HttpException(
+          '제출한 가입서가 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       return res.status(HttpStatus.OK).json(signup);
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/findOneSubmitted');
+      this.logger.error('SignupController/findOneSubmitted', e.message);
+      throw new HttpException(
+        'SignupController/findOneSubmitted',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -317,15 +341,14 @@ export class SignupController {
       // 제출한 가입서 조회
       const signup = await this.signupService.findMySignup(userId, crewId);
       if (!signup) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '제출한 가입서가 없습니다.' });
+        throw new HttpException(
+          '제출한 가입서가 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 작성자 권한
       if (signup.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '작성자가 아닙니다.' });
+        throw new HttpException('작성자가 아닙니다.', HttpStatus.UNAUTHORIZED);
       }
       const signupId = signup.signupId;
       // 가입서 수정
@@ -335,15 +358,16 @@ export class SignupController {
         signupId,
       );
       if (!editSignup) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '가입서 수정 실패' });
+        throw new HttpException('가입서 수정 실패', HttpStatus.BAD_REQUEST);
       } else {
         return res.status(HttpStatus.OK).json({ message: '가입서 수정 성공' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/editMySubmitted');
+      this.logger.error('SignupController/editMySubmitted', e.message);
+      throw new HttpException(
+        'SignupController/editMySubmitted',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -369,15 +393,14 @@ export class SignupController {
       // 제출한 가입서 조회
       const signup = await this.signupService.findMySignup(userId, crewId);
       if (!signup) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '제출한 가입서가 없습니다.' });
+        throw new HttpException(
+          '제출한 가입서가 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 작성자 권한
       if (signup.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '작성자가 아닙니다.' });
+        throw new HttpException('작성자가 아닙니다.', HttpStatus.UNAUTHORIZED);
       }
       const signupId = signup.signupId;
       // 가입서 삭제
@@ -386,15 +409,16 @@ export class SignupController {
         signupId,
       );
       if (!deleteSignup) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '가입서 삭제 실패' });
+        throw new HttpException('가입서 삭제 실패', HttpStatus.BAD_REQUEST);
       } else {
         return res.status(HttpStatus.OK).json({ message: '가입서 삭제 성공' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/editMySubmitted');
+      this.logger.error('SignupController/deleteMySubmitted', e.message);
+      throw new HttpException(
+        'SignupController/deleteMySubmitted',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -436,22 +460,27 @@ export class SignupController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId === userId) {
         const signup = await this.signupService.findAllSubmitted(crewId);
         return res.status(HttpStatus.OK).json(signup);
       } else {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '모임장이 아닙니다. 접근 권한이 없습니다.' });
+        throw new HttpException(
+          '모임장이 아닙니다. 접근 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/findAllSubmitted');
+      this.logger.error('SignupController/findAllSubmitted', e.message);
+      throw new HttpException(
+        'SignupController/findAllSubmitted',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -479,8 +508,11 @@ export class SignupController {
         .status(HttpStatus.OK)
         .json({ message: '모임 가입서 확인 완료' });
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/confirmsignup');
+      this.logger.error('SignupController/confirmsignup', e.message);
+      throw new HttpException(
+        'SignupController/confirmsignup',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -506,9 +538,10 @@ export class SignupController {
       // 모임 조회
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       const leaveUser = await this.leavecrewService.findOneLeaveUser(
         crewId,
@@ -524,15 +557,16 @@ export class SignupController {
             await this.leavecrewService.createLeaveCrew(crewId, userId);
             return res.status(HttpStatus.OK).json({ message: '탈퇴 성공' });
           } else {
-            return res
-              .status(HttpStatus.BAD_REQUEST)
-              .json({ message: '탈퇴 실패' });
+            throw new HttpException('탈퇴 실패', HttpStatus.BAD_REQUEST);
           }
         }
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupController/exitCrew');
+      this.logger.error('SignupController/exitCrew', e.message);
+      throw new HttpException(
+        'SignupController/confirmsignup',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

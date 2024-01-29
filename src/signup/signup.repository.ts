@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Signup } from '@src/signup/entities/signup.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -6,12 +6,24 @@ import { ConfirmSignupDto } from '@src/signup/dto/confirm-signup.dto';
 import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
 import Submitted from '@src/signup/interface/submitted';
 import AllSignup from '@src/signup/interface/AllSignup';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class SignupRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Signup) private signupRepository: Repository<Signup>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* signup submit */
   async submitSignup(
@@ -30,8 +42,7 @@ export class SignupRepository {
       await this.signupRepository.save(submitSignup);
       return submitSignup;
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/submitSignup');
+      this.handleException('SignupRepository/submitSignup', e);
     }
   }
 
@@ -45,8 +56,7 @@ export class SignupRepository {
         .andWhere('signup.crewId = :crewId', { crewId })
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/findMySignup');
+      this.handleException('SignupRepository/findMySignup', e);
     }
   }
 
@@ -67,8 +77,7 @@ export class SignupRepository {
         },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/editMySubmitted');
+      this.handleException('SignupRepository/editMySubmitted', e);
     }
   }
 
@@ -86,8 +95,7 @@ export class SignupRepository {
         .andWhere('signup.signupId = :signupId', { signupId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/deleteMySubmitted');
+      this.handleException('SignupRepository/deleteMySubmitted', e);
     }
   }
 
@@ -101,8 +109,7 @@ export class SignupRepository {
         .andWhere('signup.permission IS NULL')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/findMyAllSignup');
+      this.handleException('SignupRepository/findMyAllSignup', e);
     }
   }
 
@@ -135,8 +142,7 @@ export class SignupRepository {
         .getRawMany();
       return findAllSubmitted;
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/findAllSubmitted');
+      this.handleException('SignupRepository/findAllSubmitted', e);
     }
   }
 
@@ -163,8 +169,7 @@ export class SignupRepository {
       const confirmedSignup = await this.signupRepository.save(signup);
       return confirmedSignup;
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/confirmsignup');
+      this.handleException('SignupRepository/confirmsignup', e);
     }
   }
 
@@ -178,8 +183,7 @@ export class SignupRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('SignupRepository/deleteSignup');
+      this.handleException('SignupRepository/deleteSignup', e);
     }
   }
 }
