@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { UsersRepository } from '@src/users/users.repository';
 import { TopicDto } from '@src/topic/dto/topic.dto';
 import { TopicService } from '@src/topic/topic.service';
@@ -7,13 +7,25 @@ import { AddUserInfoDto } from '@src/users/dto/addUserInfo-user.dto';
 import { EditUserInfoDto } from '@src/users/dto/editUserInfo-user.dto';
 import { Users } from '@src/users/entities/user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class UsersService {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private usersRepository: UsersRepository,
     private topicService: TopicService,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   // user 정보 email로 조회
   async findUserByEmail(
@@ -23,8 +35,7 @@ export class UsersService {
     try {
       return await this.usersRepository.findUserByEmail(email, provider);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/findUserByEmail');
+      this.handleException('UsersService/findUserByEmail', e);
     }
   }
 
@@ -33,22 +44,20 @@ export class UsersService {
     try {
       return await this.usersRepository.findUserByPk(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/findUserByPk');
+      this.handleException('UsersService/findUserByPk', e);
     }
   }
 
   // newUser create
-  async create({ email, nickname, provider }): Promise<Users> {
+  async createUser({ email, nickname, provider }): Promise<Users> {
     try {
-      return await this.usersRepository.create({
+      return await this.usersRepository.createUser({
         email,
         nickname,
         provider,
       });
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/create');
+      this.handleException('UsersService/create', e);
     }
   }
 
@@ -60,8 +69,7 @@ export class UsersService {
     try {
       return await this.usersRepository.userInfo(addUserInfoDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/userInfo');
+      this.handleException('UsersService/userInfo', e);
     }
   }
 
@@ -73,8 +81,7 @@ export class UsersService {
     try {
       return await this.usersRepository.editUserInfo(editUserInfoDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/editUserInfo');
+      this.handleException('UsersService/editUserInfo', e);
     }
   }
 
@@ -83,8 +90,7 @@ export class UsersService {
     try {
       return await this.topicService.addTopic(topicDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/addTopic');
+      this.handleException('UsersService/addTopic', e);
     }
   }
 
@@ -93,8 +99,7 @@ export class UsersService {
     try {
       return await this.topicService.findTopicById(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/findTopicById');
+      this.handleException('UsersService/findTopicById', e);
     }
   }
 
@@ -103,8 +108,7 @@ export class UsersService {
     try {
       return await this.topicService.editTopic(editTopicDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/editTopic');
+      this.handleException('UsersService/editTopic', e);
     }
   }
 
@@ -117,8 +121,7 @@ export class UsersService {
       }
       return exNickname;
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/checkNickname');
+      this.handleException('UsersService/checkNickname', e);
     }
   }
 
@@ -127,8 +130,7 @@ export class UsersService {
     try {
       return await this.usersRepository.deleteAccount(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersService/deleteAccount');
+      this.handleException('UsersService/deleteAccount', e);
     }
   }
 }

@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '@src/users/entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { EditUserInfoDto } from '@src/users/dto/editUserInfo-user.dto';
 import { AddUserInfoDto } from '@src/users/dto/addUserInfo-user.dto';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class UsersRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Users) private usersRepository: Repository<Users>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   // email로 유저 정보 찾기
   async findUserByEmail(
@@ -21,8 +33,7 @@ export class UsersRepository {
         where: { email, provider },
       });
     } catch (e) {
-      console.error(e.message);
-      throw new Error('UsersRepository / findUserByEmail');
+      this.handleException('UsersRepository/findUserByEmail', e);
     }
   }
 
@@ -31,13 +42,12 @@ export class UsersRepository {
     try {
       return await this.usersRepository.findOne({ where: { userId } });
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersRepository/findUserByPk');
+      this.handleException('UsersRepository/findUserByPk', e);
     }
   }
 
   // 유저 생성
-  async create({ email, nickname, provider }): Promise<Users> {
+  async createUser({ email, nickname, provider }): Promise<Users> {
     try {
       const user = new Users();
       user.email = email;
@@ -46,8 +56,7 @@ export class UsersRepository {
       await this.usersRepository.save(user);
       return user;
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersRepository/create');
+      this.handleException('UsersRepository/createUser', e);
     }
   }
 
@@ -64,8 +73,7 @@ export class UsersRepository {
         { nickname, profileImage, age, gender, myMessage, location },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersRepository / addUserInfo');
+      this.handleException('UsersRepository/addUserInfo', e);
     }
   }
 
@@ -82,8 +90,7 @@ export class UsersRepository {
         { nickname, profileImage, age, gender, myMessage, location },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersRepository / editUserInfo');
+      this.handleException('UsersRepository/editUserInfo', e);
     }
   }
 
@@ -95,8 +102,7 @@ export class UsersRepository {
       });
       return user ? user.nickname : null;
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersRepository/checkNickname');
+      this.handleException('UsersRepository/checkNickname', e);
     }
   }
 
@@ -105,8 +111,7 @@ export class UsersRepository {
     try {
       return await this.usersRepository.delete(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersRepository/deleteAccount');
+      this.handleException('UsersRepository/deleteAccount', e);
     }
   }
 }

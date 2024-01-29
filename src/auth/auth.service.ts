@@ -28,8 +28,8 @@ export class AuthService {
   }
 
   /* newUser 생성 */
-  async create({ email, nickname, provider }): Promise<Users> {
-    const user = await this.usersService.create({
+  async createUser({ email, nickname, provider }): Promise<Users> {
+    const user = await this.usersService.createUser({
       email,
       nickname,
       provider,

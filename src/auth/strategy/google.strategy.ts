@@ -34,7 +34,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
     // user 정보가 없을 경우 새로운 user db에 저장
     if (exUser === null) {
-      const newUser = await this.authService.create({
+      const newUser = await this.authService.createUser({
         email,
         nickname,
         provider,

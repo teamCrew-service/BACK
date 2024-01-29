@@ -11,6 +11,9 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  Inject,
+  LoggerService,
+  HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { GoogleAuthGuard } from '@src/auth/guard/google-auth.guard';
@@ -40,6 +43,7 @@ import { ScheduleService } from '@src/schedule/schedule.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '@src/crew/multerConfig';
 import { IsOptional } from 'class-validator';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 export class UserFirstUploadDto {
   @ApiProperty()
   topicAndInfoDto: TopicAndInfoDto;
@@ -76,6 +80,8 @@ export class UserEditUploadDto {
 @ApiTags('User API')
 export class UsersController {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly usersService: UsersService,
     private readonly crewService: CrewService,
     private readonly authService: AuthService,
@@ -132,8 +138,11 @@ export class UsersController {
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('kakao 로그인 error');
+      this.logger.error('kakao 로그인 error', e.message);
+      throw new HttpException(
+        'kakao 로그인 error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -183,8 +192,11 @@ export class UsersController {
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('kakao 로그인 error');
+      this.logger.error('naver 로그인 error', e.message);
+      throw new HttpException(
+        'naver 로그인 error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -233,8 +245,11 @@ export class UsersController {
         res.redirect(process.env.REDIRECT_URI_HOME + `/${query}`);
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('Google 로그인 error');
+      this.logger.error('Google 로그인 error', e.message);
+      throw new HttpException(
+        'Google 로그인 error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -242,7 +257,7 @@ export class UsersController {
   @Post('login')
   async testLogin(
     @Body() testLoginDto: TestLoginDto,
-    @Res() res: any,
+    @Res() res: Response,
   ): Promise<Object> {
     const email = testLoginDto.email;
     const provider = testLoginDto.provider;
@@ -273,7 +288,7 @@ export class UsersController {
   async addUserInfo(
     @Body('topicAndInfoDto') topicAndInfoDto: any,
     @UploadedFiles() files,
-    @Res() res: any,
+    @Res() res: Response,
   ): Promise<Object> {
     try {
       const { addUserInfoDto, topicDto } = JSON.parse(topicAndInfoDto);
@@ -289,8 +304,11 @@ export class UsersController {
         .status(HttpStatus.CREATED)
         .json({ message: '추가 정보 입력 완료' });
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/addUserInfo');
+      this.logger.error('UsersController/addUserInfo', e.message);
+      throw new HttpException(
+        'UsersController/addUserInfo',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -306,25 +324,24 @@ export class UsersController {
   })
   async checkNickname(
     @Body() checkNicknameDto: CheckNicknameDto,
-    @Res() res: any,
+    @Res() res: Response,
   ): Promise<Object> {
     try {
       const newNickname = checkNicknameDto.nickname;
       const exNickname = await this.usersService.checkNickname(newNickname);
       if (newNickname === exNickname) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '중복된 닉네임입니다.' });
+        throw new HttpException('중복된 닉네임입니다.', HttpStatus.BAD_REQUEST);
       } else {
         return res
           .status(HttpStatus.OK)
           .json({ message: '중복된 닉네임이 없습니다.' });
       }
     } catch (e) {
-      console.error(e);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: '닉네임 중복 체크 실패' });
+      this.logger.error('닉네임 중복 체크 실패', e.message);
+      throw new HttpException(
+        '닉네임 중복 체크 실패',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -423,8 +440,11 @@ export class UsersController {
         likedCrew: crewList,
       });
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/mypage');
+      this.logger.error('UsersController/mypage', e.message);
+      throw new HttpException(
+        'UsersController/mypage',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -455,9 +475,10 @@ export class UsersController {
       const { userId } = res.locals.user;
 
       if (!editTopicAndInfoDto) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '수정할 내용이 없습니다.' });
+        throw new HttpException(
+          '수정할 내용이 없습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       //files가 비어있으면 실행안함
       if (files.length > 0) {
@@ -470,10 +491,11 @@ export class UsersController {
       }
       return res.status(HttpStatus.OK).json({ message: '유저 정보 수정 완료' });
     } catch (e) {
-      console.error(e);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: '유저 정보 수정 실패' });
+      this.logger.error('유저 정보 수정 실패', e.message);
+      throw new HttpException(
+        '유저 정보 수정 실패',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -523,8 +545,11 @@ export class UsersController {
 
       return res.status(HttpStatus.OK).json(likedCrew);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/findLikedCrew');
+      this.logger.error('UsersController/findLikedCrew', e.message);
+      throw new HttpException(
+        'UsersController/findLikedCrew',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -587,8 +612,11 @@ export class UsersController {
 
       return res.status(HttpStatus.OK).json(joinedCrew);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/findJoinedCrew');
+      this.logger.error('UsersController/findJoinedCrew', e.message);
+      throw new HttpException(
+        'UsersController/findJoinedCrew',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -652,8 +680,11 @@ export class UsersController {
 
       return res.status(HttpStatus.OK).json(myCrew);
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/findMyCrew');
+      this.logger.error('UsersController/findMyCrew', e.message);
+      throw new HttpException(
+        'UsersController/findMyCrew',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -713,8 +744,11 @@ export class UsersController {
 
       return res.status(HttpStatus.OK).json({ waitingCrew });
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/waitingCrew');
+      this.logger.error('UsersController/waitingCrew', e.message);
+      throw new HttpException(
+        'UsersController/waitingCrew',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -735,9 +769,10 @@ export class UsersController {
       const crewList = await this.crewService.findMyCrew(userId);
       // 모임장인 crew가 있으면 위임 후에 탈퇴할 수 있게 하기
       if (crewList.length > 0) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '모임장 위임을 하지 않은 crew가 있습니다.' });
+        throw new HttpException(
+          '모임장 위임을 하지 않은 crew가 있습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       const toBeDeletedAccount =
         await this.unsubscribeService.findOneUnsubscribe(userId);
@@ -746,8 +781,11 @@ export class UsersController {
         return res.status(HttpStatus.OK).json({ message: '탈퇴 대기 성공' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/deleteAccount');
+      this.logger.error('UsersController/deleteAccount', e.message);
+      throw new HttpException(
+        'UsersController/deleteAccount',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -772,8 +810,11 @@ export class UsersController {
         return res.status(HttpStatus.OK).json({ message: '계정 복구 완료' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('UsersController/deleteUnsubscribe');
+      this.logger.error('UsersController/deleteUnsubscribe', e.message);
+      throw new HttpException(
+        'UsersController/deleteUnsubscribe',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
