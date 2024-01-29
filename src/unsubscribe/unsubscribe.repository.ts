@@ -1,14 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Unsubscribe } from '@src/unsubscribe/entities/unsubscribe.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class UnsubscribeRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Unsubscribe)
     private unsubscribeRepository: Repository<Unsubscribe>,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   /* 탈퇴를 원하는 계정 조회 */
   async findAllUnsubscribe(): Promise<Unsubscribe[]> {
@@ -24,8 +36,7 @@ export class UnsubscribeRepository {
         .select(['userId', 'toBeDeletedDay'])
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('UnsubscribeRepository/findAllUnsubscribe');
+      this.handleException('UnsubscribeRepository/findAllUnsubscribe', e);
     }
   }
 
@@ -38,8 +49,7 @@ export class UnsubscribeRepository {
         .select(['userId', 'toBeDeletedDay'])
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('UnsubscribeRepository/findOneUnsubscribe');
+      this.handleException('UnsubscribeRepository/findOneUnsubscribe', e);
     }
   }
 
@@ -57,8 +67,7 @@ export class UnsubscribeRepository {
       await this.unsubscribeRepository.save(unsubscribe);
       return unsubscribe;
     } catch (e) {
-      console.error(e);
-      throw new Error('UnsubscribeRepository/createUnsubscribe');
+      this.handleException('UnsubscribeRepository/createUnsubscribe', e);
     }
   }
 
@@ -72,8 +81,7 @@ export class UnsubscribeRepository {
         .where('unsubscribe.userId = :userId', { userId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('UnsubscribeRepository/deleteUnsubscribe');
+      this.handleException('UnsubscribeRepository/deleteUnsubscribe', e);
     }
   }
 }
