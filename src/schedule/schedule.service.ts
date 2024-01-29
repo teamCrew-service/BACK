@@ -1,4 +1,10 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  Inject,
+  LoggerService,
+} from '@nestjs/common';
 import { ScheduleRepository } from '@src/schedule/schedule.repository';
 import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
 import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
@@ -6,18 +12,31 @@ import { Cron } from '@nestjs/schedule';
 import MySchedule from 'src/schedule/interface/mySchedule';
 import { UpdateResult } from 'typeorm';
 import { Schedule } from '@src/schedule/entities/schedule.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class ScheduleService {
-  constructor(private readonly scheduleRepository: ScheduleRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private readonly scheduleRepository: ScheduleRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   @Cron('0 0 * * * *')
   async scheduleCron() {
     try {
       await this.scheduleRepository.updateScheduleIsDone();
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/scheduleCron');
+      this.handleException('ScheduleService/scheduleCron', e);
     }
   }
 
@@ -69,8 +88,7 @@ export class ScheduleService {
 
       return result;
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/findSchedule');
+      this.handleException('ScheduleService/findSchedule', e);
     }
   }
 
@@ -124,8 +142,7 @@ export class ScheduleService {
 
       return result;
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/findParticipateSchedule');
+      this.handleException('ScheduleService/findParticipateSchedule', e);
     }
   }
 
@@ -142,8 +159,8 @@ export class ScheduleService {
         crewId,
       );
       return { schedule, message: '일정 등록 성공' };
-    } catch (error) {
-      throw new HttpException('일정 글 생성 실패', HttpStatus.BAD_REQUEST);
+    } catch (e) {
+      this.handleException('ScheduleService/createSchedule', e);
     }
   }
 
@@ -159,9 +176,8 @@ export class ScheduleService {
         crewId,
         scheduleId,
       );
-    } catch (error) {
-      console.error('Error while editing schedule:', error);
-      throw new HttpException('일정 수정 실패', HttpStatus.BAD_REQUEST);
+    } catch (e) {
+      this.handleException('ScheduleService/editSchedule', e);
     }
   }
 
@@ -175,12 +191,8 @@ export class ScheduleService {
         scheduleId,
         crewId,
       );
-    } catch (error) {
-      console.error('Error while finding schedule detail:', error);
-      throw new HttpException(
-        '공지사항 상세 조회 실패',
-        HttpStatus.BAD_REQUEST,
-      );
+    } catch (e) {
+      this.handleException('ScheduleService/findScheduleDetail', e);
     }
   }
 
@@ -192,9 +204,8 @@ export class ScheduleService {
         crewId,
       );
       return { schedule, message: '일정 삭제 성공' };
-    } catch (error) {
-      console.error('Error while deleting schedule:', error);
-      throw new HttpException('공지사항 삭제 실패', HttpStatus.BAD_REQUEST);
+    } catch (e) {
+      this.handleException('ScheduleService/deleteSchedule', e);
     }
   }
 
@@ -206,8 +217,7 @@ export class ScheduleService {
     try {
       return await this.scheduleRepository.findScheduleByCrew(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/findScheduleByCrew');
+      this.handleException('ScheduleService/findScheduleByCrew', e);
     }
   }
 
@@ -217,8 +227,7 @@ export class ScheduleService {
       await this.scheduleRepository.delegateSchedule(delegator, crewId);
       return '일정 위임 완료';
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/delegateSchedule');
+      this.handleException('ScheduleService/delegateSchedule', e);
     }
   }
 
@@ -227,8 +236,7 @@ export class ScheduleService {
     try {
       return await this.scheduleRepository.findScheduleCloseToToday(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/findScheduleCloseToToday');
+      this.handleException('ScheduleService/findScheduleCloseToToday', e);
     }
   }
 
@@ -237,8 +245,7 @@ export class ScheduleService {
     try {
       return await this.scheduleRepository.deleteScheduleByCrew(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleService/deleteScheduleByCrew');
+      this.handleException('ScheduleService/deleteScheduleByCrew', e);
     }
   }
 }

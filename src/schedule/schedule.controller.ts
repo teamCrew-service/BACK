@@ -9,6 +9,8 @@ import {
   Body,
   Param,
   Delete,
+  Inject,
+  LoggerService,
 } from '@nestjs/common';
 import { ScheduleService } from '@src/schedule/schedule.service';
 import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
@@ -23,11 +25,14 @@ import {
 import { ParticipantService } from '@src/participant/participant.service';
 import { CrewService } from '@src/crew/crew.service';
 import { MemberService } from '@src/member/member.service';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('schedule')
 @ApiTags('Schedule API')
 export class ScheduleController {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     private readonly scheduleService: ScheduleService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -58,9 +63,10 @@ export class ScheduleController {
       const crew = await this.crewService.findByCrewId(crewId);
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '일정 등록 권한이 없습니다.' });
+        throw new HttpException(
+          '일정 등록 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // schedule 생성
@@ -72,8 +78,11 @@ export class ScheduleController {
 
       return res.json(result);
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleController/createschedule');
+      this.logger.error('ScheduleController/createschedule', e.message);
+      throw new HttpException(
+        'ScheduleController/createschedule',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -102,15 +111,17 @@ export class ScheduleController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '모임이 존재하지 않습니다.' });
+        throw new HttpException(
+          '모임이 존재하지 않습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '일정 수정 권한이 없습니다.' });
+        throw new HttpException(
+          '일정 수정 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // schedule 수정
@@ -120,14 +131,15 @@ export class ScheduleController {
         editscheduleDto,
       );
       if (!updatedSchedule) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '일정 수정 실패' });
+        throw new HttpException('일정 수정 실패', HttpStatus.BAD_REQUEST);
       }
       return res.status(HttpStatus.OK).json({ message: '일정 수정 성공' });
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleController/editschedule');
+      this.logger.error('ScheduleController/editschedule', e.message);
+      throw new HttpException(
+        'ScheduleController/editschedule',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -174,9 +186,10 @@ export class ScheduleController {
         crewId,
       );
       if (!schedule || schedule.scheduleId === null) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 일정입니다.' });
+        throw new HttpException(
+          '존재하지 않는 일정입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 참여자 조회
       const participant = await this.participantService.findAllParticipant(
@@ -184,10 +197,10 @@ export class ScheduleController {
         scheduleId,
       );
       return res.status(HttpStatus.OK).json({ schedule, participant });
-    } catch (error) {
-      console.error(error); // 로깅
+    } catch (e) {
+      this.logger.error('ScheduleController/findscheduleDetail', e.message);
       throw new HttpException(
-        `일정 상세 조회 실패: ${error.message}`,
+        'ScheduleController/findscheduleDetail',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -221,15 +234,17 @@ export class ScheduleController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '모임이 존재하지 않습니다.' });
+        throw new HttpException(
+          '모임이 존재하지 않습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 권한 확인
       if (crew.userId !== userId) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: '일정 삭제 권한이 없습니다.' });
+        throw new HttpException(
+          '일정 삭제 권한이 없습니다.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       // 일정에 관련 된 정보 삭제 처리
@@ -238,10 +253,10 @@ export class ScheduleController {
         this.participantService.deleteParticipantBySchedule(scheduleId, crewId),
       ]);
       return res.status(HttpStatus.OK).json(result);
-    } catch (error) {
-      console.error(error); // 로깅
+    } catch (e) {
+      this.logger.error('ScheduleController/deleteschedule', e.message);
       throw new HttpException(
-        `일정 삭제 실패: ${error.message}`,
+        'ScheduleController/deleteschedule',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -271,9 +286,10 @@ export class ScheduleController {
       // 모임 정보
       const crew = await this.crewService.findByCrewId(crewId);
       if (!crew) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '모임이 존재하지 않습니다.' });
+        throw new HttpException(
+          '모임이 존재하지 않습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       // 멤버, 참여자 조회
       const member = await this.memberService.findAllMember(crewId);
@@ -290,9 +306,10 @@ export class ScheduleController {
       // 참가자 조회해서 참가 인원인지
       for (let i = 0; i < participant.length; i++) {
         if (userId === participant[i].userId) {
-          return res
-            .status(HttpStatus.BAD_REQUEST)
-            .json({ message: '이미 참여한 인원입니다.' });
+          throw new HttpException(
+            '이미 참여한 인원입니다.',
+            HttpStatus.BAD_REQUEST,
+          );
         }
       }
 
@@ -309,12 +326,16 @@ export class ScheduleController {
             .json({ message: '일정에 참가 성공' });
         }
       }
-      return res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ message: 'crew원이 아닙니다. 일정에 참가할 권한이 없습니다.' });
+      throw new HttpException(
+        'crew원이 아닙니다. 일정에 참가할 권한이 없습니다.',
+        HttpStatus.UNAUTHORIZED,
+      );
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleController/participateSchedule');
+      this.logger.error('ScheduleController/participateSchedule', e.message);
+      throw new HttpException(
+        'ScheduleController/participateSchedule',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -355,9 +376,10 @@ export class ScheduleController {
               userId,
             );
           if (!canceledParticipant) {
-            return res
-              .status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .json({ message: '일정 참가 취소 실패' });
+            throw new HttpException(
+              '일정 참가 취소 실패',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
           }
           return res
             .status(HttpStatus.OK)
@@ -365,12 +387,16 @@ export class ScheduleController {
         }
       }
 
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: '참여한 인원이 아닙니다.' });
+      throw new HttpException(
+        '참여한 인원이 아닙니다.',
+        HttpStatus.BAD_REQUEST,
+      );
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleController/cancelParticipate');
+      this.logger.error('ScheduleController/cancelParticipate', e.message);
+      throw new HttpException(
+        'ScheduleController/cancelParticipate',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

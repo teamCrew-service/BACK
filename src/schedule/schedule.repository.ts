@@ -1,18 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from '@src/schedule/entities/schedule.entity';
 import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
 import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
 import { Repository, EntityManager, UpdateResult } from 'typeorm';
 import MySchedule from '@src/schedule/interface/mySchedule';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class ScheduleRepository {
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
     @InjectRepository(Schedule)
     private readonly scheduleRepository: Repository<Schedule>,
     private readonly entityManager: EntityManager,
   ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   // 일정 조회
   async findSchedule(userId: number): Promise<MySchedule[]> {
@@ -40,8 +52,7 @@ export class ScheduleRepository {
 
       return await this.entityManager.query(query);
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/findSchedule');
+      this.handleException('ScheduleRepository/findSchedule', e);
     }
   }
 
@@ -71,8 +82,7 @@ export class ScheduleRepository {
 
       return await this.entityManager.query(query);
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/findParticipateSchedule');
+      this.handleException('ScheduleRepository/findParticipateSchedule', e);
     }
   }
 
@@ -98,8 +108,7 @@ export class ScheduleRepository {
 
       return createdSchedule;
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/createSchedule');
+      this.handleException('ScheduleRepository/createSchedule', e);
     }
   }
 
@@ -134,8 +143,7 @@ export class ScheduleRepository {
         },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/editSchedule');
+      this.handleException('ScheduleRepository/editSchedule', e);
     }
   }
 
@@ -171,8 +179,7 @@ export class ScheduleRepository {
         ]) // 필요한 필드만 선택
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/findScheduleDetail');
+      this.handleException('ScheduleRepository/findScheduleDetail', e);
     }
   }
 
@@ -185,8 +192,7 @@ export class ScheduleRepository {
 
       return await this.scheduleRepository.softRemove(schedule); // soft delete
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/deleteSchedule');
+      this.handleException('ScheduleRepository/deleteSchedule', e);
     }
   }
 
@@ -234,8 +240,7 @@ export class ScheduleRepository {
         return schedule;
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/findScheduleByCrew');
+      this.handleException('ScheduleRepository/findScheduleByCrew', e);
     }
   }
 
@@ -257,8 +262,7 @@ export class ScheduleRepository {
         })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/updateScheduleIsDone');
+      this.handleException('ScheduleRepository/updateScheduleIsDone', e);
     }
   }
 
@@ -273,8 +277,7 @@ export class ScheduleRepository {
         .andWhere('deletedAt IS NULL')
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/delegateSchedule');
+      this.handleException('ScheduleRepository/delegateSchedule', e);
     }
   }
 
@@ -296,8 +299,7 @@ export class ScheduleRepository {
 
       return schedule[0];
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/findScheduleCloseToToday');
+      this.handleException('ScheduleRepository/findScheduleCloseToToday', e);
     }
   }
 
@@ -316,8 +318,7 @@ export class ScheduleRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('ScheduleRepository/deleteScheduleByCrew');
+      this.handleException('ScheduleRepository/deleteScheduleByCrew', e);
     }
   }
 }
