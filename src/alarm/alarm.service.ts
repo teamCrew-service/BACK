@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { AlarmRepository } from '@src/alarm/alarm.repository';
 import { Alarm } from '@src/alarm/entities/alarm.entity';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class AlarmService {
-  constructor(private alarmRepository: AlarmRepository) {}
+  constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
+    private alarmRepository: AlarmRepository,
+  ) {}
 
   /* 알림 생성 */
   async createAlarm(
@@ -20,8 +24,7 @@ export class AlarmService {
         nickname,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('AlarmService/createAlarm');
+      this.errorHandlingService.handleException('AlarmService/createAlarm', e);
     }
   }
 
@@ -30,8 +33,7 @@ export class AlarmService {
     try {
       return await this.alarmRepository.findOneAlarm(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('AlarmService/findOneAlarm');
+      this.errorHandlingService.handleException('AlarmService/findOneAlarm', e);
     }
   }
 
@@ -40,8 +42,7 @@ export class AlarmService {
     try {
       return await this.alarmRepository.checkAlarm(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('AlarmService/checkAlarm');
+      this.errorHandlingService.handleException('AlarmService/checkAlarm', e);
     }
   }
 }

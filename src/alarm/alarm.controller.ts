@@ -1,4 +1,11 @@
-import { Controller, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import {
+  Controller,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { AlarmService } from '@src/alarm/alarm.service';
 import {
   ApiBearerAuth,
@@ -8,11 +15,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CrewService } from '@src/crew/crew.service';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('alarm')
 @ApiTags('Alarm API')
 export class AlarmController {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly alarmService: AlarmService,
     private readonly crewService: CrewService,
   ) {}
@@ -42,25 +51,29 @@ export class AlarmController {
       const crew = await this.crewService.findCrewDetail(crewId);
 
       if (crew.crewId === null) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .json({ message: '존재하지 않는 모임입니다.' });
+        throw new HttpException(
+          '존재하지 않는 모임입니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       await this.alarmService.checkAlarm(crewId, userId);
 
       // 알림 확인
       const alarm = await this.alarmService.findOneAlarm(crewId, userId);
-      if (alarm) {
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ message: '알림 확인 실패' });
+      if (!alarm) {
+        throw new HttpException(
+          '알림이 존재하지 않습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       } else {
         return res.status(HttpStatus.OK).json({ message: '알림 확인 완료' });
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('AlarmController/checkAlarm');
+      this.errorHandlingService.handleException(
+        'AlarmController/checkAlarm',
+        e,
+      );
     }
   }
 }

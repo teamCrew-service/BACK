@@ -1,20 +1,13 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  LoggerService,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ReportRepository } from '@src/report/report.repository';
 import { CreateReportDto } from '@src/report/dto/createReport.dto';
 import { Report } from '@src/report/entities/report.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class ReportService {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly reportRepository: ReportRepository,
   ) {}
 
@@ -31,10 +24,9 @@ export class ReportService {
         crewId,
       );
     } catch (e) {
-      this.logger.error('ReportService/createReport', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ReportService/createReport',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }

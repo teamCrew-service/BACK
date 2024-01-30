@@ -1,25 +1,15 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ParticipantRepository } from '@src/participant/participant.repository';
 import { Participant } from '@src/participant/entities/participant.entity';
 import { DeleteResult } from 'typeorm';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class ParticipantService {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly participantRepository: ParticipantRepository,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* 일정에서 참여하기 */
   async participateSchedule(
@@ -34,7 +24,10 @@ export class ParticipantService {
         scheduleId,
       );
     } catch (e) {
-      this.handleException('ParticipantService/participateSchedule', e);
+      this.errorHandlingService.handleException(
+        'ParticipantService/participateSchedule',
+        e,
+      );
     }
   }
 
@@ -50,7 +43,10 @@ export class ParticipantService {
       );
       return participant;
     } catch (e) {
-      this.handleException('ParticipantService/findAllParticipant', e);
+      this.errorHandlingService.handleException(
+        'ParticipantService/findAllParticipant',
+        e,
+      );
     }
   }
 
@@ -67,7 +63,10 @@ export class ParticipantService {
         userId,
       );
     } catch (e) {
-      this.handleException('ParticipantService/cancelParticipate', e);
+      this.errorHandlingService.handleException(
+        'ParticipantService/cancelParticipate',
+        e,
+      );
     }
   }
 
@@ -76,7 +75,10 @@ export class ParticipantService {
     try {
       return await this.participantRepository.deleteParticipant(crewId);
     } catch (e) {
-      this.handleException('ParticipantService/deleteParticipant', e);
+      this.errorHandlingService.handleException(
+        'ParticipantService/deleteParticipant',
+        e,
+      );
     }
   }
 
@@ -91,7 +93,10 @@ export class ParticipantService {
         crewId,
       );
     } catch (e) {
-      this.handleException('ParticipantService/deleteParticipantBySchedule', e);
+      this.errorHandlingService.handleException(
+        'ParticipantService/deleteParticipantBySchedule',
+        e,
+      );
     }
   }
 }

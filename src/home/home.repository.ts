@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Crew } from '@src/crew/entities/crew.entity';
 import { Repository } from 'typeorm';
 import GetCrew from '@src/home/interface/getCrew';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class HomeRepository {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Crew)
     private mapRepository: Repository<Crew>,
   ) {}
@@ -44,8 +46,7 @@ export class HomeRepository {
         .groupBy('crew.crewId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeRepository/getCrew');
+      this.errorHandlingService.handleException('HomeRepository/getCrew', e);
     }
   }
 
@@ -86,8 +87,10 @@ export class HomeRepository {
         .andWhere('crew.deletedAt IS NULL')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeRepository/findCrewByCategoryAndMap');
+      this.errorHandlingService.handleException(
+        'HomeRepository/findCrewByCategoryAndMap',
+        e,
+      );
     }
   }
 
@@ -127,8 +130,10 @@ export class HomeRepository {
         .orderBy('like.userId', 'DESC')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeRepository/findCrewByCategory');
+      this.errorHandlingService.handleException(
+        'HomeRepository/findCrewByCategory',
+        e,
+      );
     }
   }
 }

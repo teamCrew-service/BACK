@@ -5,10 +5,12 @@ import { Repository, UpdateResult } from 'typeorm';
 import { CreateCrewDto } from '@src/crew/dto/createCrew.dto';
 import { EditCrewDto } from '@src/crew/dto/editCrew.dto';
 import CrewDetail from '@src/crew/interface/crewDetail';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class CrewRepository {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Crew) private crewRepository: Repository<Crew>,
   ) {}
 
@@ -21,8 +23,10 @@ export class CrewRepository {
         .where('crewId = :crewId', { crewId })
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findCrewForAuth');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findCrewForAuth',
+        e,
+      );
     }
   }
 
@@ -31,8 +35,10 @@ export class CrewRepository {
     try {
       return await this.crewRepository.find({ where: { category } });
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findByCategory');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findByCategory',
+        e,
+      );
     }
   }
 
@@ -68,8 +74,7 @@ export class CrewRepository {
       await this.crewRepository.save(crew);
       return crew;
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/createCrew');
+      this.errorHandlingService.handleException('CrewRepository/createCrew', e);
     }
   }
 
@@ -113,8 +118,10 @@ export class CrewRepository {
         .andWhere('crew.deletedAt IS NULL')
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findCrewDetail');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findCrewDetail',
+        e,
+      );
     }
   }
 
@@ -142,8 +149,10 @@ export class CrewRepository {
         .groupBy('crew.crewId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findCreatedCrew');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findCreatedCrew',
+        e,
+      );
     }
   }
 
@@ -184,8 +193,7 @@ export class CrewRepository {
         },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/editCrew');
+      this.errorHandlingService.handleException('CrewRepository/editCrew', e);
     }
   }
 
@@ -200,8 +208,7 @@ export class CrewRepository {
       // softDelete 처리
       return await this.crewRepository.update({ crewId }, { deletedAt: today });
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/deleteCrew');
+      this.errorHandlingService.handleException('CrewRepository/deleteCrew', e);
     }
   }
 
@@ -230,8 +237,10 @@ export class CrewRepository {
         .orderBy('crew.createdAt', 'DESC')
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findByCrewId');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findByCrewId',
+        e,
+      );
     }
   }
 
@@ -259,8 +268,10 @@ export class CrewRepository {
         .orderBy('crew.createdAt', 'DESC')
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findWaitingPermission');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findWaitingPermission',
+        e,
+      );
     }
   }
 
@@ -295,8 +306,7 @@ export class CrewRepository {
         .groupBy('crew.crewId')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findMyCrew');
+      this.errorHandlingService.handleException('CrewRepository/findMyCrew', e);
     }
   }
 
@@ -325,8 +335,10 @@ export class CrewRepository {
         .groupBy('crew.crewId')
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findCrewDetailByCrewId');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findCrewDetailByCrewId',
+        e,
+      );
     }
   }
 
@@ -340,8 +352,10 @@ export class CrewRepository {
         .select(['crewId', 'userId'])
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/findOneCrew');
+      this.errorHandlingService.handleException(
+        'CrewRepository/findOneCrew',
+        e,
+      );
     }
   }
 
@@ -360,8 +374,10 @@ export class CrewRepository {
         .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/delegateCrew');
+      this.errorHandlingService.handleException(
+        'CrewRepository/delegateCrew',
+        e,
+      );
     }
   }
 
@@ -376,8 +392,10 @@ export class CrewRepository {
         { thumbnail: thumbnail },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewRepository/editThumbnail');
+      this.errorHandlingService.handleException(
+        'CrewRepository/editThumbnail',
+        e,
+      );
     }
   }
 }

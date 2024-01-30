@@ -8,18 +8,24 @@ import { join } from 'path';
 import { Crew } from '@src/crew/entities/crew.entity';
 import CrewDetail from '@src/crew/interface/crewDetail';
 import { UpdateResult } from 'typeorm';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class CrewService {
-  constructor(private crewRepository: CrewRepository) {}
+  constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
+    private crewRepository: CrewRepository,
+  ) {}
 
   /* 권한 검사를 위한 crew 조회 */
   async findCrewForAuth(crewId: number): Promise<Crew> {
     try {
       return await this.crewRepository.findCrewForAuth(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findCrewForAuth');
+      this.errorHandlingService.handleException(
+        'CrewService/findCrewForAuth',
+        e,
+      );
     }
   }
 
@@ -28,8 +34,10 @@ export class CrewService {
     try {
       return await this.crewRepository.findByCategory(category);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findByCategory');
+      this.errorHandlingService.handleException(
+        'CrewService/findByCategory',
+        e,
+      );
     }
   }
 
@@ -41,8 +49,7 @@ export class CrewService {
     try {
       return await this.crewRepository.createCrew(createCrewDto, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/createCrew');
+      this.errorHandlingService.handleException('CrewService/createCrew', e);
     }
   }
 
@@ -62,8 +69,10 @@ export class CrewService {
       return localPath;
       //thumbnail은 url로 되어있다.
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/thumbnailUpload');
+      this.errorHandlingService.handleException(
+        'CrewService/thumbnailUpload',
+        e,
+      );
     }
   }
   async downloadAndSave(url: string, localPath: string): Promise<void> {
@@ -82,8 +91,10 @@ export class CrewService {
         writer.on('error', reject);
       });
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/downloadAndSave');
+      this.errorHandlingService.handleException(
+        'CrewService/downloadAndSave',
+        e,
+      );
     }
   }
 
@@ -92,8 +103,10 @@ export class CrewService {
     try {
       return await this.crewRepository.findCrewDetail(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findCrewDetail');
+      this.errorHandlingService.handleException(
+        'CrewService/findCrewDetail',
+        e,
+      );
     }
   }
 
@@ -105,8 +118,7 @@ export class CrewService {
     try {
       return await this.crewRepository.editCrew(crewId, editCrewDto);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/editCrew');
+      this.errorHandlingService.handleException('CrewService/editCrew', e);
     }
   }
 
@@ -115,8 +127,7 @@ export class CrewService {
     try {
       return await this.crewRepository.deleteCrew(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/deleteCrew');
+      this.errorHandlingService.handleException('CrewService/deleteCrew', e);
     }
   }
 
@@ -125,8 +136,7 @@ export class CrewService {
     try {
       return await this.crewRepository.findByCrewId(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findByCrewId');
+      this.errorHandlingService.handleException('CrewService/findByCrewId', e);
     }
   }
 
@@ -135,8 +145,10 @@ export class CrewService {
     try {
       return await this.crewRepository.findWaitingPermission(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findWaitingPermission');
+      this.errorHandlingService.handleException(
+        'CrewService/findWaitingPermission',
+        e,
+      );
     }
   }
 
@@ -145,8 +157,7 @@ export class CrewService {
     try {
       return await this.crewRepository.findMyCrew(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findMyCrew');
+      this.errorHandlingService.handleException('CrewService/findMyCrew', e);
     }
   }
 
@@ -155,8 +166,10 @@ export class CrewService {
     try {
       return await this.crewRepository.findCrewDetailByCrewId(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findCrewDetailByCrewId');
+      this.errorHandlingService.handleException(
+        'CrewService/findCrewDetailByCrewId',
+        e,
+      );
     }
   }
 
@@ -165,8 +178,7 @@ export class CrewService {
     try {
       return await this.crewRepository.findOneCrew(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/findOneCrew');
+      this.errorHandlingService.handleException('CrewService/findOneCrew', e);
     }
   }
 
@@ -179,8 +191,7 @@ export class CrewService {
     try {
       return await this.crewRepository.delegateCrew(delegator, crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/delegateCrew');
+      this.errorHandlingService.handleException('CrewService/delegateCrew', e);
     }
   }
 
@@ -192,8 +203,7 @@ export class CrewService {
     try {
       return await this.crewRepository.editThumbnail(crewId, thumbnail);
     } catch (e) {
-      console.error(e);
-      throw new Error('CrewService/editThumbnail');
+      this.errorHandlingService.handleException('CrewService/editThumbnail', e);
     }
   }
 }

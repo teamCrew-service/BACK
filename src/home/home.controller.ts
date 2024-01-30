@@ -14,11 +14,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger/dist';
 import { ScheduleService } from '@src/schedule/schedule.service';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('home')
 @ApiTags('Home API')
 export class HomeController {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly homeService: HomeService,
     private readonly scheduleService: ScheduleService,
   ) {}
@@ -71,12 +73,8 @@ export class HomeController {
 
       // 다가오는 일정 리스트 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json({ schedule, nickname });
-    } catch (error) {
-      console.error(error); // 로깅
-      throw new HttpException(
-        `리스트 조회 실패: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (e) {
+      this.errorHandlingService.handleException('TopicService/findSchedule', e);
     }
   }
 
@@ -159,8 +157,10 @@ export class HomeController {
         .status(HttpStatus.OK)
         .json({ comingSchedule, participateSchedule });
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeController/findWholeSchedule');
+      this.errorHandlingService.handleException(
+        'TopicService/findWholeSchedule',
+        e,
+      );
     }
   }
 
@@ -215,12 +215,8 @@ export class HomeController {
 
       // 내 주변 모임 조회 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
-    } catch (error) {
-      console.error(error); // 로깅
-      throw new HttpException(
-        `리스트 조회 실패: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (e) {
+      this.errorHandlingService.handleException('TopicService/getCrew', e);
     }
   }
 
@@ -281,11 +277,10 @@ export class HomeController {
 
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
-    } catch (error) {
-      console.error(error); // 로깅
-      throw new HttpException(
-        `리스트 조회 실패: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+    } catch (e) {
+      this.errorHandlingService.handleException(
+        'TopicService/findCrewByCategoryAndMap',
+        e,
       );
     }
   }
@@ -346,10 +341,10 @@ export class HomeController {
       // 카테고리별로 조회한 결과가 있을 경우
       return res.status(HttpStatus.OK).json(crew);
     } catch (e) {
-      console.error(e);
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: '관심사별 리스트 조회 실패' });
+      this.errorHandlingService.handleException(
+        'TopicService/findCrewByCategory',
+        e,
+      );
     }
   }
 }

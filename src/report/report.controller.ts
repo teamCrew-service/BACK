@@ -5,8 +5,6 @@ import {
   Param,
   Res,
   HttpStatus,
-  Inject,
-  LoggerService,
   HttpException,
 } from '@nestjs/common';
 import { ReportService } from '@src/report/report.service';
@@ -18,14 +16,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateReportDto } from '@src/report/dto/createReport.dto';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('report')
 @ApiTags('Report API')
 export class ReportController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly reportService: ReportService,
   ) {}
 
@@ -53,10 +50,9 @@ export class ReportController {
       await this.reportService.createReport(createReportDto, userId, crewId);
       return res.status(HttpStatus.OK).json({ message: '신고하기 성공' });
     } catch (e) {
-      this.logger.error('ReportController/createReport', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ReportController/createReport',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }

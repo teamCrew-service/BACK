@@ -1,26 +1,16 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 import { Participant } from '@src/participant/entities/participant.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class ParticipantRepository {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Participant)
     private readonly participantRepository: Repository<Participant>,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* 일정에서 참여하기 */
   async participateSchedule(
@@ -36,7 +26,10 @@ export class ParticipantRepository {
       await this.participantRepository.save(participant);
       return participant;
     } catch (e) {
-      this.handleException('ParticipantRepository/participateSchedule', e);
+      this.errorHandlingService.handleException(
+        'ParticipantRepository/participateSchedule',
+        e,
+      );
     }
   }
 
@@ -60,7 +53,10 @@ export class ParticipantRepository {
         .getRawMany();
       return participant;
     } catch (e) {
-      this.handleException('ParticipantRepository/findAllParticipant', e);
+      this.errorHandlingService.handleException(
+        'ParticipantRepository/findAllParticipant',
+        e,
+      );
     }
   }
 
@@ -80,7 +76,10 @@ export class ParticipantRepository {
         .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
-      this.handleException('ParticipantRepository/cancelParticipate', e);
+      this.errorHandlingService.handleException(
+        'ParticipantRepository/cancelParticipate',
+        e,
+      );
     }
   }
 
@@ -94,7 +93,10 @@ export class ParticipantRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      this.handleException('ParticipantRepository/deleteParticipant', e);
+      this.errorHandlingService.handleException(
+        'ParticipantRepository/deleteParticipant',
+        e,
+      );
     }
   }
 
@@ -112,7 +114,7 @@ export class ParticipantRepository {
         .andWhere('scheduleId = :scheduleId', { scheduleId })
         .execute();
     } catch (e) {
-      this.handleException(
+      this.errorHandlingService.handleException(
         'ParticipantRepository/deleteParticipantBySchedule',
         e,
       );

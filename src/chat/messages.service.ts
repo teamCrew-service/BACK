@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Message, MessageDocument } from '@src/chat/schemas/message.schema';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class MessagesService {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectModel(Message.name)
     private readonly messageModel: Model<MessageDocument>,
   ) {}
@@ -32,8 +34,10 @@ export class MessagesService {
       console.log('Message saved successfully:', savedMessage);
       return savedMessage;
     } catch (error) {
-      console.error('Error while saving the message:', error);
-      throw error;
+      this.errorHandlingService.handleException(
+        'Error while saving the message:',
+        error,
+      );
     }
   }
 
@@ -54,8 +58,10 @@ export class MessagesService {
       // 결과를 반환할 때는 최신 메시지가 먼저 오도록 역순으로 반환합니다.
       return messages.reverse();
     } catch (error) {
-      console.error('Error while fetching previous messages:', error);
-      throw error;
+      this.errorHandlingService.handleException(
+        'Error while fetching previous messages:',
+        error,
+      );
     }
   }
 }

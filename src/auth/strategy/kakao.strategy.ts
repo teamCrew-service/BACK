@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
 import { AuthService } from '@src/auth/auth.service';
+import Auth from '@src/auth/interface/auth';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
@@ -16,7 +17,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     refreshToken: string,
     profile: any,
     done: any,
-  ): Promise<any> {
+  ): Promise<Auth> {
     // profile에서 정보 추출
     const email = profile._json.kakao_account.email;
     const nickname = profile.displayName;

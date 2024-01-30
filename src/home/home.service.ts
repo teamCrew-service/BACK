@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-// import { Crew } from 'src/crew/entities/crew.entity';
 import { HomeRepository } from '@src/home/home.repository';
 import MySchedule from '@src/schedule/interface/mySchedule';
 import { ScheduleService } from '@src/schedule/schedule.service';
 import GetCrew from '@src/home/interface/getCrew';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class HomeService {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     private homeRepository: HomeRepository,
     private scheduleService: ScheduleService,
   ) {}
@@ -17,8 +18,7 @@ export class HomeService {
     try {
       return await this.scheduleService.findSchedule(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeService/findSchedule');
+      this.errorHandlingService.handleException('HomeService/findSchedule', e);
     }
   }
 
@@ -27,8 +27,10 @@ export class HomeService {
     try {
       return await this.scheduleService.findParticipateSchedule(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeService/findParticipateSchedule');
+      this.errorHandlingService.handleException(
+        'HomeService/findParticipateSchedule',
+        e,
+      );
     }
   }
 
@@ -37,8 +39,7 @@ export class HomeService {
     try {
       return await this.homeRepository.getCrew(userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeService/getCrew');
+      this.errorHandlingService.handleException('HomeService/getCrew', e);
     }
   }
 
@@ -53,8 +54,10 @@ export class HomeService {
         userId,
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeService/findCrewByCategoryAndMap');
+      this.errorHandlingService.handleException(
+        'HomeService/findCrewByCategoryAndMap',
+        e,
+      );
     }
   }
 
@@ -66,8 +69,10 @@ export class HomeService {
     try {
       return await this.homeRepository.findCrewByCategory(category, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('HomeService/findCrewByCategory');
+      this.errorHandlingService.handleException(
+        'HomeService/findCrewByCategory',
+        e,
+      );
     }
   }
 }

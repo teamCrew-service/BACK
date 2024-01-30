@@ -1,33 +1,23 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MemberRepository } from '@src/member/member.repository';
 import { Member } from '@src/member/entities/member.entity';
 import JoinedCrew from '@src/member/interface/joinedCrew';
 import { DeleteResult } from 'typeorm';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class MemberService {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private memberRepository: MemberRepository,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* (누구나 참여 가능) 모임 가입 */
   async addMember(crewId: number, userId: number): Promise<Member> {
     try {
       return await this.memberRepository.addMember(crewId, userId);
     } catch (e) {
-      this.handleException('MemberService/addMember', e);
+      this.errorHandlingService.handleException('MemberService/addMember', e);
     }
   }
 
@@ -36,7 +26,10 @@ export class MemberService {
     try {
       return await this.memberRepository.findAllMember(crewId);
     } catch (e) {
-      this.handleException('MemberService/findAllMember', e);
+      this.errorHandlingService.handleException(
+        'MemberService/findAllMember',
+        e,
+      );
     }
   }
 
@@ -45,7 +38,10 @@ export class MemberService {
     try {
       return await this.memberRepository.findJoinedCrew(userId);
     } catch (e) {
-      this.handleException('MemberService/findJoinedCrew', e);
+      this.errorHandlingService.handleException(
+        'MemberService/findJoinedCrew',
+        e,
+      );
     }
   }
 
@@ -63,7 +59,10 @@ export class MemberService {
 
       return 'member 테이블 위임 완료';
     } catch (e) {
-      this.handleException('MemberService/delegateMember', e);
+      this.errorHandlingService.handleException(
+        'MemberService/delegateMember',
+        e,
+      );
     }
   }
 
@@ -72,7 +71,7 @@ export class MemberService {
     try {
       return await this.memberRepository.exitCrew(crewId, userId);
     } catch (e) {
-      this.handleException('MemberService/exitCrew', e);
+      this.errorHandlingService.handleException('MemberService/exitCrew', e);
     }
   }
 
@@ -81,7 +80,10 @@ export class MemberService {
     try {
       return await this.memberRepository.deleteMember(crewId);
     } catch (e) {
-      this.handleException('MemberService/deleteMember', e);
+      this.errorHandlingService.handleException(
+        'MemberService/deleteMember',
+        e,
+      );
     }
   }
 }

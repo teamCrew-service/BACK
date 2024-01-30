@@ -7,9 +7,9 @@ import {
   Post,
   Delete,
   Res,
-  Put,
   UseInterceptors,
   UploadedFiles,
+  HttpException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -27,6 +27,7 @@ import { CrewService } from '@src/crew/crew.service';
 import { MemberService } from '@src/member/member.service';
 import { multerConfig } from '@src/crew/multerConfig';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 export class ImageFilesUploadDto {
   @ApiProperty()
   SaveImageDto: SaveImageDto;
@@ -45,6 +46,7 @@ export class ImageFilesUploadDto {
 @ApiTags('Image API')
 export class ImageController {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly imageService: ImageService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -90,9 +92,10 @@ export class ImageController {
         if (crew[i].userId === userId || member[i].userId === userId) {
           // 이미지는 최대 5개까지만 저장 가능합니다.
           if (exImages.length === 5) {
-            return res
-              .status(HttpStatus.BAD_REQUEST)
-              .json({ message: '이미지 저장은 최대 5개까지 가능합니다.' });
+            throw new HttpException(
+              '이미지 저장은 최대 5개까지 가능합니다.',
+              HttpStatus.BAD_REQUEST,
+            );
           }
           const saveImageDto = JSON.parse(body);
 
@@ -114,14 +117,14 @@ export class ImageController {
             .status(HttpStatus.OK)
             .json({ message: '이미지 저장 성공' });
         } else {
-          return res
-            .status(HttpStatus.UNAUTHORIZED)
-            .json({ message: '이미지 저장 권한이 없습니다.' });
+          throw new HttpException(
+            '이미지 저장 권한이 없습니다.',
+            HttpStatus.UNAUTHORIZED,
+          );
         }
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageController/saveImage');
+      this.errorHandlingService.handleException('ImageController/saveImage', e);
     }
   }
 
@@ -170,8 +173,10 @@ export class ImageController {
         }
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageController/findCrewImages');
+      this.errorHandlingService.handleException(
+        'ImageController/findCrewImages',
+        e,
+      );
     }
   }
 
@@ -204,15 +209,17 @@ export class ImageController {
       // 권한 확인
       for (let i = 0; i < myImage.length; i++) {
         if (myImage[i].userId !== userId) {
-          return res
-            .status(HttpStatus.UNAUTHORIZED)
-            .json({ message: '이미지 삭제 권한이 없습니다.' });
+          throw new HttpException(
+            '이미지 삭제 권한이 없습니다.',
+            HttpStatus.UNAUTHORIZED,
+          );
         } else {
           const deleteImage = await this.imageService.deleteImage(imageId);
           if (!deleteImage) {
-            return res
-              .status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .json({ message: '이미지 삭제 실패' });
+            throw new HttpException(
+              '이미지 삭제 실패',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
           }
           return res
             .status(HttpStatus.OK)
@@ -220,8 +227,10 @@ export class ImageController {
         }
       }
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageController/deleteImage');
+      this.errorHandlingService.handleException(
+        'ImageController/deleteImage',
+        e,
+      );
     }
   }
 }

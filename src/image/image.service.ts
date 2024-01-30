@@ -5,18 +5,21 @@ import * as AWS from 'aws-sdk';
 import axios from 'axios';
 import { Image } from '@src/image/entities/image.entity';
 import { UpdateResult } from 'typeorm';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class ImageService {
-  constructor(private imageRepository: ImageRepository) {}
+  constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
+    private imageRepository: ImageRepository,
+  ) {}
 
   /* 나의 image 조회 */
   async findMyImages(crewId: number, userId: number): Promise<Image[]> {
     try {
       return await this.imageRepository.findMyImages(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/findMyImages');
+      this.errorHandlingService.handleException('ImageService/findMyImages', e);
     }
   }
 
@@ -25,8 +28,10 @@ export class ImageService {
     try {
       return await this.imageRepository.findCrewImages(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/findCrewImages');
+      this.errorHandlingService.handleException(
+        'ImageService/findCrewImages',
+        e,
+      );
     }
   }
 
@@ -39,8 +44,7 @@ export class ImageService {
     try {
       return await this.imageRepository.saveImage(saveImageDto, crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/saveImage');
+      this.errorHandlingService.handleException('ImageService/saveImage', e);
     }
   }
 
@@ -49,8 +53,7 @@ export class ImageService {
     try {
       return await this.imageRepository.deleteImage(imageId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/deleteImage');
+      this.errorHandlingService.handleException('ImageService/deleteImage', e);
     }
   }
 
@@ -85,8 +88,7 @@ export class ImageService {
         });
       });
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/urlToS3');
+      this.errorHandlingService.handleException('ImageService/urlToS3', e);
     }
   }
 
@@ -95,8 +97,10 @@ export class ImageService {
     try {
       return await this.imageRepository.deleteImageByCrew(crewId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/deleteImageByCrew');
+      this.errorHandlingService.handleException(
+        'ImageService/deleteImageByCrew',
+        e,
+      );
     }
   }
 
@@ -108,8 +112,10 @@ export class ImageService {
     try {
       return await this.imageRepository.deleteImageExitCrew(crewId, userId);
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageService/deleteImageExitCrew');
+      this.errorHandlingService.handleException(
+        'ImageService/deleteImageExitCrew',
+        e,
+      );
     }
   }
 }

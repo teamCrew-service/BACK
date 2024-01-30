@@ -8,8 +8,6 @@ import {
   Put,
   Delete,
   Res,
-  Inject,
-  LoggerService,
   HttpException,
 } from '@nestjs/common';
 import {
@@ -24,14 +22,13 @@ import { CrewService } from '@src/crew/crew.service';
 import { EditNoticeDto } from '@src/notice/dto/editNotice.dto';
 import { VoteFormService } from '@src/voteform/voteform.service';
 import { Notice } from '@src/notice/entities/notice.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('notice')
 @ApiTags('Notice API')
 export class NoticeController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly noticeService: NoticeService,
     private readonly crewService: CrewService,
     private readonly voteFormService: VoteFormService,
@@ -80,10 +77,9 @@ export class NoticeController {
         .status(HttpStatus.OK)
         .json({ message: '공지 등록 완료', noticeId });
     } catch (e) {
-      this.logger.error('noticeController/createNotice', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'noticeController/createNotice',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -136,10 +132,9 @@ export class NoticeController {
       const allNotice = { notice, voteForm };
       return res.status(HttpStatus.OK).json(allNotice);
     } catch (e) {
-      this.logger.error('noticeController/findAllNotice', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'noticeController/findAllNotice',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -186,10 +181,9 @@ export class NoticeController {
         return res.status(HttpStatus.OK).json(notice);
       }
     } catch (e) {
-      this.logger.error('noticeController/findNoticeDetail', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'noticeController/findNoticeDetail',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -246,10 +240,9 @@ export class NoticeController {
         return res.status(HttpStatus.OK).json({ message: '공지 수정 성공' });
       }
     } catch (e) {
-      this.logger.error('noticeController/editNotice', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'noticeController/editNotice',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -304,10 +297,9 @@ export class NoticeController {
         return res.status(HttpStatus.OK).json({ message: '공지 삭제 성공' });
       }
     } catch (e) {
-      this.logger.error('noticeController/deleteNotice', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'noticeController/deleteNotice',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }

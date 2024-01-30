@@ -1,26 +1,16 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like } from '@src/like/entities/like.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import LikedCrew from '@src/like/interface/likedCrew';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class LikeRepository {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Like) private likeRepository: Repository<Like>,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* 찜하기 */
   async likeCrew(crewId: number, userId: number): Promise<Like> {
@@ -31,7 +21,7 @@ export class LikeRepository {
       await this.likeRepository.save(like);
       return like;
     } catch (e) {
-      this.handleException('LikeRepository/likeCrew', e);
+      this.errorHandlingService.handleException('LikeRepository/likeCrew', e);
     }
   }
 
@@ -46,7 +36,10 @@ export class LikeRepository {
         .andWhere('like.userId = :userId', { userId })
         .execute();
     } catch (e) {
-      this.handleException('LikeRepository/cancelLikeCrew', e);
+      this.errorHandlingService.handleException(
+        'LikeRepository/cancelLikeCrew',
+        e,
+      );
     }
   }
 
@@ -75,7 +68,10 @@ export class LikeRepository {
         .groupBy('like.likeId')
         .getRawMany();
     } catch (e) {
-      this.handleException('LikeRepository/findLikedCrew', e);
+      this.errorHandlingService.handleException(
+        'LikeRepository/findLikedCrew',
+        e,
+      );
     }
   }
 
@@ -88,7 +84,10 @@ export class LikeRepository {
         .where('like.crewId = :crewId', { crewId })
         .getRawMany();
     } catch (e) {
-      this.handleException('LikeRepository/countLikedCrew', e);
+      this.errorHandlingService.handleException(
+        'LikeRepository/countLikedCrew',
+        e,
+      );
     }
   }
 
@@ -102,7 +101,10 @@ export class LikeRepository {
         .andWhere('like.userId = :userId', { userId })
         .getRawOne();
     } catch (e) {
-      this.handleException('LikeRepository/confirmLiked', e);
+      this.errorHandlingService.handleException(
+        'LikeRepository/confirmLiked',
+        e,
+      );
     }
   }
 
@@ -116,7 +118,7 @@ export class LikeRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      this.handleException('LikeRepository/deleteLike', e);
+      this.errorHandlingService.handleException('LikeRepository/deleteLike', e);
     }
   }
 }

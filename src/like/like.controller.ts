@@ -3,8 +3,6 @@ import {
   Delete,
   HttpException,
   HttpStatus,
-  Inject,
-  LoggerService,
   Param,
   Post,
   Res,
@@ -15,15 +13,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 import { LikeService } from '@src/like/like.service';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller('like')
 @ApiTags('Like API')
 export class LikeController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly likeService: LikeService,
   ) {}
 
@@ -57,11 +54,7 @@ export class LikeController {
       await this.likeService.likeCrew(crewId, userId);
       return res.status(HttpStatus.OK).json({ message: '찜하기 성공' });
     } catch (e) {
-      this.logger.error('LikeController/likeCrew', e.message);
-      throw new HttpException(
-        'LikeController/likeCrew',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.errorHandlingService.handleException('LikeController/likeCrew', e);
     }
   }
 
@@ -91,10 +84,9 @@ export class LikeController {
       }
       throw new HttpException('찜한 crew가 아닙니다.', HttpStatus.BAD_REQUEST);
     } catch (e) {
-      this.logger.error('LikeController/cancelLikeCrew', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'LikeController/cancelLikeCrew',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }

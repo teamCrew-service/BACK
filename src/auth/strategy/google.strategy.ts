@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
 import { AuthService } from '@src/auth/auth.service';
+import Auth from '@src/auth/interface/auth';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -18,7 +19,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     refreshToken: string,
     profile: any,
     done: any,
-  ): Promise<any> {
+  ): Promise<Auth> {
     // profile에서 정보 추출
     const email = profile._json.email;
     const nickname = profile._json.name;

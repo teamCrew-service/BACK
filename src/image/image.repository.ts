@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Image } from '@src/image/entities/image.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { SaveImageDto } from '@src/image/dto/saveImage.dto';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class ImageRepository {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Image) private imageRepository: Repository<Image>,
   ) {}
 
@@ -20,8 +22,10 @@ export class ImageRepository {
         .andWhere('image.userId = :userId', { userId })
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageRepository/findMyImages');
+      this.errorHandlingService.handleException(
+        'ImageRepository/findMyImages',
+        e,
+      );
     }
   }
 
@@ -41,8 +45,10 @@ export class ImageRepository {
         .orderBy('image.createdAt', 'DESC')
         .getRawMany();
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageRepository/findCrewImages');
+      this.errorHandlingService.handleException(
+        'ImageRepository/findCrewImages',
+        e,
+      );
     }
   }
 
@@ -60,8 +66,7 @@ export class ImageRepository {
       const newImage = await this.imageRepository.save(image);
       return newImage;
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageRepository/saveImage');
+      this.errorHandlingService.handleException('ImageRepository/saveImage', e);
     }
   }
 
@@ -73,8 +78,10 @@ export class ImageRepository {
         { deletedAt: new Date() },
       );
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageRepository/deleteImage');
+      this.errorHandlingService.handleException(
+        'ImageRepository/deleteImage',
+        e,
+      );
     }
   }
 
@@ -93,8 +100,10 @@ export class ImageRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageRepository/deleteImageByCrew');
+      this.errorHandlingService.handleException(
+        'ImageRepository/deleteImageByCrew',
+        e,
+      );
     }
   }
 
@@ -117,8 +126,10 @@ export class ImageRepository {
         .andWhere('userId = :userId', { userId })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('ImageRepository/deleteImageExitCrew');
+      this.errorHandlingService.handleException(
+        'ImageRepository/deleteImageExitCrew',
+        e,
+      );
     }
   }
 }

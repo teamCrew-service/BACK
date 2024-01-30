@@ -1,8 +1,7 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
