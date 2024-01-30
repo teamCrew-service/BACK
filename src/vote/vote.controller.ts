@@ -7,8 +7,6 @@ import {
   HttpStatus,
   Get,
   Put,
-  Inject,
-  LoggerService,
   HttpException,
 } from '@nestjs/common';
 import { VoteService } from '@src/vote/vote.service';
@@ -25,13 +23,13 @@ import { MemberService } from '@src/member/member.service';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
 import { VoteFormService } from '@src/voteform/voteform.service';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('vote')
 @ApiTags('Vote API')
 export class VoteController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly voteService: VoteService,
     private readonly voteFormService: VoteFormService,
     private readonly crewService: CrewService,
@@ -142,11 +140,7 @@ export class VoteController {
         HttpStatus.UNAUTHORIZED,
       );
     } catch (e) {
-      this.logger.error('VoteController/voting', e.message);
-      throw new HttpException(
-        'VoteController/voting',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.errorHandlingService.handleException('VoteController/voting', e);
     }
   }
 
@@ -265,11 +259,7 @@ export class VoteController {
         );
       }
     } catch (e) {
-      this.logger.error('VoteController/findVote', e.message);
-      throw new HttpException(
-        'VoteController/findVote',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.errorHandlingService.handleException('VoteController/findVote', e);
     }
   }
 
@@ -331,11 +321,7 @@ export class VoteController {
         HttpStatus.UNAUTHORIZED,
       );
     } catch (e) {
-      this.logger.error('VoteController/editVote', e.message);
-      throw new HttpException(
-        'VoteController/editVote',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.errorHandlingService.handleException('VoteController/editVote', e);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SignupFormRepository } from '@src/signup/signupForm.repository';
 import { SignupRepository } from '@src/signup/signup.repository';
 import { ConfirmSignupDto } from '@src/signup/dto/confirm-signup.dto';
@@ -9,26 +9,16 @@ import { Signup } from '@src/signup/entities/signup.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import Submitted from '@src/signup/interface/submitted';
 import AllSignup from './interface/AllSignup';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class SignupService {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private signupFormRepository: SignupFormRepository,
     private signupRespository: SignupRepository,
     private memberRepository: MemberRepository,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* form 생성 */
   async createSignupForm(
@@ -41,7 +31,10 @@ export class SignupService {
         createSignupFormDto,
       );
     } catch (e) {
-      this.handleException('SignupService/createSignupForm', e);
+      this.errorHandlingService.handleException(
+        'SignupService/createSignupForm',
+        e,
+      );
     }
   }
 
@@ -50,7 +43,10 @@ export class SignupService {
     try {
       return await this.signupFormRepository.findOneSignupForm(signupFormId);
     } catch (e) {
-      this.handleException('SignupService/findOneSignupForm', e);
+      this.errorHandlingService.handleException(
+        'SignupService/findOneSignupForm',
+        e,
+      );
     }
   }
 
@@ -69,7 +65,10 @@ export class SignupService {
         submitSignupDto,
       );
     } catch (e) {
-      this.handleException('SignupService/submitSignup', e);
+      this.errorHandlingService.handleException(
+        'SignupService/submitSignup',
+        e,
+      );
     }
   }
 
@@ -78,7 +77,10 @@ export class SignupService {
     try {
       return await this.signupRespository.findMySignup(userId, crewId);
     } catch (e) {
-      this.handleException('SignupService/findMySignup', e);
+      this.errorHandlingService.handleException(
+        'SignupService/findMySignup',
+        e,
+      );
     }
   }
 
@@ -95,7 +97,10 @@ export class SignupService {
         signupId,
       );
     } catch (e) {
-      this.handleException('SignupService/editMySubmitted', e);
+      this.errorHandlingService.handleException(
+        'SignupService/editMySubmitted',
+        e,
+      );
     }
   }
 
@@ -107,7 +112,10 @@ export class SignupService {
     try {
       return await this.signupRespository.deleteMySubmitted(crewId, signupId);
     } catch (e) {
-      this.handleException('SignupService/deleteMySubmitted', e);
+      this.errorHandlingService.handleException(
+        'SignupService/deleteMySubmitted',
+        e,
+      );
     }
   }
 
@@ -116,7 +124,10 @@ export class SignupService {
     try {
       return await this.signupRespository.findMyAllSignup(userId);
     } catch (e) {
-      this.handleException('SignupService/findMyAllSignup', e);
+      this.errorHandlingService.handleException(
+        'SignupService/findMyAllSignup',
+        e,
+      );
     }
   }
 
@@ -134,7 +145,10 @@ export class SignupService {
       });
       return findAllSubmitted;
     } catch (e) {
-      this.handleException('SignupService/findAllSubmitted', e);
+      this.errorHandlingService.handleException(
+        'SignupService/findAllSubmitted',
+        e,
+      );
     }
   }
 
@@ -158,7 +172,10 @@ export class SignupService {
         return confirmedSignup;
       }
     } catch (e) {
-      this.handleException('SignupService/confirmsignup', e);
+      this.errorHandlingService.handleException(
+        'SignupService/confirmsignup',
+        e,
+      );
     }
   }
 
@@ -167,7 +184,7 @@ export class SignupService {
     try {
       return await this.memberRepository.exitCrew(crewId, userId);
     } catch (e) {
-      this.handleException('SignupService/exitCrew', e);
+      this.errorHandlingService.handleException('SignupService/exitCrew', e);
     }
   }
 
@@ -179,7 +196,10 @@ export class SignupService {
         this.signupFormRepository.deleteSignupForm(crewId),
       ]);
     } catch (e) {
-      this.handleException('SignupService/deleteSignupAndSignupForm', e);
+      this.errorHandlingService.handleException(
+        'SignupService/deleteSignupAndSignupForm',
+        e,
+      );
     }
   }
 }

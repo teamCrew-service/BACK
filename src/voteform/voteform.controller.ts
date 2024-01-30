@@ -5,8 +5,6 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Inject,
-  LoggerService,
   Param,
   Post,
   Put,
@@ -24,14 +22,13 @@ import { CreateVoteFormDto } from '@src/voteform/dto/createVoteForm.dto';
 import { CrewService } from '@src/crew/crew.service';
 import { MemberService } from '@src/member/member.service';
 import { EditVoteFormDto } from '@src/voteform/dto/editVoteForm.dto';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('voteform')
 @ApiTags('VoteForm API')
 export class VoteformController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly voteFormService: VoteFormService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -88,10 +85,9 @@ export class VoteformController {
         .status(HttpStatus.OK)
         .json({ message: '투표 공지를 등록했습니다.', voteFormId });
     } catch (e) {
-      this.logger.error('VoteFormController/createVoteForm', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'VoteFormController/createVoteForm',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -169,10 +165,9 @@ export class VoteformController {
       }
       throw new HttpException('crew원이 아닙니다.', HttpStatus.UNAUTHORIZED);
     } catch (e) {
-      this.logger.error('VoteFormController/findVoteFormDetail', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'VoteFormController/findVoteFormDetail',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -229,10 +224,9 @@ export class VoteformController {
       }
       return res.status(HttpStatus.OK).json({ message: '투표 공지 수정 성공' });
     } catch (e) {
-      this.logger.error('VoteFormController/editVoteForm', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'VoteFormController/editVoteForm',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -294,10 +288,9 @@ export class VoteformController {
       }
       return res.status(HttpStatus.OK).json({ message: '투표 공지 삭제 성공' });
     } catch (e) {
-      this.logger.error('VoteFormController/deleteVoteForm', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'VoteFormController/deleteVoteForm',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }

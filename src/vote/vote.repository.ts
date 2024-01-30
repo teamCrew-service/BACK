@@ -1,27 +1,17 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Vote } from '@src/vote/entities/vote.entity';
 import { VotingDto } from '@src/vote/dto/voting.dto';
 import { EditVotingDto } from '@src/vote/dto/editVoting.dto';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class VoteRepository {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Vote) private voteRepository: Repository<Vote>,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* 투표하기 */
   async voting(
@@ -52,7 +42,7 @@ export class VoteRepository {
       }
       return { message: '투표가 성공적으로 저장되었습니다.' };
     } catch (e) {
-      this.handleException('VoteRepository/voting', e);
+      this.errorHandlingService.handleException('VoteRepository/voting', e);
     }
   }
 
@@ -76,7 +66,10 @@ export class VoteRepository {
         .groupBy('vote.voteId')
         .getRawMany();
     } catch (e) {
-      this.handleException('VoteRepository/findAllVote', e);
+      this.errorHandlingService.handleException(
+        'VoteRepository/findAllVote',
+        e,
+      );
     }
   }
 
@@ -94,7 +87,10 @@ export class VoteRepository {
         .groupBy('voteId')
         .getRawMany();
     } catch (e) {
-      this.handleException('VoteRepository/findAllAnonymousVote', e);
+      this.errorHandlingService.handleException(
+        'VoteRepository/findAllAnonymousVote',
+        e,
+      );
     }
   }
 
@@ -113,7 +109,10 @@ export class VoteRepository {
         .andWhere('vote.userId = :userId', { userId })
         .getRawMany();
     } catch (e) {
-      this.handleException('VoteRepository/findUserVote', e);
+      this.errorHandlingService.handleException(
+        'VoteRepository/findUserVote',
+        e,
+      );
     }
   }
 
@@ -148,7 +147,7 @@ export class VoteRepository {
       }
       return { message: '수정한 투표를 성공적으로 저장했습니다.' };
     } catch (e) {
-      this.handleException('VoteRepository/editVote', e);
+      this.errorHandlingService.handleException('VoteRepository/editVote', e);
     }
   }
 
@@ -162,7 +161,10 @@ export class VoteRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      this.handleException('VoteRepository/deleteVoteByCrew', e);
+      this.errorHandlingService.handleException(
+        'VoteRepository/deleteVoteByCrew',
+        e,
+      );
     }
   }
 }

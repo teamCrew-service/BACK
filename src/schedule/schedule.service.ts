@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-  Inject,
-  LoggerService,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ScheduleRepository } from '@src/schedule/schedule.repository';
 import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
 import { EditScheduleDto } from '@src/schedule/dto/editSchedule.dto';
@@ -12,31 +6,24 @@ import { Cron } from '@nestjs/schedule';
 import MySchedule from 'src/schedule/interface/mySchedule';
 import { UpdateResult } from 'typeorm';
 import { Schedule } from '@src/schedule/entities/schedule.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class ScheduleService {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly scheduleRepository: ScheduleRepository,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   @Cron('0 0 * * * *')
   async scheduleCron() {
     try {
       await this.scheduleRepository.updateScheduleIsDone();
     } catch (e) {
-      this.handleException('ScheduleService/scheduleCron', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/scheduleCron',
+        e,
+      );
     }
   }
 
@@ -88,7 +75,10 @@ export class ScheduleService {
 
       return result;
     } catch (e) {
-      this.handleException('ScheduleService/findSchedule', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/findSchedule',
+        e,
+      );
     }
   }
 
@@ -142,7 +132,10 @@ export class ScheduleService {
 
       return result;
     } catch (e) {
-      this.handleException('ScheduleService/findParticipateSchedule', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/findParticipateSchedule',
+        e,
+      );
     }
   }
 
@@ -160,7 +153,10 @@ export class ScheduleService {
       );
       return { schedule, message: '일정 등록 성공' };
     } catch (e) {
-      this.handleException('ScheduleService/createSchedule', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/createSchedule',
+        e,
+      );
     }
   }
 
@@ -177,7 +173,10 @@ export class ScheduleService {
         scheduleId,
       );
     } catch (e) {
-      this.handleException('ScheduleService/editSchedule', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/editSchedule',
+        e,
+      );
     }
   }
 
@@ -192,7 +191,10 @@ export class ScheduleService {
         crewId,
       );
     } catch (e) {
-      this.handleException('ScheduleService/findScheduleDetail', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/findScheduleDetail',
+        e,
+      );
     }
   }
 
@@ -205,7 +207,10 @@ export class ScheduleService {
       );
       return { schedule, message: '일정 삭제 성공' };
     } catch (e) {
-      this.handleException('ScheduleService/deleteSchedule', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/deleteSchedule',
+        e,
+      );
     }
   }
 
@@ -217,7 +222,10 @@ export class ScheduleService {
     try {
       return await this.scheduleRepository.findScheduleByCrew(crewId, userId);
     } catch (e) {
-      this.handleException('ScheduleService/findScheduleByCrew', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/findScheduleByCrew',
+        e,
+      );
     }
   }
 
@@ -227,7 +235,10 @@ export class ScheduleService {
       await this.scheduleRepository.delegateSchedule(delegator, crewId);
       return '일정 위임 완료';
     } catch (e) {
-      this.handleException('ScheduleService/delegateSchedule', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/delegateSchedule',
+        e,
+      );
     }
   }
 
@@ -236,7 +247,10 @@ export class ScheduleService {
     try {
       return await this.scheduleRepository.findScheduleCloseToToday(crewId);
     } catch (e) {
-      this.handleException('ScheduleService/findScheduleCloseToToday', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/findScheduleCloseToToday',
+        e,
+      );
     }
   }
 
@@ -245,7 +259,10 @@ export class ScheduleService {
     try {
       return await this.scheduleRepository.deleteScheduleByCrew(crewId);
     } catch (e) {
-      this.handleException('ScheduleService/deleteScheduleByCrew', e);
+      this.errorHandlingService.handleException(
+        'ScheduleService/deleteScheduleByCrew',
+        e,
+      );
     }
   }
 }

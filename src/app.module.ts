@@ -32,6 +32,7 @@ import { ChatModule } from '@src/chat/chat.module';
 import { AlarmModule } from '@src/alarm/alarm.module';
 import { WinstonModule, utilities } from 'nest-winston';
 import * as winston from 'winston';
+import { ErrorHandlingModule } from './error-handling/error-handling.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import * as winston from 'winston';
       // synchronize: true,
       synchronize: false,
     }),
+    ErrorHandlingModule,
     UsersModule,
     AuthModule,
     SignupModule,

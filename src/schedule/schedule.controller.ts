@@ -9,8 +9,6 @@ import {
   Body,
   Param,
   Delete,
-  Inject,
-  LoggerService,
 } from '@nestjs/common';
 import { ScheduleService } from '@src/schedule/schedule.service';
 import { CreateScheduleDto } from '@src/schedule/dto/createSchedule.dto';
@@ -25,14 +23,13 @@ import {
 import { ParticipantService } from '@src/participant/participant.service';
 import { CrewService } from '@src/crew/crew.service';
 import { MemberService } from '@src/member/member.service';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller('schedule')
 @ApiTags('Schedule API')
 export class ScheduleController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly scheduleService: ScheduleService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -78,10 +75,9 @@ export class ScheduleController {
 
       return res.json(result);
     } catch (e) {
-      this.logger.error('ScheduleController/createschedule', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ScheduleController/createschedule',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -135,10 +131,9 @@ export class ScheduleController {
       }
       return res.status(HttpStatus.OK).json({ message: '일정 수정 성공' });
     } catch (e) {
-      this.logger.error('ScheduleController/editschedule', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ScheduleController/editschedule',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -198,10 +193,9 @@ export class ScheduleController {
       );
       return res.status(HttpStatus.OK).json({ schedule, participant });
     } catch (e) {
-      this.logger.error('ScheduleController/findscheduleDetail', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ScheduleController/findscheduleDetail',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -254,10 +248,9 @@ export class ScheduleController {
       ]);
       return res.status(HttpStatus.OK).json(result);
     } catch (e) {
-      this.logger.error('ScheduleController/deleteschedule', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ScheduleController/deleteschedule',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -331,10 +324,9 @@ export class ScheduleController {
         HttpStatus.UNAUTHORIZED,
       );
     } catch (e) {
-      this.logger.error('ScheduleController/participateSchedule', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ScheduleController/participateSchedule',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -392,10 +384,9 @@ export class ScheduleController {
         HttpStatus.BAD_REQUEST,
       );
     } catch (e) {
-      this.logger.error('ScheduleController/cancelParticipate', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'ScheduleController/cancelParticipate',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }

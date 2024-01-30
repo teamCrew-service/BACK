@@ -1,27 +1,17 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from '@src/topic/entities/topic.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { TopicDto } from '@src/topic/dto/topic.dto';
 import { EditTopicDto } from '@src/topic/dto/editTopic.dto';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class TopicRepository {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Topic) private topicRepository: Repository<Topic>,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* 관심사 선택 */
   async addTopic(topicDto: TopicDto, userId: number): Promise<Object> {
@@ -55,7 +45,7 @@ export class TopicRepository {
 
       return { message: '주제가 성공적으로 저장되었습니다.' };
     } catch (e) {
-      this.handleException('TopicRepository/addTopic', e);
+      this.errorHandlingService.handleException('TopicRepository/addTopic', e);
     }
   }
 
@@ -68,7 +58,10 @@ export class TopicRepository {
         .where('topic.userId = :userId', { userId })
         .getRawMany();
     } catch (e) {
-      this.handleException('TopicRepository/findTopicById', e);
+      this.errorHandlingService.handleException(
+        'TopicRepository/findTopicById',
+        e,
+      );
     }
   }
 
@@ -104,7 +97,7 @@ export class TopicRepository {
 
       return { message: '관심사 주제 수정 성공' };
     } catch (e) {
-      this.handleException('TopicRepository/editTopic', e);
+      this.errorHandlingService.handleException('TopicRepository/editTopic', e);
     }
   }
 
@@ -118,7 +111,10 @@ export class TopicRepository {
         .where('topic.userId = :userId', { userId })
         .execute();
     } catch (e) {
-      this.handleException('TopicRepository/deleteTopic', e);
+      this.errorHandlingService.handleException(
+        'TopicRepository/deleteTopic',
+        e,
+      );
     }
   }
 }

@@ -1,30 +1,20 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UnsubscribeRepository } from '@src/unsubscribe/unsubscribe.repository';
 import { UsersRepository } from '@src/users/users.repository';
 import { Cron } from '@nestjs/schedule';
 import { TopicRepository } from '@src/topic/topic.repository';
 import { Unsubscribe } from './entities/unsubscribe.entity';
 import { DeleteResult } from 'typeorm';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Injectable()
 export class UnsubscribeService {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private unsubscribeRepository: UnsubscribeRepository,
     private usersRepository: UsersRepository,
     private topicRepository: TopicRepository,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   @Cron('0 0 * * * *')
   async toBeDeletedCron() {
@@ -48,7 +38,10 @@ export class UnsubscribeService {
         await Promise.all(deleteUnsubscribe);
       }
     } catch (e) {
-      this.handleException('UnsubscribeService/ToBeDeletedCron', e);
+      this.errorHandlingService.handleException(
+        'UnsubscribeService/ToBeDeletedCron',
+        e,
+      );
     }
   }
 
@@ -57,7 +50,10 @@ export class UnsubscribeService {
     try {
       return await this.unsubscribeRepository.findAllUnsubscribe();
     } catch (e) {
-      this.handleException('UnsubscribeService/findAllUnsubscribe', e);
+      this.errorHandlingService.handleException(
+        'UnsubscribeService/findAllUnsubscribe',
+        e,
+      );
     }
   }
 
@@ -66,7 +62,10 @@ export class UnsubscribeService {
     try {
       return await this.unsubscribeRepository.findOneUnsubscribe(userId);
     } catch (e) {
-      this.handleException('UnsubscribeService/findOneUnsubscribe', e);
+      this.errorHandlingService.handleException(
+        'UnsubscribeService/findOneUnsubscribe',
+        e,
+      );
     }
   }
 
@@ -75,7 +74,10 @@ export class UnsubscribeService {
     try {
       return await this.unsubscribeRepository.createUnsubscribe(userId);
     } catch (e) {
-      this.handleException('UnsubscribeService/createUnsubscribe', e);
+      this.errorHandlingService.handleException(
+        'UnsubscribeService/createUnsubscribe',
+        e,
+      );
     }
   }
 
@@ -84,7 +86,10 @@ export class UnsubscribeService {
     try {
       return await this.unsubscribeRepository.deleteUnsubscribe(userId);
     } catch (e) {
-      this.handleException('UnsubscribeService/deleteUnsubscribe', e);
+      this.errorHandlingService.handleException(
+        'UnsubscribeService/deleteUnsubscribe',
+        e,
+      );
     }
   }
 }

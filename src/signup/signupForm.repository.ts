@@ -1,26 +1,16 @@
-import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 import { Signupform } from '@src/signup/entities/signupForm.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class SignupFormRepository {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Signupform)
     private signupFormRepository: Repository<Signupform>,
   ) {}
-
-  // 에러 처리
-  private handleException(context: string, error: Error) {
-    this.logger.error(`${context}: ${error.message}`);
-    throw {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: `An error occurred in ${context}`,
-    };
-  }
 
   /* form 생성 */
   async createSignupForm(
@@ -35,7 +25,10 @@ export class SignupFormRepository {
       await this.signupFormRepository.save(signupForm);
       return signupForm;
     } catch (e) {
-      this.handleException('SignupFormRepository/createSignupForm', e);
+      this.errorHandlingService.handleException(
+        'SignupFormRepository/createSignupForm',
+        e,
+      );
     }
   }
 
@@ -54,7 +47,10 @@ export class SignupFormRepository {
         .where('signupform.signupFormId = :signupFormId', { signupFormId })
         .getRawOne();
     } catch (e) {
-      this.handleException('SignupFormRepository/findOneSignupForm', e);
+      this.errorHandlingService.handleException(
+        'SignupFormRepository/findOneSignupForm',
+        e,
+      );
     }
   }
 
@@ -68,7 +64,10 @@ export class SignupFormRepository {
         .where('crewId = :crewId', { crewId })
         .execute();
     } catch (e) {
-      this.handleException('SignupFormRepository/deleteSignupForm', e);
+      this.errorHandlingService.handleException(
+        'SignupFormRepository/deleteSignupForm',
+        e,
+      );
     }
   }
 }

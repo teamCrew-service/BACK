@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class LeavecrewRepository {
   constructor(
+    private readonly errorHandlingService: ErrorHandlingService,
     @InjectRepository(Leavecrew)
     private leavecrewRepository: Repository<Leavecrew>,
   ) {}
@@ -25,8 +28,10 @@ export class LeavecrewRepository {
         .where('leavecrew.leaveDay = :today', { today })
         .execute();
     } catch (e) {
-      console.error(e);
-      throw new Error('LeavecrewRepository/findAllLeaveCrew');
+      this.errorHandlingService.handleException(
+        'LeavecrewRepository/findAllLeaveCrew',
+        e,
+      );
     }
   }
 
@@ -50,8 +55,10 @@ export class LeavecrewRepository {
       await this.leavecrewRepository.save(leaveUser);
       return leaveUser;
     } catch (e) {
-      console.error(e);
-      throw new Error('LeavecrewRepository/createLeaveCrew');
+      this.errorHandlingService.handleException(
+        'LeavecrewRepository/createLeaveCrew',
+        e,
+      );
     }
   }
 
@@ -65,8 +72,10 @@ export class LeavecrewRepository {
         .andWhere('leavecrew.crewId = :crewId', { crewId })
         .getRawOne();
     } catch (e) {
-      console.error(e);
-      throw new Error('LeavecrewRepository/findOneLeaveUser');
+      this.errorHandlingService.handleException(
+        'LeavecrewRepository/findAllLeaveCrew',
+        e,
+      );
     }
   }
 }

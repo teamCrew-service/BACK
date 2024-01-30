@@ -5,8 +5,6 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Inject,
-  LoggerService,
   Param,
   Post,
   Put,
@@ -29,14 +27,13 @@ import { LeavecrewService } from '@src/leavecrew/leavecrew.service';
 import { EditSignupDto } from '@src/signup/dto/editSubmit-signup.dto';
 import { ImageService } from '@src/image/image.service';
 import { Signup } from '@src/signup/entities/signup.entity';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ErrorHandlingService } from '@src/error-handling/error-handling.service';
 
 @Controller()
 @ApiTags('signup API')
 export class SignupController {
   constructor(
-    @Inject(WINSTON_MODULE_NEST_PROVIDER)
-    private readonly logger: LoggerService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly signupService: SignupService,
     private readonly crewService: CrewService,
     private readonly memberService: MemberService,
@@ -119,11 +116,7 @@ export class SignupController {
 
       return res.status(HttpStatus.CREATED).json({ message: '모임 가입 완료' });
     } catch (e) {
-      this.logger.error('SignupController/signup', e.message);
-      throw new HttpException(
-        'SignupController/signup',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.errorHandlingService.handleException('SignupController/signup', e);
     }
   }
 
@@ -158,10 +151,9 @@ export class SignupController {
       );
       return res.status(HttpStatus.OK).json(signupForm);
     } catch (e) {
-      this.logger.error('SignupController/findOneSignupForm', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/findOneSignupForm',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -255,10 +247,9 @@ export class SignupController {
         .status(HttpStatus.CREATED)
         .json({ message: '모임 가입서 작성 완료' });
     } catch (e) {
-      this.logger.error('SignupController/submitSignup', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/submitSignup',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -310,10 +301,9 @@ export class SignupController {
       }
       return res.status(HttpStatus.OK).json(signup);
     } catch (e) {
-      this.logger.error('SignupController/findOneSubmitted', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/findOneSubmitted',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -363,10 +353,9 @@ export class SignupController {
         return res.status(HttpStatus.OK).json({ message: '가입서 수정 성공' });
       }
     } catch (e) {
-      this.logger.error('SignupController/editMySubmitted', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/editMySubmitted',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -414,10 +403,9 @@ export class SignupController {
         return res.status(HttpStatus.OK).json({ message: '가입서 삭제 성공' });
       }
     } catch (e) {
-      this.logger.error('SignupController/deleteMySubmitted', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/deleteMySubmitted',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -476,10 +464,9 @@ export class SignupController {
         );
       }
     } catch (e) {
-      this.logger.error('SignupController/findAllSubmitted', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/findAllSubmitted',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -508,10 +495,9 @@ export class SignupController {
         .status(HttpStatus.OK)
         .json({ message: '모임 가입서 확인 완료' });
     } catch (e) {
-      this.logger.error('SignupController/confirmsignup', e.message);
-      throw new HttpException(
+      this.errorHandlingService.handleException(
         'SignupController/confirmsignup',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
   }
@@ -562,11 +548,7 @@ export class SignupController {
         }
       }
     } catch (e) {
-      this.logger.error('SignupController/exitCrew', e.message);
-      throw new HttpException(
-        'SignupController/confirmsignup',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.errorHandlingService.handleException('SignupController/exitCrew', e);
     }
   }
 }

@@ -1,11 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, LoggerService } from '@nestjs/common';
 import { LeavecrewRepository } from '@src/leavecrew/leavecrew.repository';
 import { Cron } from '@nestjs/schedule';
 import { Leavecrew } from '@src/leavecrew/entities/leavecrew.entity';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class LeavecrewService {
-  constructor(private leavecrewRepository: LeavecrewRepository) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+    private leavecrewRepository: LeavecrewRepository,
+  ) {}
+
+  // 에러 처리
+  private handleException(context: string, error: Error) {
+    this.logger.error(`${context}: ${error.message}`);
+    throw {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: `An error occurred in ${context}`,
+    };
+  }
 
   @Cron('0 0 * * * *')
   async toBeLeaveCron() {
